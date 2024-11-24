@@ -46,6 +46,9 @@ class _TasksWidgetState extends State<TasksWidget> {
 
   @override
   Widget build(BuildContext context) {
+    if (taskDeleteTA.watch(context) == true) {
+      setState(() {});
+    }
     String languageCode = 'es'; // Valor por defecto
     if (updateConfigurationCF.watch(context) == true) {
       languageCode = configurationCF.value!.language.toString();
@@ -153,6 +156,7 @@ class _TasksWidgetState extends State<TasksWidget> {
                     children: tasks.map((task) {
                       print('personas por tarea:${task.people![0].name}');
                       return CardTasks(
+                        idTask: task.id!,
                         title: task.title ?? '', // Aquí usas el título de la tarea
                         namePriority: task.namePriority ?? '',
                         iconPriority: getIconFromString(

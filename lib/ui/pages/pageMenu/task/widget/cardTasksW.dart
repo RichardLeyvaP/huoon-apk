@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:huoon/data/models/tasks/tasks_model.dart';
 import 'package:huoon/domain/blocs/task_cat_state_prior.dart/task_cat_state_prior_service.dart';
+import 'package:huoon/domain/blocs/tasks/tasks_service.dart';
+import 'package:huoon/domain/blocs/user_activity_bloc/user_activity_service.dart';
 import 'package:huoon/ui/Components/avatarMultiples.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class CardTasks extends StatefulWidget {
+  final int idTask;
   final String title;
   final IconData icon;
   final IconData iconPriority;
@@ -23,6 +26,7 @@ class CardTasks extends StatefulWidget {
 
   const CardTasks({
     Key? key,
+    required this.idTask,
     required this.title,
     required this.icon,
     required this.iconPriority,
@@ -246,11 +250,18 @@ class _CardTasksState extends State<CardTasks> {
                           icon: Icons.delete,
                           label: "Eliminar",
                           color: Colors.red,
-                          onPressed: () {
-                            setState(() {
-                              // task-destroy por post
-                              isOptionsVisible = false;
-                            });
+                          onPressed: () async {
+                            await deleteTasks(widget.idTask);
+                            // Obtén la fecha seleccionada inicial desde getSelectedDate
+                            String initialDateString = getSelectedDate();
+                            // carga las tareas
+                            fetchTasks(initialDateString);
+                            updateTaskScreen(initialDateString); //screen_Home_Tasks
+                            // setState(() {
+                            //   // task-destroy por post
+                            //   isOptionsVisible = false;
+                            // });
+
                             // Lógica de eliminación aquí
                           },
                         ),

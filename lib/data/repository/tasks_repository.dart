@@ -111,7 +111,7 @@ class TasksRepository {
       'start_date': task.startDate,
       'end_date': task.endDate,
       'priority_id': task.priorityId, //llegando null
-      'parent_id': null, //todo fijo por duda
+      // 'parent_id': null, //todo fijo por duda
       // 'parent_id': task.parentId,
       'status_id': task.statusId,
       'category_id': task.categoryId,
@@ -161,7 +161,7 @@ class TasksRepository {
     print('si estoy devolviendo esto:1-${response}');
   }
 
-  void deleteTasks(int id) async {
+  Future<dynamic> deleteTasks(int id) async {
     final endpoint = '${Env.apiEndpoint}/task-destroy';
     final body = {
       'id': id,
@@ -169,8 +169,8 @@ class TasksRepository {
     try {
       final response = await authService.post(endpoint, body: body);
 
-      print('Eliminada la Tarea con-response: $response');
-      print('Eliminada la Tarea con id: $id');
+      print('Intentando Eliminar la Tarea con-response: $response');
+      print('Intentando Eliminar la Tarea con id: $id');
     } catch (e) {
       print('Error en showTasks: $e');
     }

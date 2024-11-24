@@ -477,7 +477,7 @@ class _SecondTaskPageState extends State<SecondTaskPage> {
         ),
       );
       //ENVIANDO A INSERTAR
-      submitTask();
+      storeTask();
 
       // Navegar a la siguiente página
       Future.delayed(const Duration(seconds: 2), () {

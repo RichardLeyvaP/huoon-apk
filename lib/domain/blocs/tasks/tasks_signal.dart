@@ -8,5 +8,6 @@ final Signal<String?> errorMessageTA = Signal<String?>(null);
 final Signal<String?> empyMessageTA = Signal<String?>(null);
 final Signal<TaskElement> taskElementTA = Signal<TaskElement>(const TaskElement());
 final Signal<bool> taskElementUpdateTA = Signal<bool>(false);
+final Signal<bool> taskDeleteTA = Signal<bool>(false);
 final Signal<Task?> taskDataTA = Signal<Task?>(null); // Almacena los datos de la tarea
 final Signal<String> successMessageTA = Signal<String>("");

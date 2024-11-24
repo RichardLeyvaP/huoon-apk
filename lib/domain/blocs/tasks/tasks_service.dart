@@ -26,6 +26,19 @@ Future<void> fetchTasks(String date) async {
   }
 }
 
+// Enviar tarea actualizada
+Future<void> storeTask() async {
+  isLoadingTA.value = true;
+  try {
+    await tasksRepository.addTasks(taskElementTA.value);
+    successMessageTA.value = "Task submitted successfully!";
+  } catch (error) {
+    successMessageTA.value = "Error submitting task: ${error.toString()}";
+  } finally {
+    isLoadingTA.value = false;
+  }
+}
+
 // Solicitar tareas por fecha
 Future<void> updateTasks(String date) async {
   isLoadingTA.value = true;
@@ -34,6 +47,19 @@ Future<void> updateTasks(String date) async {
     successMessageTA.value = "Task update successfully!";
   } catch (error) {
     successMessageTA.value = "Error update task: ${error.toString()}";
+  } finally {
+    isLoadingTA.value = false;
+  }
+}
+
+// Solicitar tareas por fecha
+Future<void> deleteTasks(int id) async {
+  isLoadingTA.value = true;
+  try {
+    await tasksRepository.deleteTasks(id);
+    successMessageTA.value = "Task deleted successfully!";
+  } catch (error) {
+    successMessageTA.value = "Error deleted task: ${error.toString()}";
   } finally {
     isLoadingTA.value = false;
   }
@@ -81,19 +107,6 @@ void updateTaskGeoLocation(String geoLocation) {
 void updateTaskFamily(List<Person> familyMembers) {
   taskElementTA.value = taskElementTA.value.copyWith(people: familyMembers);
   taskElementUpdateTA.value = true;
-}
-
-// Enviar tarea actualizada
-Future<void> submitTask() async {
-  isLoadingTA.value = true;
-  try {
-    await tasksRepository.addTasks(taskElementTA.value);
-    successMessageTA.value = "Task submitted successfully!";
-  } catch (error) {
-    successMessageTA.value = "Error submitting task: ${error.toString()}";
-  } finally {
-    isLoadingTA.value = false;
-  }
 }
 
 void clearTaskSignals() {
