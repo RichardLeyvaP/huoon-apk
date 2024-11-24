@@ -1,0 +1,4 @@
+Va encapsular todos los componentes , clases, ficheros que correspondan
+con nuestra lógica de negocio de nuestra aplicación.
+Por ejemplo el gerenciamiento de estado a utilizar, los modelos 
+repositorios, servicios que únicamente interactuarán con el exterior . etc...

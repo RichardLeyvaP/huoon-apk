@@ -1,0 +1,34 @@
+{
+    "@@locale": "es",
+     "title": "Aplicación en Español",
+     "@title": {
+        "description": "Título de la aplicación"
+    },
+     "cartName":"Inicio",
+     "cartSearch":"Buscar",
+     "cartPdf":"(Generar pdf)",
+     "cartOpction":"Opciones",
+     "loadTitle":"Cargando datos...",
+     "closeAccount":"Cerrar mi cuenta",
+     "authMessage":"Por favor, autentiquese",
+     "noResults":"No hay resultados",
+     "serverError": "Error al conectar con el servidor", 
+     "searchTitle": "Qué deseas hacer?", 
+     "searchDescription": "Planificar Tareas - Recordatorios - Chat",
+     
+     "menuWishes": "Deseos",
+     "menuFinance": "Finanzas",
+     "menuHealth": "Salud",
+     "menuTasks": "Tareas",
+     "menuProducts": "Almacén",
+     "menuArchives": "Archivos",
+     "titleLanguage": "Selecciona tu idioma",
+
+     "acceptButton": "Aceptar",
+     "cancelButton": "Cancelar",
+     "loginButton": "Entrar",
+     "googleButton": "Entrar con Google",
+     "facebookButton": "Entrar con Facebook",
+     "rememberPassword": "Olvidé mi contraseña"
+
+}

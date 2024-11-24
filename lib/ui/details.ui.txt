@@ -1,0 +1,4 @@
+Estarán todos los archivos o componentes,clases, etc..
+que representen nuestra información de la aplicación,
+en este caso codigo flutter,unicamente tendremos de
+ la aparte de interfaz gráfica. 

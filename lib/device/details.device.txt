@@ -1,0 +1,3 @@
+Va  acontener todas las clases, métodos, componentes
+que accedan a funcionalidades nativas del dispositivo
+ejemplo, biometría,gps,cámara..características especiales de dispositivo.
