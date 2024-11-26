@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:huoon/data/models/tasks/tasks_model.dart';
 import 'package:huoon/data/repository/tasks_repository.dart';
 import 'package:huoon/data/services/globalCallApi/apiService.dart';
 import 'package:huoon/domain/blocs/task_cat_state_prior.dart/task_cat_state_prior_signal.dart';
@@ -90,6 +91,14 @@ void onPrioritySelected(int priorityId) {
   selectedPriorityIdCSP.value = priorityId;
 }
 
+void onSelectedID(int id) {
+  selectedIdCSP.value = id;
+}
+
+void onSelectedTaskUpdate(TaskElement selectTaskUpdate) {
+  selectedTaskUpdateCSP.value = selectTaskUpdate;
+}
+
 void onCategorySelected(int categoryId) {
   selectedCategoryIdCSP.value = categoryId;
 }
@@ -101,6 +110,11 @@ void onTaskStateSelected(int stateTaskId) {
 void onPersonSelected(int personId) {
   final updatedPersonIds = List<int>.from(selectedPersonIdsCSP.value)..add(personId);
   selectedPersonIdsCSP.value = updatedPersonIds;
+}
+
+void onFamilySelected(List<Taskperson> person) {
+  selecteFamilyCSP.value = null;
+  selecteFamilyCSP.value = person;
 }
 
 void onFrequencyChanged(String newFrequency) {
@@ -133,4 +147,11 @@ void clearCategoryStatusPrioritySignals() {
   isLoadingCSP.value = false;
   loadDataCSP.value = false;
   errorMessageCSP.value = null;
+  //nuevos agregados
+  geoLocationTaskCSP.value = null;
+  descriptionTaskCSP.value = null;
+  tittleTaskCSP.value = null;
+  selecteFamilyCSP.value = null;
+  selectedTaskUpdateCSP.value = null;
+  selectedIdCSP.value = null;
 }

@@ -59,9 +59,17 @@ class MyApp extends StatelessWidget {
         builder: (context, state) => const AuthCheck(),
       ),
       GoRoute(
-        path: '/TaskCreation',
-        builder: (context, state) => TaskCreation(),
+        name: 'taskCreation',
+        path: '/taskCreation/:id', // :id indica que es un parámetro en la URL
+        builder: (context, state) {
+          // Obtiene el id desde los parámetros de la ruta
+          final String? idParam = state.pathParameters['id'];
+          final int? id = idParam != null ? int.tryParse(idParam) : null;
+
+          return TaskCreation(id: id);
+        },
       ),
+
       GoRoute(
         path: '/ProductCreation',
         builder: (context, state) => ProductCreation(),

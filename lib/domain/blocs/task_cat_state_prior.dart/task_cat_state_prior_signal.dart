@@ -1,3 +1,4 @@
+import 'package:huoon/data/models/tasks/tasks_model.dart';
 import 'package:huoon/domain/modelos/category_model.dart';
 import 'package:signals/signals.dart';
 
@@ -8,7 +9,10 @@ final Signal<List<Priority>?> prioritiesCSP = Signal<List<Priority>?>(null);
 final Signal<List<String>?> frequencyCSP = Signal<List<String>?>(null);
 final Signal<List<Taskperson>?> taskPersonsCSP = Signal<List<Taskperson>?>(null);
 final Signal<List<int>> selectedPersonIdsCSP = Signal<List<int>>([]);
+final Signal<List<Taskperson>?> selecteFamilyCSP = Signal<List<Taskperson>?>(null);
 final Signal<int?> selectedCategoryIdCSP = Signal<int?>(null);
+final Signal<int?> selectedIdCSP = Signal<int?>(null);
+final Signal<TaskElement?> selectedTaskUpdateCSP = Signal<TaskElement?>(null);
 final Signal<int?> selectedPriorityIdCSP = Signal<int?>(null);
 final Signal<int?> selectStateTaskCSP = Signal<int?>(null);
 final Signal<String> frequencyTaskCSP = Signal<String>("");

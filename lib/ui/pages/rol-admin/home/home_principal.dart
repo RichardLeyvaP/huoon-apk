@@ -166,9 +166,8 @@ class _HomePrincipalState extends State<HomePrincipal> with SingleTickerProvider
                   fetchCategoriesStatusPriority();
 
                   print('inde =.... ${_tabController.index}');
-                  GoRouter.of(context).go(
-                    '/TaskCreation',
-                  );
+                  //context.goNamed('taskCreation', pathParameters: {'id': ''}); // Pasando un valor vacío
+                  context.goNamed('taskCreation', pathParameters: {'id': '0'});
                 } else if (_tabController.index == 4) {
                   //agregar productos
                   print('inde =.... ${_tabController.index}');

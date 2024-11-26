@@ -3,6 +3,10 @@ import 'package:huoon/ui/pages/rol-admin/Task/secondTaskPage.dart';
 import 'package:huoon/ui/pages/rol-admin/Task/startTaskPage.dart';
 
 class TaskCreation extends StatefulWidget {
+  final int? id; // ID opcional que se recibe
+
+  TaskCreation({this.id});
+
   @override
   _TaskCreationState createState() => _TaskCreationState();
 }
@@ -18,10 +22,9 @@ class _TaskCreationState extends State<TaskCreation> {
         // physics: BouncingScrollPhysics(),//activa el deslizamiento con el dedo
         physics: NeverScrollableScrollPhysics(), // Desactiva el deslizamiento con el dedo
         children: [
-          //1 Página
-          StartTaskPage(pageController: _pageController),
-          //2 Página
-          SecondTaskPage(pageController: _pageController),
+          // Pasar el ID a las páginas
+          StartTaskPage(pageController: _pageController, id: widget.id),
+          SecondTaskPage(pageController: _pageController, id: widget.id),
         ],
       ),
     );

@@ -12,8 +12,9 @@ import 'package:signals/signals_flutter.dart';
 
 class StartTaskPage extends StatefulWidget {
   final PageController pageController;
+  final int? id; // ID opcional
 
-  StartTaskPage({required this.pageController});
+  StartTaskPage({required this.pageController, this.id});
 
   @override
   _StartTaskPageState createState() => _StartTaskPageState();
@@ -32,19 +33,25 @@ class _StartTaskPageState extends State<StartTaskPage> {
 
   // Variable para manejar las prioridades seleccionadas
   List<Priority> selectedPriorities = [];
+  String tittle = 'Crear Tarea';
 
   @override
   Widget build(BuildContext context) {
+    if (widget.id != 0) {
+      tittle = 'Modificar Tarea';
+      updateTaskid(widget.id!);
+      print('mostrar el id:${widget.id}');
+    }
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: 50,
           backgroundColor: Colors.transparent,
           elevation: 0,
-          title: const Center(
+          title: Center(
             child: Column(
               children: [
-                Text('Crear Tarea', style: TextStyle(fontSize: 18, color: Colors.black)),
+                Text(tittle, style: TextStyle(fontSize: 18, color: Colors.black)),
                 Text('(Paso 1 de 2)', style: TextStyle(fontSize: 10, color: Color.fromARGB(150, 0, 0, 0))),
               ],
             ),
@@ -132,7 +139,7 @@ class _StartTaskPageState extends State<StartTaskPage> {
                                     maxLines: 2,
                                     onFieldSubmitted: (_) => _onSubmit(),
                                   ),
-                                  SizedBox(height: 10),
+                                  const SizedBox(height: 10),
                                 ],
                               );
                             },
@@ -143,7 +150,10 @@ class _StartTaskPageState extends State<StartTaskPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           ElevatedButton(
-                            onPressed: () => GoRouter.of(context).go('/HomePrincipal'),
+                            onPressed: () {
+                              clearCategoryStatusPrioritySignals();
+                              GoRouter.of(context).go('/HomePrincipal');
+                            },
                             child: Text("Regresar"),
                           ),
                           ElevatedButton(
@@ -204,15 +214,12 @@ class _StartTaskPageState extends State<StartTaskPage> {
             selectedCategoryId: selectedCategoryIdCSP.value,
             selectMultiple: selectMultiple,
             onSelectionChanged: (selectedCategories) async {
-              setState(() {
-                FocusScope.of(context).unfocus();
-                arrayCategory = selectedCategories.map((category) => category.id).toList();
-                if (arrayCategory.isNotEmpty) {
-                  onCategorySelected(arrayCategory.first);
+              FocusScope.of(context).unfocus();
+              onCategorySelected(arrayCategory.first);
 
-                  print('Estados seleccionados-elementos de la primera pagina:${arrayCategory}');
-                }
-              });
+              // arrayCategory = selectedCategories.map((category) => category.id).toList();
+              // if (arrayCategory.isNotEmpty) {print('Estados seleccionados-elementos de la primera pagina:${arrayCategory}');
+              // }
             },
           );
         } else if (errorMessageCSP.watch(context) != null) {
@@ -256,6 +263,7 @@ class _StartTaskPageState extends State<StartTaskPage> {
             selectMultiple: false, // Permite seleccionar solo un estado
             selectedStatusId: _selectStatetask, // Estado preseleccionado
             onSelectionChanged: (List<Status> selectedStatuses) {
+              FocusScope.of(context).unfocus();
               // Aquí manejas los estados seleccionados
               print('Estados seleccionados: ${selectedStatuses.map((e) => e.id).join(', ')}');
               selectedStatus = selectedStatuses.isNotEmpty ? selectedStatuses.first.id : 0;
@@ -297,6 +305,7 @@ class _StartTaskPageState extends State<StartTaskPage> {
 
 // Método que será llamado cuando se seleccionen o deseleccionen prioridades
   void _onSelectionChanged(List<Priority> selectedPrioritiesList) {
+    FocusScope.of(context).unfocus();
     selectedPriorities = selectedPrioritiesList;
 
     // Aquí manejas los estados seleccionados
@@ -307,86 +316,4 @@ class _StartTaskPageState extends State<StartTaskPage> {
     onPrioritySelected(selectedPriority);
     //este va actualizando el arreglo para mandar a insertar o eliminar
   }
-
-  // cardSimpleSelectionStatus(CategoriesStatusPrioritySuccess state, Status status) {
-  //   return Padding(
-  //     padding: const EdgeInsets.only(top: 10, right: 10.0, bottom: 10),
-  //     child: Container(
-  //       // height: 20,
-  //       width: 120,
-  //       // margin: const EdgeInsets.symmetric(vertical: 20),
-  //       decoration: BoxDecoration(
-  //         color: Colors.white,
-  //         borderRadius: BorderRadius.circular(10),
-  //         border: Border.all(
-  //           color: state.selectStatetask == status.id ? colorBotoomSel.withOpacity(0.8) : colorBotoom.withOpacity(0.4),
-  //           width: 2.0,
-  //         ),
-  //         boxShadow: [
-  //           BoxShadow(
-  //             color:
-  //                 state.selectStatetask == status.id ? colorBotoomSel.withOpacity(0.4) : colorBotoom.withOpacity(0.4),
-  //             blurRadius: 10,
-  //             offset: Offset(0, 0),
-  //           ),
-  //         ],
-  //       ),
-  //       child: Padding(
-  //         padding: const EdgeInsets.all(8.0),
-  //         child: Center(
-  //           child: Text(
-  //             status.title,
-  //             style: TextStyle(
-  //               fontSize: 14,
-  //               fontWeight: FontWeight.bold,
-  //               color: state.selectStatetask == status.id ? Colors.red : Colors.black,
-  //             ),
-  //           ),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  /* cardSimpleSelection(CategoriesStatusPrioritySuccess state, Priority status) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 10, right: 10.0, bottom: 10),
-      child: Container(
-        // height: 20,
-        width: 80,
-        // margin: const EdgeInsets.symmetric(vertical: 20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color:
-                state.selectedPriorityId == status.id ? colorBotoomSel.withOpacity(0.8) : colorBotoom.withOpacity(0.4),
-            width: 2.0,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: state.selectedPriorityId == status.id
-                  ? colorBotoomSel.withOpacity(0.4)
-                  : colorBotoom.withOpacity(0.4),
-              blurRadius: 10,
-              offset: Offset(0, 0),
-            ),
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Center(
-            child: Text(
-              status.title,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: state.selectedPriorityId == status.id ? Colors.red : Colors.black,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }*/
 }

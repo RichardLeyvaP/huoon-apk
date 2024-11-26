@@ -44,8 +44,10 @@ class TaskElement with _$TaskElement {
 class Person with _$Person {
   const factory Person({
     required int id,
-    required String name,
-    required String image,
+    int? roleId,
+    String? name,
+    String? image,
+    String? roleName,
   }) = _Person;
 
   factory Person.fromJson(Map<String, Object?> json) => _$PersonFromJson(json);

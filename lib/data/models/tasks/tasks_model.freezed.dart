@@ -764,8 +764,10 @@ Person _$PersonFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$Person {
   int get id => throw _privateConstructorUsedError;
-  String get name => throw _privateConstructorUsedError;
-  String get image => throw _privateConstructorUsedError;
+  int? get roleId => throw _privateConstructorUsedError;
+  String? get name => throw _privateConstructorUsedError;
+  String? get image => throw _privateConstructorUsedError;
+  String? get roleName => throw _privateConstructorUsedError;
 
   /// Serializes this Person to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -781,7 +783,8 @@ abstract class $PersonCopyWith<$Res> {
   factory $PersonCopyWith(Person value, $Res Function(Person) then) =
       _$PersonCopyWithImpl<$Res, Person>;
   @useResult
-  $Res call({int id, String name, String image});
+  $Res call(
+      {int id, int? roleId, String? name, String? image, String? roleName});
 }
 
 /// @nodoc
@@ -800,22 +803,32 @@ class _$PersonCopyWithImpl<$Res, $Val extends Person>
   @override
   $Res call({
     Object? id = null,
-    Object? name = null,
-    Object? image = null,
+    Object? roleId = freezed,
+    Object? name = freezed,
+    Object? image = freezed,
+    Object? roleName = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int,
-      name: null == name
+      roleId: freezed == roleId
+          ? _value.roleId
+          : roleId // ignore: cast_nullable_to_non_nullable
+              as int?,
+      name: freezed == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      image: null == image
+              as String?,
+      image: freezed == image
           ? _value.image
           : image // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
+      roleName: freezed == roleName
+          ? _value.roleName
+          : roleName // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -827,7 +840,8 @@ abstract class _$$PersonImplCopyWith<$Res> implements $PersonCopyWith<$Res> {
       __$$PersonImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int id, String name, String image});
+  $Res call(
+      {int id, int? roleId, String? name, String? image, String? roleName});
 }
 
 /// @nodoc
@@ -844,22 +858,32 @@ class __$$PersonImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = null,
-    Object? name = null,
-    Object? image = null,
+    Object? roleId = freezed,
+    Object? name = freezed,
+    Object? image = freezed,
+    Object? roleName = freezed,
   }) {
     return _then(_$PersonImpl(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int,
-      name: null == name
+      roleId: freezed == roleId
+          ? _value.roleId
+          : roleId // ignore: cast_nullable_to_non_nullable
+              as int?,
+      name: freezed == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      image: null == image
+              as String?,
+      image: freezed == image
           ? _value.image
           : image // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
+      roleName: freezed == roleName
+          ? _value.roleName
+          : roleName // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -868,7 +892,7 @@ class __$$PersonImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$PersonImpl implements _Person {
   const _$PersonImpl(
-      {required this.id, required this.name, required this.image});
+      {required this.id, this.roleId, this.name, this.image, this.roleName});
 
   factory _$PersonImpl.fromJson(Map<String, dynamic> json) =>
       _$$PersonImplFromJson(json);
@@ -876,13 +900,17 @@ class _$PersonImpl implements _Person {
   @override
   final int id;
   @override
-  final String name;
+  final int? roleId;
   @override
-  final String image;
+  final String? name;
+  @override
+  final String? image;
+  @override
+  final String? roleName;
 
   @override
   String toString() {
-    return 'Person(id: $id, name: $name, image: $image)';
+    return 'Person(id: $id, roleId: $roleId, name: $name, image: $image, roleName: $roleName)';
   }
 
   @override
@@ -891,13 +919,17 @@ class _$PersonImpl implements _Person {
         (other.runtimeType == runtimeType &&
             other is _$PersonImpl &&
             (identical(other.id, id) || other.id == id) &&
+            (identical(other.roleId, roleId) || other.roleId == roleId) &&
             (identical(other.name, name) || other.name == name) &&
-            (identical(other.image, image) || other.image == image));
+            (identical(other.image, image) || other.image == image) &&
+            (identical(other.roleName, roleName) ||
+                other.roleName == roleName));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, image);
+  int get hashCode =>
+      Object.hash(runtimeType, id, roleId, name, image, roleName);
 
   /// Create a copy of Person
   /// with the given fields replaced by the non-null parameter values.
@@ -918,17 +950,23 @@ class _$PersonImpl implements _Person {
 abstract class _Person implements Person {
   const factory _Person(
       {required final int id,
-      required final String name,
-      required final String image}) = _$PersonImpl;
+      final int? roleId,
+      final String? name,
+      final String? image,
+      final String? roleName}) = _$PersonImpl;
 
   factory _Person.fromJson(Map<String, dynamic> json) = _$PersonImpl.fromJson;
 
   @override
   int get id;
   @override
-  String get name;
+  int? get roleId;
   @override
-  String get image;
+  String? get name;
+  @override
+  String? get image;
+  @override
+  String? get roleName;
 
   /// Create a copy of Person
   /// with the given fields replaced by the non-null parameter values.

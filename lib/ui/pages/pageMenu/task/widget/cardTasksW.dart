@@ -23,9 +23,10 @@ class CardTasks extends StatefulWidget {
   final double? padding;
   final double? radius;
   final List<Person> people;
+  final TaskElement task;
 
   const CardTasks({
-    Key? key,
+    super.key,
     required this.idTask,
     required this.title,
     required this.icon,
@@ -41,7 +42,8 @@ class CardTasks extends StatefulWidget {
     required this.people,
     this.padding,
     this.radius,
-  }) : super(key: key);
+    required this.task,
+  });
 
   @override
   _CardTasksState createState() => _CardTasksState();
@@ -50,6 +52,23 @@ class CardTasks extends StatefulWidget {
 class _CardTasksState extends State<CardTasks> {
   bool isExpanded = true; // Controla la visibilidad del contenido expandido
   bool isOptionsVisible = false; // Controla si se muestran las opciones
+
+  Future<void> handleNavigation() async {
+    // Realiza todas las operaciones asíncronas primero.
+    await fetchCategoriesStatusPriority();
+    dataEditTask(widget.task);
+
+    // Una vez que las tareas asíncronas han terminado, verifica si el widget sigue montado.
+    if (mounted) {
+      context.goNamed(
+        'taskCreation',
+        pathParameters: {'id': '${widget.idTask}'},
+      );
+      setState(() {
+        isOptionsVisible = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -233,17 +252,7 @@ class _CardTasksState extends State<CardTasks> {
                           label: "Editar",
                           color: const Color.fromARGB(255, 16, 79, 131),
                           onPressed: () {
-                            fetchCategoriesStatusPriority();
-
-                            GoRouter.of(context).go(
-                              '/TaskCreation',
-                            );
-                            // task-update por post
-                            //llamar al formulario de Modificar
-                            setState(() {
-                              isOptionsVisible = false;
-                            });
-                            // Lógica de edición aquí
+                            handleNavigation();
                           },
                         ),
                         _buildOptionButton(

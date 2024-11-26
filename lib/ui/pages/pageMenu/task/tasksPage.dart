@@ -155,6 +155,8 @@ class _TasksWidgetState extends State<TasksWidget> {
                   child: Column(
                     children: tasks.map((task) {
                       print('personas por tarea:${task.people![0].name}');
+                      print('personas por tarea-id:${task.people![0].roleId}');
+                      print('personas por tarea-name:${task.people![0].roleName}');
                       return CardTasks(
                         idTask: task.id!,
                         title: task.title ?? '', // Aquí usas el título de la tarea
@@ -165,14 +167,15 @@ class _TasksWidgetState extends State<TasksWidget> {
                         icon: getIconFromString(task.iconCategory!), // Puedes cambiar el ícono
                         // icon: MdiIcons.cakeVariantOutline, // Puedes cambiar el ícono
                         date: formatDate(task.startDate!), // Aquí usas la fecha de inicio de la tarea
-                        details: task.description ?? '', // Descripción de la tarea
-                        location: task.geoLocation!,
+                        details: task.description ?? "", // Descripción de la tarea
+                        location: task.geoLocation ?? "",
                         schedule: '${extractTime(task.startDate!)} - ${extractTime(task.endDate!)}', // Horario
                         iconSize: 12.0,
                         iconColor: getColorConvert(task.colorCategory), //verde Verde Brillante #32CD32
                         //iconColor: Color(int.parse(task.colorPriority, radix: 16)),
                         padding: 8.0,
                         people: task.people!,
+                        task: task,
                         // radius: 30,
                       );
                     }).toList(),

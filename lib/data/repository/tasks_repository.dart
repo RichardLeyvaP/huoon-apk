@@ -1,5 +1,6 @@
 import 'package:huoon/data/models/tasks/tasks_model.dart';
 import 'package:huoon/data/services/globalCallApi/apiService.dart';
+import 'package:huoon/domain/blocs/task_cat_state_prior.dart/task_cat_state_prior_signal.dart';
 import 'package:huoon/ui/pages/env.dart';
 
 class TasksRepository {
@@ -91,7 +92,9 @@ class TasksRepository {
   }
 
   List<Map<String, dynamic>> getTaskFamiliesFromSelectedPersons(List selectedTaskpersons) {
+    print('eeee-personas:${selectedTaskpersons.length}');
     return selectedTaskpersons.map((p) {
+      print('eeee-personas:${p.id}');
       return {
         "person_id": p.id, // Aquí p.id es el ID de la persona
         "role_id": 1, // Valor fijo por ahora
@@ -104,6 +107,7 @@ class TasksRepository {
   Future<dynamic> addTasks(TaskElement task) async {
     final endpoint = '${Env.apiEndpoint}/task';
     //  const endpoint = '${Env.apiEndpoint}/task-test';
+    List<Map<String, dynamic>> peopleSelected = getTaskFamiliesFromSelectedPersons(selecteFamilyCSP.value!);
     final body = {
       //'task': task,
       'title': task.title,
@@ -111,8 +115,8 @@ class TasksRepository {
       'start_date': task.startDate,
       'end_date': task.endDate,
       'priority_id': task.priorityId, //llegando null
-      // 'parent_id': null, //todo fijo por duda
-      // 'parent_id': task.parentId,
+      //'parent_id': null, //todo fijo por duda
+      'parent_id': task.parentId,
       'status_id': task.statusId,
       'category_id': task.categoryId,
       // 'category_id': task.categoryId,
@@ -124,12 +128,12 @@ class TasksRepository {
       'attachments': 'image/test.png', //todo fijo por duda
       // 'attachments': task.attachments,
       'geo_location': task.geoLocation,
-      'people': getTaskFamiliesFromSelectedPersons(task.people!)
+      'people': peopleSelected
     };
-    print('si estoy devolviendo esto:1-BODY-${body}');
+    // print('si estoy devolviendo esto:1-BODY-${body}');
     // Llama al servicio que maneja la API de autenticación para login
     final response = await authService.post(endpoint, body: body);
-
+    print('si estoy devolviendo esto:1-BODY-${body}');
     print('si estoy devolviendo esto:1-${response}');
   }
 
@@ -137,28 +141,34 @@ class TasksRepository {
   Future<dynamic> updateTasksRepository(TaskElement task) async {
     final endpoint = '${Env.apiEndpoint}/task-update';
     //  const endpoint = '${Env.apiEndpoint}/task-test';
+    List<Map<String, dynamic>> peopleSelected = getTaskFamiliesFromSelectedPersons(selecteFamilyCSP.value!);
     final body = {
-      //'task': task,
+      'id': task.id,
       'title': task.title,
       'description': task.description,
       'start_date': task.startDate,
       'end_date': task.endDate,
       'priority_id': task.priorityId, //llegando null
+      //'parent_id': null, //todo fijo por duda
       'parent_id': task.parentId,
       'status_id': task.statusId,
       'category_id': task.categoryId,
       // 'category_id': task.categoryId,
       'recurrence': task.recurrence,
-      'estimated_time': task.estimatedTime,
-      'comments': task.comments,
-      'attachments': task.attachments,
-      'geo_location': 'task.geoLocation' //todo valor fijo
+      'estimated_time': task.estimatedTime ?? 0, //todo fijo por duda
+      // 'estimated_time': task.estimatedTime,
+      'comments': 'comentario de prueba', //todo fijo por duda
+      // 'comments': task.comments ?? '',
+      'attachments': 'image/test.png', //todo fijo por duda
+      // 'attachments': task.attachments,
+      'geo_location': task.geoLocation == "" ? null : task.geoLocation,
+      'people': peopleSelected
     };
-    print('si estoy devolviendo esto:1-BODY-${body}');
+    print('si estoy devolviendo esto:1-BODY-New:${body}');
     // Llama al servicio que maneja la API de autenticación para login
     final response = await authService.post(endpoint, body: body);
 
-    print('si estoy devolviendo esto:1-${response}');
+    print('si estoy devolviendo esto:1-New-${response}');
   }
 
   Future<dynamic> deleteTasks(int id) async {

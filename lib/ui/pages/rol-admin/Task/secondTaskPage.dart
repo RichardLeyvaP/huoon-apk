@@ -15,8 +15,9 @@ import 'package:table_calendar/table_calendar.dart';
 
 class SecondTaskPage extends StatefulWidget {
   final PageController pageController;
+  final int? id; // ID opcional
 
-  const SecondTaskPage({super.key, required this.pageController});
+  SecondTaskPage({required this.pageController, this.id});
 
   @override
   _SecondTaskPageState createState() => _SecondTaskPageState();
@@ -31,6 +32,8 @@ class _SecondTaskPageState extends State<SecondTaskPage> {
         id: taskperson.id,
         name: taskperson.namePerson!, // Mapear namePerson a name
         image: taskperson.imagePerson!, // Mapear imagePerson a image
+        //roleId: taskperson.rolId!,
+        //roleName: taskperson.nameRole!
       );
     }).toList();
   }
@@ -42,19 +45,16 @@ class _SecondTaskPageState extends State<SecondTaskPage> {
 
   void _onSelectionChanged(List<Taskperson> selected, List<String>? roles) {
     FocusScope.of(context).unfocus();
-    setState(() {
+    /* setState(() {
       selectedTaskpersons = selected; // Guarda la lista de personas seleccionadas
       selectedRoles = roles; // Guarda la lista de roles seleccionados
-    });
+    });*/
     // Función para convertir List<Taskperson> a List<Person>
 
     List<Person> persons = convertToPersonList(selectedTaskpersons);
-    // context
-    //     .read<TasksBloc>()
-    //     .add(TaskFamilyUpdated(persons)); //aqui va agregando a TaskElement para luego crear la tarea
-
     // aqui se agregan los familiares
     updateTaskFamily(persons);
+    onFamilySelected(selected);
     // Aquí puedes hacer algo con los datos seleccionados
     // print("Estados seleccionados-Personas seleccionadas: ${selectedTaskpersons.length}");
     print("Estados seleccionados-Personas seleccionadas: ${selectedTaskpersons.map((p) => p.id)}");
@@ -132,9 +132,15 @@ class _SecondTaskPageState extends State<SecondTaskPage> {
     }
   }
 
+  String tittle = 'Crear Tarea';
+
   //**variables del dataTimer */
   @override
   Widget build(BuildContext context) {
+    print('mostrar el id:${widget.id}');
+    if (widget.id != 0) {
+      tittle = 'Modificar Tarea';
+    }
     if (geoLocationTaskCSP.watch(context) != null) {
       _locationController.text = geoLocationTaskCSP.value!;
     }
@@ -144,11 +150,11 @@ class _SecondTaskPageState extends State<SecondTaskPage> {
           toolbarHeight: 50,
           backgroundColor: Colors.transparent,
           elevation: 0, // Asegúrate de que no tenga sombras adicionales
-          title: const Center(
+          title: Center(
             child: Column(
               children: [
                 Text(
-                  'Crear Tarea',
+                  tittle,
                   style: TextStyle(fontSize: 18, color: Colors.black),
                 ),
                 Text(
@@ -228,7 +234,7 @@ class _SecondTaskPageState extends State<SecondTaskPage> {
                     ),
                     ElevatedButton(
                       onPressed: _onSubmit,
-                      child: Text("Crear Tarea"),
+                      child: Text(tittle),
                     ),
                   ],
                 ),
@@ -244,7 +250,7 @@ class _SecondTaskPageState extends State<SecondTaskPage> {
     return Builder(
       builder: (context) {
         if (taskPersonsCSP.watch(context) != null) {
-          final taskpersons = taskPersonsCSP.value;
+          final taskpersons = taskPersonsCSP.value; //todas la spersonas que pertenencen al hogar
           return TaskpersonWidget(
             taskpersons: taskpersons!,
             titleWidget: 'Selecciona un Familiar',
@@ -451,7 +457,7 @@ class _SecondTaskPageState extends State<SecondTaskPage> {
     );
   }
 
-  void _onSubmit() {
+  Future<void> _onSubmit() async {
     if (_formKey.currentState?.validate() ?? false) {
       // Cierra el teclado si está abierto
       FocusScope.of(context).unfocus();
@@ -476,8 +482,14 @@ class _SecondTaskPageState extends State<SecondTaskPage> {
           ),
         ),
       );
-      //ENVIANDO A INSERTAR
-      storeTask();
+
+      if (tittle == 'Modificar Tarea') {
+        await updateTasks();
+      } else {
+        //ENVIANDO A INSERTAR
+        await storeTask();
+      }
+      clearCategoryStatusPrioritySignals();
 
       // Navegar a la siguiente página
       Future.delayed(const Duration(seconds: 2), () {

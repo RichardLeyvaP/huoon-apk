@@ -1,7 +1,9 @@
 import 'package:huoon/data/models/tasks/tasks_model.dart';
 import 'package:huoon/data/repository/tasks_repository.dart';
 import 'package:huoon/data/services/globalCallApi/apiService.dart';
+import 'package:huoon/domain/blocs/task_cat_state_prior.dart/task_cat_state_prior_service.dart';
 import 'package:huoon/domain/blocs/tasks/tasks_signal.dart';
+import 'package:huoon/domain/modelos/category_model.dart';
 
 final tasksRepository = TasksRepository(authService: ApiService());
 
@@ -40,7 +42,7 @@ Future<void> storeTask() async {
 }
 
 // Solicitar tareas por fecha
-Future<void> updateTasks(String date) async {
+Future<void> updateTasks() async {
   isLoadingTA.value = true;
   try {
     await tasksRepository.updateTasksRepository(taskElementTA.value);
@@ -83,6 +85,12 @@ void updateTaskPriority(int priorityId) {
   taskElementUpdateTA.value = true;
 } // Actualizar categoryId de la tarea
 
+// Actualizar prioridad de la tarea
+void updateTaskid(int id) {
+  taskElementTA.value = taskElementTA.value.copyWith(id: id);
+  taskElementUpdateTA.value = true;
+} // Actualizar categoryId de la tarea
+
 void updateTaskCategoryId(int categoryId) {
   taskElementTA.value = taskElementTA.value.copyWith(categoryId: categoryId);
   taskElementUpdateTA.value = true;
@@ -107,6 +115,33 @@ void updateTaskGeoLocation(String geoLocation) {
 void updateTaskFamily(List<Person> familyMembers) {
   taskElementTA.value = taskElementTA.value.copyWith(people: familyMembers);
   taskElementUpdateTA.value = true;
+}
+
+List<Person> convertToPersonList(List<Taskperson> taskpersons) {
+  return taskpersons.map((taskperson) {
+    return Person(
+        id: taskperson.id,
+        name: taskperson.namePerson!, // Mapear namePerson a name
+        image: taskperson.imagePerson!, // Mapear imagePerson a image
+        roleId: taskperson.rolId!,
+        roleName: taskperson.nameRole!);
+  }).toList();
+}
+
+// Actualizar familiares asignados a la tarea
+void dataEditTask(TaskElement taskElem) {
+  onSelectedID(taskElem.id!);
+  onTittleChanged(taskElem.title ?? '');
+  onDescriptionChanged(taskElem.description ?? '');
+  onPrioritySelected(taskElem.priorityId!);
+  onCategorySelected(taskElem.categoryId!);
+  onTaskStateSelected(taskElem.statusId!);
+//onPersonSelected();
+  // aqui se agregan los familiares
+  updateTaskFamily(taskElem.people!);
+  // onFamilySelected(taskElem.people!);
+  onFrequencyChanged(taskElem.recurrence ?? '');
+  onGeoLocationChanged(taskElem.geoLocation ?? '');
 }
 
 void clearTaskSignals() {
