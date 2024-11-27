@@ -132,7 +132,7 @@ class ApiService {
       case 204:
         // Código 204 OK: La solicitud se realizó correctamente y se obtuvo una respuesta vacia
         return 'No hay resultados';
-      case 401:
+      case 401: // Código 401 : No tiene permisos o token expirado
         return jsonDecode(response.body);
       case 404:
         return 'No encontró la dirección statusCode:404';

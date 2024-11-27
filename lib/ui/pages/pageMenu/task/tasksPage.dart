@@ -38,7 +38,7 @@ class _TasksWidgetState extends State<TasksWidget> {
     _focusedDay = initialDate;
     // carga las tareas
     fetchTasks(initialDateString);
-    updateTaskScreen(initialDateString); //screen_Home_Tasks
+    updateTaskScreen('screen_Home_Tasks', initialDateString); //screen_Home_Tasks
 
     // WidgetsBinding.instance.addPostFrameCallback((_) async {
     // });
@@ -73,7 +73,7 @@ class _TasksWidgetState extends State<TasksWidget> {
                 _selectedDay = selectedDay;
                 _focusedDay = focusedDay;
                 //actualizo el estado la fecha en que dio para ver la tarea
-                updateTaskScreen(date); //screen_Home_Tasks
+                updateTaskScreen('screen_Home_Tasks', date); //screen_Home_Tasks
                 //mando a buscar las tareas de esa fecha
                 fetchTasks(date);
               });

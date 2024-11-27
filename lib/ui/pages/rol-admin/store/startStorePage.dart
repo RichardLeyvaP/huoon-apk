@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:huoon/data/models/store/store_model.dart';
+import 'package:huoon/domain/blocs/store_bloc/store_service.dart';
+import 'package:huoon/domain/blocs/store_bloc/store_signal.dart';
+import 'package:huoon/domain/blocs/task_cat_state_prior.dart/task_cat_state_prior_service.dart';
+import 'package:huoon/domain/blocs/task_cat_state_prior.dart/task_cat_state_prior_signal.dart';
+import 'package:huoon/domain/modelos/category_model.dart';
+import 'package:huoon/ui/Components/state_widget.dart';
 import 'package:huoon/ui/pages/rol-admin/Task/selectDays/utils.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:signals/signals_flutter.dart';
 
 class StartStorePage extends StatefulWidget {
   final PageController pageController;
@@ -38,16 +46,15 @@ class _StartStorePageState extends State<StartStorePage> {
           ),
         ),
       ),
-      body: Text('estaba el codigo de abajo'),
+      body:
+          // Text('estaba el codigo de abajo'),
 
-      /*   BlocBuilder<StoreBloc, StoreState>(
-        builder: (context, state) {
+          Builder(
+        builder: (
+          context,
+        ) {
           String titleState = '';
-          if (state is StoreSubmittedUpdated) {
-            _titleController.text = state.storeElement.name.toString();
-            _descriptionController.text = state.storeElement.description.toString();
-            _placeController.text = state.storeElement.location.toString();
-          }
+
           return SafeArea(
             child: Stack(
               children: [
@@ -150,6 +157,8 @@ class _StartStorePageState extends State<StartStorePage> {
                           ),
                           maxLines: 2,
                         ),
+                        const SizedBox(height: 10),
+                        _buildStatusSection(),
                         SizedBox(height: 100),
                         Container()
                       ],
@@ -183,7 +192,6 @@ class _StartStorePageState extends State<StartStorePage> {
           );
         },
       ),
-*/
     );
   }
 
@@ -197,24 +205,64 @@ class _StartStorePageState extends State<StartStorePage> {
       print(
           'object-test-_descriptionController.text:${emptyTextField(_descriptionController.text) ? 'No hay comentario' : _descriptionController.text}');
       final storeElement = StoreElement(
-          id: 0,
-          status: 0,
+          status: selectedStatus,
           title: _titleController.text, //si emptyTextField = true es que esta vacio
           description: emptyTextField(_descriptionController.text) ? 'No hay comentario' : _descriptionController.text,
           location: _placeController.text
           // image: 'products/1.jpg',
           );
-
+      //mandar a insertar almacen
+      submitStore(storeElement, 1); //todo fijo mando valor del hogar
 // Dispara el evento para insertar el producto
-
+      print('mostrando valores de almacen a insertar:${storeElement}');
       // Navegar a la siguiente página
-      widget.pageController.nextPage(
-        duration: Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
+      // Navegar a la siguiente página
+      Future.delayed(const Duration(seconds: 2), () {
+        GoRouter.of(context).go(
+          '/HomePrincipal',
+          extra: {
+            'name': '',
+            'email': '',
+            'avatarUrl': '',
+          },
+        );
+      });
     }
     if (emptyTextField(_titleController.text)) {
       _titleController.text = '';
     }
+  }
+
+  int selectedStatus = 0;
+  Widget _buildStatusSection() {
+    return Builder(
+      builder: (context) {
+        if (statusStoreCSP.value != null) {
+          bool selectMultiple = false;
+
+          return StatusWidget(
+            status: statusStoreCSP.value!,
+            fitTextContainer: false,
+            eventDetails: true,
+            titleWidget: 'Permisos ',
+            selectMultiple: selectMultiple, // Permite seleccionar solo un estado
+            selectedStatusId: statusStoreCSP.value!.first.id, // Estado preseleccionado
+            onSelectionChanged: (List<Status> selectedStatuses) {
+              FocusScope.of(context).unfocus();
+              // Aquí manejas los estados seleccionados
+              print('Estados del almacen seleccionados-1: ${selectedStatuses.map((e) => e.id).join(', ')}');
+              selectedStatus = selectedStatuses.isNotEmpty ? selectedStatuses.first.id : 0;
+              print('Estados del almacen seleccionados-2: $selectedStatus');
+
+              //seleccionando el estado
+              // onTaskStateSelected(selectedStatus);
+            },
+          );
+        } else if (errorMessageCSP.watch(context) != null) {
+          return Center(child: Text('Error: ${errorMessageCSP.value}'));
+        }
+        return Container();
+      },
+    );
   }
 }

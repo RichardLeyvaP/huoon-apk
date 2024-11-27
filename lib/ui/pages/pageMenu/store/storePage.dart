@@ -6,6 +6,7 @@ import 'package:huoon/domain/blocs/products_bloc/products_service.dart';
 import 'package:huoon/domain/blocs/products_bloc/products_signal.dart';
 import 'package:huoon/domain/blocs/store_bloc/store_service.dart';
 import 'package:huoon/domain/blocs/store_bloc/store_signal.dart';
+import 'package:huoon/domain/blocs/user_activity_bloc/user_activity_service.dart';
 import 'package:huoon/ui/util/utils_class_apk.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:signals/signals_flutter.dart';
@@ -49,6 +50,13 @@ class _StorePageState extends State<StorePage> {
 
   @override
   Widget build(BuildContext context) {
+    if (_selectedStore == null) {
+      //estoy en almacenes
+      onScreenChange('screen_Home_Store');
+    } else {
+      //estoy en productos
+      onScreenChange('screen_Home_Store');
+    }
     print('Entrando en página de Almacenes');
     return Scaffold(
       floatingActionButton: StatefulBuilder(

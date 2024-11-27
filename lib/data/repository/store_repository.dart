@@ -84,12 +84,14 @@ class StoreRepository {
   }
 
   // Método para agregar una tienda
-  Future<dynamic> addStore(StoreElement store) async {
-    final endpoint = '${Env.apiEndpoint}/stores';
+  Future<dynamic> addStore(StoreElement store, int homeId) async {
+    final endpoint = '${Env.apiEndpoint}/person-warehouse';
     print('Agregando nueva tienda');
 
     final body = {
-      'name': store.title,
+      'home_id': homeId,
+      'title': store.title,
+      'status': store.status,
       'location': store.location,
       'description': store.description,
     };

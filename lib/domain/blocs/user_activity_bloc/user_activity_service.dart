@@ -72,9 +72,9 @@ String getSelectedDate() {
 }
 
 // Ejemplo de actualización de contexto para tareas
-void updateTaskScreen(String selectedDate) {
+void updateTaskScreen(String screen, String selectedDate) {
   onScreenChange(
-    'screen_Home_Tasks',
+    screen,
     additionalData: {'selectedDate': selectedDate},
   );
 }

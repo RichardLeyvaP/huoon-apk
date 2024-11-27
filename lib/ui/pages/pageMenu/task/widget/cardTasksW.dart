@@ -265,7 +265,7 @@ class _CardTasksState extends State<CardTasks> {
                             String initialDateString = getSelectedDate();
                             // carga las tareas
                             fetchTasks(initialDateString);
-                            updateTaskScreen(initialDateString); //screen_Home_Tasks
+                            updateTaskScreen('screen_Home_Tasks', initialDateString); //screen_Home_Tasks
                             // setState(() {
                             //   // task-destroy por post
                             //   isOptionsVisible = false;

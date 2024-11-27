@@ -41,10 +41,11 @@ void updateStoreData(StoreElement updatedStoreElement) {
 }
 
 // Método para enviar tienda a la API
-Future<void> submitStore() async {
+Future<void> submitStore(StoreElement updatedStoreElement, int homeId) async {
   isSubmittingST.value = true;
   try {
-    await storeRepository.addStore(currentStoreElementST.value!);
+    await storeRepository.addStore(updatedStoreElement, homeId);
+    // await storeRepository.addStore(currentStoreElementST.value!);
     isSubmittingST.value = false;
     submitSuccessST.value = true;
     submitErrorST.value = null;
