@@ -4,7 +4,8 @@ import 'package:huoon/ui/pages/env.dart';
 
 class TaskpersonWidget extends StatefulWidget {
   final List<Taskperson> taskpersons;
-  final List<String>? rolesList;
+  final List<Taskperson>? selectTaskpersons;
+  final List<Roles>? rolesList;
   final String titleWidget;
   final bool selectMultiple;
   final bool enableRoleSelection; // Nueva variable para habilitar la selección de rol
@@ -15,6 +16,7 @@ class TaskpersonWidget extends StatefulWidget {
   const TaskpersonWidget({
     super.key,
     required this.taskpersons,
+    this.selectTaskpersons,
     required this.titleWidget,
     this.selectMultiple = true,
     this.enableRoleSelection = false, // Valor por defecto
@@ -44,6 +46,16 @@ class _TaskpersonWidgetState extends State<TaskpersonWidget> {
         selectedPersons[selectedIndex] = true;
       }
     }
+
+    // Marca las personas de selectTaskpersons como seleccionadas
+    if (widget.selectTaskpersons != null) {
+      for (var selectedTaskperson in widget.selectTaskpersons!) {
+        int index = widget.taskpersons.indexWhere((person) => person.id == selectedTaskperson.id);
+        if (index != -1) {
+          selectedPersons[index] = true;
+        }
+      }
+    }
   }
 
   void _notifySelection() {
@@ -56,9 +68,9 @@ class _TaskpersonWidgetState extends State<TaskpersonWidget> {
     widget.onSelectionChanged(selected, selectedRoles); // Pasamos los roles seleccionados
   }
 
-  Future<void> _showRoleSelectionDialog(
-      BuildContext context, List<Taskperson> selectedTaskpersons, List<String> listRoles) async {
-    List<String> roles = listRoles;
+  Future<void> _showRoleSelectionDialogMultiple(
+      BuildContext context, List<Taskperson> selectedTaskpersons, List<Roles> listRoles) async {
+    List<Roles> roles = listRoles;
 
     // List<bool> selectedRoles = List<bool>.filled(roles.length, false);
     List<bool> selectedRoles =
@@ -101,7 +113,7 @@ class _TaskpersonWidgetState extends State<TaskpersonWidget> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                role,
+                                role.nameRol,
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: selectedRoles[index] ? FontWeight.bold : FontWeight.normal,
@@ -127,7 +139,7 @@ class _TaskpersonWidgetState extends State<TaskpersonWidget> {
             ),
             TextButton(
               onPressed: () {
-                List<String> finalSelectedRoles = [];
+                List<Roles> finalSelectedRoles = [];
                 for (int i = 0; i < selectedRoles.length; i++) {
                   if (selectedRoles[i]) {
                     finalSelectedRoles.add(roles[i]);
@@ -142,6 +154,90 @@ class _TaskpersonWidgetState extends State<TaskpersonWidget> {
                   Navigator.of(context).pop();
                   // widget.onSelectionChanged(selectedTaskpersons, finalSelectedRoles);
                 }
+              },
+              child: Text('Aceptar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showRoleSelectionDialog(
+      BuildContext context, List<Taskperson> selectedTaskpersons, List<Roles> listRoles) async {
+    List<Roles> roles = listRoles;
+
+    // Inicialmente, ningún rol está seleccionado
+    int? selectedRoleIndex;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            'Selecciona un Rol',
+            style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                  color: const Color.fromARGB(213, 0, 0, 0),
+                  fontSize: 20,
+                ),
+          ),
+          content: Container(
+            width: double.maxFinite,
+            child: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: roles.map((role) {
+                    int index = roles.indexOf(role);
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          // Actualiza el índice del rol seleccionado
+                          selectedRoleIndex = index;
+                        });
+                      },
+                      child: Card(
+                        margin: const EdgeInsets.symmetric(vertical: 5),
+                        color: selectedRoleIndex == index ? Colors.green[100] : Colors.white,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                role.nameRol,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: selectedRoleIndex == index ? FontWeight.bold : FontWeight.normal,
+                                ),
+                              ),
+                              if (selectedRoleIndex == index) Icon(Icons.check_circle, color: Colors.green),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                );
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Cierra el diálogo
+              },
+              child: Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () {
+                if (selectedRoleIndex != null) {
+                  // Notifica el rol seleccionado si se eligió uno
+                  Roles selectedRole = roles[selectedRoleIndex!];
+                  // Aquí puedes hacer lo que necesites con `selectedRole`
+                  print('Rol seleccionado: ${selectedRole.nameRol}');
+                }
+                Navigator.of(context).pop(); // Cierra el diálogo
               },
               child: Text('Aceptar'),
             ),

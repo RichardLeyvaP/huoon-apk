@@ -7,13 +7,13 @@ import 'package:huoon/domain/blocs/products_bloc/products_signal.dart';
 final ProductsRepository productsRepository = ProductsRepository(authService: ApiService());
 
 // Método para cargar productos
-Future<void> loadProduct() async {
+Future<void> loadProduct(int homeId, int warehouseId) async {
   isLoadingSignalPR.value = true;
   productErrorSignal.value = null;
   productEmpySignal.value = null;
 
   try {
-    final result = await productsRepository.getProduct();
+    final result = await productsRepository.getProduct(homeId, warehouseId);
 
     if (result is String) {
       //está vacio
@@ -32,7 +32,7 @@ Future<void> loadProduct() async {
 // Métodos para actualizar datos del producto
 void updateProductData(ProductElement updatedElement) {
   productElementSignal.value = productElementSignal.value.copyWith(
-    name: updatedElement.name ?? productElementSignal.value.name,
+    productName: updatedElement.productName ?? productElementSignal.value.productName,
     additionalNotes: updatedElement.additionalNotes ?? productElementSignal.value.additionalNotes,
     categoryId: updatedElement.categoryId ?? productElementSignal.value.categoryId,
     statusId: updatedElement.statusId ?? productElementSignal.value.statusId,

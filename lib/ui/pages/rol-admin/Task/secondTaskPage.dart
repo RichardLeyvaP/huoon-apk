@@ -4,6 +4,7 @@ import 'package:huoon/data/models/tasks/tasks_model.dart';
 import 'package:huoon/domain/blocs/task_cat_state_prior.dart/task_cat_state_prior_service.dart';
 import 'package:huoon/domain/blocs/task_cat_state_prior.dart/task_cat_state_prior_signal.dart';
 import 'package:huoon/domain/blocs/tasks/tasks_service.dart';
+import 'package:huoon/domain/blocs/tasks/tasks_signal.dart';
 import 'package:huoon/domain/modelos/category_model.dart';
 import 'package:huoon/ui/Components/family_widget.dart';
 import 'package:huoon/ui/Components/frequency_widget.dart';
@@ -45,12 +46,6 @@ class _SecondTaskPageState extends State<SecondTaskPage> {
 
   void _onSelectionChanged(List<Taskperson> selected, List<String>? roles) {
     FocusScope.of(context).unfocus();
-    /* setState(() {
-      selectedTaskpersons = selected; // Guarda la lista de personas seleccionadas
-      selectedRoles = roles; // Guarda la lista de roles seleccionados
-    });*/
-    // Función para convertir List<Taskperson> a List<Person>
-
     List<Person> persons = convertToPersonList(selectedTaskpersons);
     // aqui se agregan los familiares
     updateTaskFamily(persons);
@@ -250,14 +245,39 @@ class _SecondTaskPageState extends State<SecondTaskPage> {
     return Builder(
       builder: (context) {
         if (taskPersonsCSP.watch(context) != null) {
-          final taskpersons = taskPersonsCSP.value; //todas la spersonas que pertenencen al hogar
+          bool selectMultiple = true;
+          if (widget.id != 0) {
+            //es modificar
+          } else //es insertar que cargue el primero por defecto
+          {
+            if (taskPersonsCSP.value!.isNotEmpty) {
+              onPersonSelected(taskPersonsCSP.value!.first.id);
+            }
+          }
+
+          List<Taskperson> convertToTaskpersonList(List<Person> personList) {
+            return personList.map((person) {
+              return Taskperson(
+                id: person.id,
+                namePerson: person.name,
+                imagePerson: person.image,
+                rolId: person.roleId,
+                nameRole: person.roleName,
+              );
+            }).toList();
+          }
+
+// Luego, puedes usarla así:
+          List<Taskperson> taskpersonsList = convertToTaskpersonList(taskElementTA.value.people!);
+
           return TaskpersonWidget(
-            taskpersons: taskpersons!,
+            taskpersons: taskPersonsCSP.value!,
+            selectTaskpersons: taskpersonsList,
             titleWidget: 'Selecciona un Familiar',
-            selectMultiple: true, // Permitir selección múltiple
+            selectMultiple: selectMultiple, // Permitir selección múltiple
             enableRoleSelection: true, // Habilitar selección de rol
             selectedPersonId: selectedPersonIdsCSP.value.first,
-            rolesList: ['Responsable', 'Participante', 'Invitado'],
+            rolesList: rolesCSP.value,
             onSelectionChanged: _onSelectionChanged, // Manejar cambios de selección
           );
         } else if (errorMessageCSP.watch(context) != null) {
@@ -278,6 +298,10 @@ class _SecondTaskPageState extends State<SecondTaskPage> {
   }) {
     return TextFormField(
       controller: controller,
+      onChanged: (value) {
+        //para mantener el estado
+        onGeoLocationChanged(controller.text);
+      },
       textCapitalization: TextCapitalization.sentences,
       textInputAction: TextInputAction.next,
       maxLength: maxLength,
@@ -461,8 +485,6 @@ class _SecondTaskPageState extends State<SecondTaskPage> {
     if (_formKey.currentState?.validate() ?? false) {
       // Cierra el teclado si está abierto
       FocusScope.of(context).unfocus();
-      //para mantener el estado
-      onGeoLocationChanged(_locationController.text);
       // para el array de mandar a insertar
       updateTaskGeoLocation(_locationController.text);
       eventDate(); //ACTUALIZA LA FECHA , SI NO LA ESCOJE LE PONE LA ACTUAL

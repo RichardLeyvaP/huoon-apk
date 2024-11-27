@@ -163,7 +163,7 @@ class _StartProductPageState extends State<StartProductPage> {
       print(
           'object-test-_descriptionController.text:${emptyTextField(_descriptionController.text) ? 'No hay comentario' : _descriptionController.text}');
       final productElement = ProductElement(
-        name: _titleController.text, //si emptyTextField = true es que esta vacio
+        productName: _titleController.text, //si emptyTextField = true es que esta vacio
         additionalNotes:
             emptyTextField(_descriptionController.text) ? 'No hay comentario' : _descriptionController.text,
         // image: 'products/1.jpg',

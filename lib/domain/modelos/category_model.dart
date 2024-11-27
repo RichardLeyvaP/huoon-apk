@@ -33,6 +33,14 @@ class Frequency {
   Frequency({required this.title, required this.description, required this.id});
 }
 
+class Roles {
+  final int id;
+  final String nameRol;
+  final String descriptionRol;
+
+  Roles({required this.id, required this.nameRol, required this.descriptionRol});
+}
+
 class Taskperson {
   final int id;
   final String? namePerson;

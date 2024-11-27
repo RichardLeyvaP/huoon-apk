@@ -5,6 +5,7 @@ import 'package:huoon/data/models/store/store_model.dart';
 import 'package:huoon/domain/blocs/products_bloc/products_service.dart';
 import 'package:huoon/domain/blocs/products_bloc/products_signal.dart';
 import 'package:huoon/domain/blocs/store_bloc/store_service.dart';
+import 'package:huoon/domain/blocs/store_bloc/store_signal.dart';
 import 'package:huoon/ui/util/utils_class_apk.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:signals/signals_flutter.dart';
@@ -25,7 +26,7 @@ class _StorePageState extends State<StorePage> {
     super.initState();
     //context.read<ProductsBloc>().add(const ProductsRequested()); //cargo los productos
     // context.read<StoreBloc>().add(const StoreRequested()); //cargo los almacenes
-    loadProduct();
+
     requestStore();
     WidgetsBinding.instance.addPostFrameCallback((_) async {});
   }
@@ -86,8 +87,7 @@ class _StorePageState extends State<StorePage> {
           _showProductDetail && _selectedStore != null
               ? _buildProductListView(_selectedStore!)
               // ? _buildProductDetailView(_selectedStore!)
-              : Text('estaba lo de abajo'),
-          // : _buildStoreListView(),
+              : _buildStoreListView(),
           // El contenido principal de tu pantalla
           Positioned(
             bottom: 20,
@@ -100,7 +100,7 @@ class _StorePageState extends State<StorePage> {
                   curve: Curves.easeInOut, // Curva de la animación
                   child: _selectedStore != null // Si no hay almacén seleccionado, no muestra nada
                       ? InkWell(
-                          onTap: () {
+                          onTap: () async {
                             // Acción al hacer clic
                             _showProductList();
                           },
@@ -121,12 +121,12 @@ class _StorePageState extends State<StorePage> {
   }
 
   Widget _buildProductListView(StoreElement selectedStore) {
-    print('_buildProductListView-aqui seleccionando el almacen:${selectedStore.name}');
+    print('_buildProductListView-aqui seleccionando el almacen:${selectedStore.title}');
     return Column(
       children: [
         Flexible(
             child: Text(
-          selectedStore.name.toString(),
+          selectedStore.title.toString(),
           style: TextStyle(fontWeight: FontWeight.w900),
         )),
         Expanded(
@@ -156,7 +156,7 @@ class _StorePageState extends State<StorePage> {
                     children: [
                       Column(
                         children: products.map((product) {
-                          return buildProductContainer(product.name.toString(), product.image.toString(),
+                          return buildProductContainer(product.productName.toString(), product.image.toString(),
                               product.totalPrice.toString(), product.quantity.toString());
                         }).toList(),
                       ),
@@ -173,7 +173,7 @@ class _StorePageState extends State<StorePage> {
     );
   }
 
-  /* Widget _buildStoreListView() {
+  Widget _buildStoreListView() {
     return Expanded(
       child: Builder(
         builder: (context) {
@@ -199,9 +199,13 @@ class _StorePageState extends State<StorePage> {
               child: Column(
                 children: stores.map((store) {
                   return GestureDetector(
-                    onTap: () => _showProductDetails(store),
+                    onTap: () async {
+                      print('estore id que necesito:${store.id!}');
+                      await loadProduct(1, store.id!);
+                      _showProductDetails(store);
+                    },
                     child: buildStoreContainer(
-                        store.name.toString(), store.location.toString(), store.description.toString()),
+                        store.title.toString(), store.location.toString(), store.description.toString()),
                   );
                 }).toList(),
               ),
@@ -213,159 +217,158 @@ class _StorePageState extends State<StorePage> {
       ),
     );
   }
-}*/
+}
 
-  Widget buildProductContainer(String name, String imageUrl, String price, String quantity) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 4),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15),
-      ),
-      elevation: 5, // Sombra de la tarjeta para hacerla más llamativa
-      child: Padding(
-        padding: const EdgeInsets.all(6.0),
-        child: Row(
-          children: [
-            // Imagen del producto en un avatar circular
-            CircleAvatar(
-              backgroundImage: imageUrl.isNotEmpty
-                  ? NetworkImage(imageUrl)
-                  : AssetImage('assets/default_product_image.png') as ImageProvider,
-              radius: 25,
-            ),
-            const SizedBox(width: 10),
-            // Información del producto
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Nombre y precio del producto
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        name,
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blueGrey[800],
-                        ),
+Widget buildProductContainer(String name, String imageUrl, String price, String quantity) {
+  return Card(
+    margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 4),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(15),
+    ),
+    elevation: 5, // Sombra de la tarjeta para hacerla más llamativa
+    child: Padding(
+      padding: const EdgeInsets.all(6.0),
+      child: Row(
+        children: [
+          // Imagen del producto en un avatar circular
+          CircleAvatar(
+            backgroundImage: imageUrl.isNotEmpty
+                ? NetworkImage(imageUrl)
+                : AssetImage('assets/default_product_image.png') as ImageProvider,
+            radius: 25,
+          ),
+          const SizedBox(width: 10),
+          // Información del producto
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Nombre y precio del producto
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      name,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blueGrey[800],
                       ),
-                      Text(
-                        '\$$price',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.green,
-                        ),
-                      ),
-                    ],
-                  ),
-                  // Cantidad del producto
-                  Text(
-                    'Cantidad: $quantity',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
                     ),
+                    Text(
+                      '\$$price',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.green,
+                      ),
+                    ),
+                  ],
+                ),
+                // Cantidad del producto
+                Text(
+                  'Cantidad: $quantity',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[600],
                   ),
-                ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+Widget buildStoreContainer(String name, String location, String description) {
+  return Card(
+    margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 4),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(15),
+    ),
+    elevation: 5, // Sombra de la tarjeta para hacerla más llamativa
+    child: Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // Nombre del "almacén"
+              Expanded(
+                child: Text(
+                  ' $name',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blueGrey[800],
+                  ),
+                  softWrap: true, // Permite que el texto se envuelva en múltiples líneas
+                  overflow: TextOverflow.ellipsis, // Muestra puntos suspensivos si es muy largo
+                ),
               ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+              // Icono o avatar opcional
+              Icon(
+                Icons.store_mall_directory, // Ícono que puede representar un almacén
+                color: Colors.blueGrey[400],
+                size: 25,
+              ),
+            ],
+          ),
 
-  Widget buildStoreContainer(String name, String location, String description) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 4),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15),
+          const SizedBox(height: 2),
+          // Descripción del "almacén"
+          Row(
+            children: [
+              Icon(
+                Icons.list_alt,
+                color: const Color.fromARGB(255, 90, 138, 94),
+                size: 14,
+              ),
+              const SizedBox(width: 4),
+              Expanded(
+                child: Text(
+                  ' $description',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: const Color.fromARGB(255, 117, 117, 117),
+                  ),
+                  softWrap: true, // Permite que la descripción se ajuste en varias líneas
+                  overflow: TextOverflow.ellipsis, // Opcional: agrega puntos suspensivos si es muy largo
+                  maxLines: 3, // Puedes limitar la cantidad de líneas si lo deseas
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 5),
+          // Ubicación del "almacén"
+          Row(
+            children: [
+              Icon(
+                Icons.location_on,
+                color: Colors.redAccent,
+                size: 14,
+              ),
+              const SizedBox(width: 4),
+              Expanded(
+                child: Text(
+                  location,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[700],
+                  ),
+                  softWrap: true,
+                  maxLines: 2, // Puedes limitar la cantidad de líneas si lo deseas
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
-      elevation: 5, // Sombra de la tarjeta para hacerla más llamativa
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // Nombre del "almacén"
-                Expanded(
-                  child: Text(
-                    ' $name',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blueGrey[800],
-                    ),
-                    softWrap: true, // Permite que el texto se envuelva en múltiples líneas
-                    overflow: TextOverflow.ellipsis, // Muestra puntos suspensivos si es muy largo
-                  ),
-                ),
-                // Icono o avatar opcional
-                Icon(
-                  Icons.store_mall_directory, // Ícono que puede representar un almacén
-                  color: Colors.blueGrey[400],
-                  size: 25,
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 2),
-            // Descripción del "almacén"
-            Row(
-              children: [
-                Icon(
-                  Icons.list_alt,
-                  color: const Color.fromARGB(255, 90, 138, 94),
-                  size: 14,
-                ),
-                const SizedBox(width: 4),
-                Expanded(
-                  child: Text(
-                    ' $description',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: const Color.fromARGB(255, 117, 117, 117),
-                    ),
-                    softWrap: true, // Permite que la descripción se ajuste en varias líneas
-                    overflow: TextOverflow.ellipsis, // Opcional: agrega puntos suspensivos si es muy largo
-                    maxLines: 3, // Puedes limitar la cantidad de líneas si lo deseas
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 5),
-            // Ubicación del "almacén"
-            Row(
-              children: [
-                Icon(
-                  Icons.location_on,
-                  color: Colors.redAccent,
-                  size: 14,
-                ),
-                const SizedBox(width: 4),
-                Expanded(
-                  child: Text(
-                    location,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[700],
-                    ),
-                    softWrap: true,
-                    maxLines: 2, // Puedes limitar la cantidad de líneas si lo deseas
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+    ),
+  );
 }

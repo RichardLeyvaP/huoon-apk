@@ -24,11 +24,20 @@
      "menuArchives": "Archivos",
      "titleLanguage": "Selecciona tu idioma",
 
+     "tittleLabel": "Título",
+     "requiredTittleLabel": "El Título es requerido",
+     "descriptionLabel": "Descripción",
      "acceptButton": "Aceptar",
+     "nextButton": "Siguiente",
      "cancelButton": "Cancelar",
+     "goBackButton": "Regresar",
      "loginButton": "Entrar",
      "googleButton": "Entrar con Google",
      "facebookButton": "Entrar con Facebook",
-     "rememberPassword": "Olvidé mi contraseña"
+     "rememberPassword": "Olvidé mi contraseña",
+     "createTask": "Crear Tarea",
+     "updateTask": "Modificar Tarea",
+     "createTaskStep1": "(Paso 1 de 2)",
+     "createTaskStep2": "(Paso 2 de 2)"
 
 }

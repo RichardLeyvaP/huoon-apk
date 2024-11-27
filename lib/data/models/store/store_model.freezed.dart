@@ -171,7 +171,9 @@ StoreElement _$StoreElementFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$StoreElement {
-  String? get name => throw _privateConstructorUsedError;
+  int? get id => throw _privateConstructorUsedError;
+  int? get status => throw _privateConstructorUsedError;
+  String? get title => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
   String? get location => throw _privateConstructorUsedError;
 
@@ -191,7 +193,12 @@ abstract class $StoreElementCopyWith<$Res> {
           StoreElement value, $Res Function(StoreElement) then) =
       _$StoreElementCopyWithImpl<$Res, StoreElement>;
   @useResult
-  $Res call({String? name, String? description, String? location});
+  $Res call(
+      {int? id,
+      int? status,
+      String? title,
+      String? description,
+      String? location});
 }
 
 /// @nodoc
@@ -209,14 +216,24 @@ class _$StoreElementCopyWithImpl<$Res, $Val extends StoreElement>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? name = freezed,
+    Object? id = freezed,
+    Object? status = freezed,
+    Object? title = freezed,
     Object? description = freezed,
     Object? location = freezed,
   }) {
     return _then(_value.copyWith(
-      name: freezed == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int?,
+      status: freezed == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as int?,
+      title: freezed == title
+          ? _value.title
+          : title // ignore: cast_nullable_to_non_nullable
               as String?,
       description: freezed == description
           ? _value.description
@@ -238,7 +255,12 @@ abstract class _$$StoreElementImplCopyWith<$Res>
       __$$StoreElementImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String? name, String? description, String? location});
+  $Res call(
+      {int? id,
+      int? status,
+      String? title,
+      String? description,
+      String? location});
 }
 
 /// @nodoc
@@ -254,14 +276,24 @@ class __$$StoreElementImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? name = freezed,
+    Object? id = freezed,
+    Object? status = freezed,
+    Object? title = freezed,
     Object? description = freezed,
     Object? location = freezed,
   }) {
     return _then(_$StoreElementImpl(
-      name: freezed == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int?,
+      status: freezed == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as int?,
+      title: freezed == title
+          ? _value.title
+          : title // ignore: cast_nullable_to_non_nullable
               as String?,
       description: freezed == description
           ? _value.description
@@ -278,13 +310,18 @@ class __$$StoreElementImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$StoreElementImpl implements _StoreElement {
-  const _$StoreElementImpl({this.name, this.description, this.location});
+  const _$StoreElementImpl(
+      {this.id, this.status, this.title, this.description, this.location});
 
   factory _$StoreElementImpl.fromJson(Map<String, dynamic> json) =>
       _$$StoreElementImplFromJson(json);
 
   @override
-  final String? name;
+  final int? id;
+  @override
+  final int? status;
+  @override
+  final String? title;
   @override
   final String? description;
   @override
@@ -292,7 +329,7 @@ class _$StoreElementImpl implements _StoreElement {
 
   @override
   String toString() {
-    return 'StoreElement(name: $name, description: $description, location: $location)';
+    return 'StoreElement(id: $id, status: $status, title: $title, description: $description, location: $location)';
   }
 
   @override
@@ -300,7 +337,9 @@ class _$StoreElementImpl implements _StoreElement {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$StoreElementImpl &&
-            (identical(other.name, name) || other.name == name) &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.title, title) || other.title == title) &&
             (identical(other.description, description) ||
                 other.description == description) &&
             (identical(other.location, location) ||
@@ -309,7 +348,8 @@ class _$StoreElementImpl implements _StoreElement {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, name, description, location);
+  int get hashCode =>
+      Object.hash(runtimeType, id, status, title, description, location);
 
   /// Create a copy of StoreElement
   /// with the given fields replaced by the non-null parameter values.
@@ -329,7 +369,9 @@ class _$StoreElementImpl implements _StoreElement {
 
 abstract class _StoreElement implements StoreElement {
   const factory _StoreElement(
-      {final String? name,
+      {final int? id,
+      final int? status,
+      final String? title,
       final String? description,
       final String? location}) = _$StoreElementImpl;
 
@@ -337,7 +379,11 @@ abstract class _StoreElement implements StoreElement {
       _$StoreElementImpl.fromJson;
 
   @override
-  String? get name;
+  int? get id;
+  @override
+  int? get status;
+  @override
+  String? get title;
   @override
   String? get description;
   @override

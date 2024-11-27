@@ -8,13 +8,13 @@ class TasksRepository {
 
   TasksRepository({required this.authService});
 
-  Future<dynamic> getCategoriesStatusPriority() async {
+  Future<dynamic> getCategoriesStatusPriority(int homeId) async {
     print('dando click en la getProduct');
     final endpoint = '${Env.apiEndpoint}/category-status-priority-apk';
-    print('entrando a * - : getCategoriesPriority-2');
+    final body = {'home_id': homeId};
     try {
       // Llama al servicio y obtiene la respuesta procesada
-      final response = await authService.get(endpoint);
+      final response = await authService.post(endpoint, body: body);
       print('entrando a * - : getCategoriesPriority-2.1;$response');
       // Verificamos si response es un JSON válido
       if (response is Map<String, dynamic>) {
@@ -115,19 +115,14 @@ class TasksRepository {
       'start_date': task.startDate,
       'end_date': task.endDate,
       'priority_id': task.priorityId, //llegando null
-      //'parent_id': null, //todo fijo por duda
       'parent_id': task.parentId,
       'status_id': task.statusId,
       'category_id': task.categoryId,
-      // 'category_id': task.categoryId,
       'recurrence': task.recurrence,
       'estimated_time': task.estimatedTime ?? 0, //todo fijo por duda
-      // 'estimated_time': task.estimatedTime,
       'comments': 'comentario de prueba', //todo fijo por duda
-      // 'comments': task.comments ?? '',
       'attachments': 'image/test.png', //todo fijo por duda
-      // 'attachments': task.attachments,
-      'geo_location': task.geoLocation,
+      'geo_location': task.geoLocation == "" ? null : task.geoLocation,
       'people': peopleSelected
     };
     // print('si estoy devolviendo esto:1-BODY-${body}');
@@ -149,18 +144,13 @@ class TasksRepository {
       'start_date': task.startDate,
       'end_date': task.endDate,
       'priority_id': task.priorityId, //llegando null
-      //'parent_id': null, //todo fijo por duda
       'parent_id': task.parentId,
       'status_id': task.statusId,
       'category_id': task.categoryId,
-      // 'category_id': task.categoryId,
       'recurrence': task.recurrence,
       'estimated_time': task.estimatedTime ?? 0, //todo fijo por duda
-      // 'estimated_time': task.estimatedTime,
       'comments': 'comentario de prueba', //todo fijo por duda
-      // 'comments': task.comments ?? '',
       'attachments': 'image/test.png', //todo fijo por duda
-      // 'attachments': task.attachments,
       'geo_location': task.geoLocation == "" ? null : task.geoLocation,
       'people': peopleSelected
     };

@@ -13,9 +13,10 @@ Future<void> requestStore() async {
   storeErrorST.value = null;
   storeEmpyST.value = null;
   storeDataST.value = null;
+  int homeId = 1;
 
   try {
-    final result = await storeRepository.getStore();
+    final result = await storeRepository.getStore(homeId);
 
     if (result is String) {
       storeEmpyST.value = result;
@@ -33,7 +34,7 @@ Future<void> requestStore() async {
 // Método para actualizar datos de la tienda
 void updateStoreData(StoreElement updatedStoreElement) {
   currentStoreElementST.value = (currentStoreElementST.value ?? const StoreElement()).copyWith(
-    name: updatedStoreElement.name ?? currentStoreElementST.value?.name,
+    title: updatedStoreElement.title ?? currentStoreElementST.value?.title,
     description: updatedStoreElement.description ?? currentStoreElementST.value?.description,
     location: updatedStoreElement.location ?? currentStoreElementST.value?.location,
   );

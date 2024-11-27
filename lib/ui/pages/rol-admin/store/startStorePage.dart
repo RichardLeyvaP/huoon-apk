@@ -197,7 +197,9 @@ class _StartStorePageState extends State<StartStorePage> {
       print(
           'object-test-_descriptionController.text:${emptyTextField(_descriptionController.text) ? 'No hay comentario' : _descriptionController.text}');
       final storeElement = StoreElement(
-          name: _titleController.text, //si emptyTextField = true es que esta vacio
+          id: 0,
+          status: 0,
+          title: _titleController.text, //si emptyTextField = true es que esta vacio
           description: emptyTextField(_descriptionController.text) ? 'No hay comentario' : _descriptionController.text,
           location: _placeController.text
           // image: 'products/1.jpg',

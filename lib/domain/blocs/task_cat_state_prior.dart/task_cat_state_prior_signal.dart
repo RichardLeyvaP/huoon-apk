@@ -6,6 +6,7 @@ import 'package:signals/signals.dart';
 final Signal<List<Category>?> categoriesCSP = Signal<List<Category>?>(null);
 final Signal<List<Status>?> statusCSP = Signal<List<Status>?>(null);
 final Signal<List<Priority>?> prioritiesCSP = Signal<List<Priority>?>(null);
+final Signal<List<Roles>?> rolesCSP = Signal<List<Roles>?>(null);
 final Signal<List<String>?> frequencyCSP = Signal<List<String>?>(null);
 final Signal<List<Taskperson>?> taskPersonsCSP = Signal<List<Taskperson>?>(null);
 final Signal<List<int>> selectedPersonIdsCSP = Signal<List<int>>([]);

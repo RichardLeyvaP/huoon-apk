@@ -15,7 +15,9 @@ class Store with _$Store {
 @freezed
 class StoreElement with _$StoreElement {
   const factory StoreElement({
-    String? name,
+    int? id,
+    int? status,
+    String? title,
     String? description,
     String? location,
   }) = _StoreElement;

@@ -7,19 +7,23 @@ class ProductsRepository {
 
   ProductsRepository({required this.authService});
 
-  Future<dynamic> getProduct() async {
-    final endpoint = '${Env.apiEndpoint}/product';
-
+  Future<dynamic> getProduct(int homeId, int warehouseId) async {
+    final endpoint = '${Env.apiEndpoint}/person-home-warehouse-products';
+    final body = {
+      'home_id': homeId, //todo valor fijo
+      'warehouse_id': warehouseId, //todo valor fijo
+    };
     try {
       // Llama al servicio y obtiene la respuesta procesada
-      final response = await authService.get(endpoint);
+      final response = await authService.post(endpoint, body: body);
 
       // Verificamos si response es un JSON válido
       if (response is Map<String, dynamic>) {
+        print('dando click en la imagen-3-123:$response');
         // Deserializamos la respuesta a nuestro modelo TaskResponse
         final taskResponse = Product.fromJson(response);
         // Retornamos el modelo deserializado
-        print('dando click en la imagen-3:$taskResponse');
+        print('dando click en la imagen-3-123:$taskResponse');
         return taskResponse;
       } else if (response is String) {
         print('dando click en la imagen-4:$response');
@@ -39,7 +43,7 @@ class ProductsRepository {
   Future<dynamic> addProduct(ProductElement product) async {
     final endpoint = '${Env.apiEndpoint}/products';
     print('*****************************************************************');
-    print(product.name);
+    print(product.productName);
     print(product.categoryId);
     print(product.statusId);
     print(product.quantity);
@@ -50,7 +54,7 @@ class ProductsRepository {
     print(product.brand);
     print(product.additionalNotes);
     final body = {
-      'name': product.name,
+      'name': product.productName,
       'category_id': product.categoryId,
       'status_id': 4, //todo valor fijo
       // 'status_id': product.statusId,

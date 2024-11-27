@@ -173,7 +173,13 @@ ProductElement _$ProductElementFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$ProductElement {
-  String? get name => throw _privateConstructorUsedError;
+  int? get id => throw _privateConstructorUsedError;
+  int? get homeId => throw _privateConstructorUsedError;
+  int? get warehouseId => throw _privateConstructorUsedError;
+  int? get productId => throw _privateConstructorUsedError;
+  String? get homeName => throw _privateConstructorUsedError;
+  String? get warehouseName => throw _privateConstructorUsedError;
+  String? get productName => throw _privateConstructorUsedError;
   int? get categoryId => throw _privateConstructorUsedError;
   int? get count => throw _privateConstructorUsedError;
   String? get nameCategory => throw _privateConstructorUsedError;
@@ -206,7 +212,13 @@ abstract class $ProductElementCopyWith<$Res> {
       _$ProductElementCopyWithImpl<$Res, ProductElement>;
   @useResult
   $Res call(
-      {String? name,
+      {int? id,
+      int? homeId,
+      int? warehouseId,
+      int? productId,
+      String? homeName,
+      String? warehouseName,
+      String? productName,
       int? categoryId,
       int? count,
       String? nameCategory,
@@ -238,7 +250,13 @@ class _$ProductElementCopyWithImpl<$Res, $Val extends ProductElement>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? name = freezed,
+    Object? id = freezed,
+    Object? homeId = freezed,
+    Object? warehouseId = freezed,
+    Object? productId = freezed,
+    Object? homeName = freezed,
+    Object? warehouseName = freezed,
+    Object? productName = freezed,
     Object? categoryId = freezed,
     Object? count = freezed,
     Object? nameCategory = freezed,
@@ -255,9 +273,33 @@ class _$ProductElementCopyWithImpl<$Res, $Val extends ProductElement>
     Object? image = freezed,
   }) {
     return _then(_value.copyWith(
-      name: freezed == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int?,
+      homeId: freezed == homeId
+          ? _value.homeId
+          : homeId // ignore: cast_nullable_to_non_nullable
+              as int?,
+      warehouseId: freezed == warehouseId
+          ? _value.warehouseId
+          : warehouseId // ignore: cast_nullable_to_non_nullable
+              as int?,
+      productId: freezed == productId
+          ? _value.productId
+          : productId // ignore: cast_nullable_to_non_nullable
+              as int?,
+      homeName: freezed == homeName
+          ? _value.homeName
+          : homeName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      warehouseName: freezed == warehouseName
+          ? _value.warehouseName
+          : warehouseName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      productName: freezed == productName
+          ? _value.productName
+          : productName // ignore: cast_nullable_to_non_nullable
               as String?,
       categoryId: freezed == categoryId
           ? _value.categoryId
@@ -328,7 +370,13 @@ abstract class _$$ProductElementImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String? name,
+      {int? id,
+      int? homeId,
+      int? warehouseId,
+      int? productId,
+      String? homeName,
+      String? warehouseName,
+      String? productName,
       int? categoryId,
       int? count,
       String? nameCategory,
@@ -358,7 +406,13 @@ class __$$ProductElementImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? name = freezed,
+    Object? id = freezed,
+    Object? homeId = freezed,
+    Object? warehouseId = freezed,
+    Object? productId = freezed,
+    Object? homeName = freezed,
+    Object? warehouseName = freezed,
+    Object? productName = freezed,
     Object? categoryId = freezed,
     Object? count = freezed,
     Object? nameCategory = freezed,
@@ -375,9 +429,33 @@ class __$$ProductElementImplCopyWithImpl<$Res>
     Object? image = freezed,
   }) {
     return _then(_$ProductElementImpl(
-      name: freezed == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int?,
+      homeId: freezed == homeId
+          ? _value.homeId
+          : homeId // ignore: cast_nullable_to_non_nullable
+              as int?,
+      warehouseId: freezed == warehouseId
+          ? _value.warehouseId
+          : warehouseId // ignore: cast_nullable_to_non_nullable
+              as int?,
+      productId: freezed == productId
+          ? _value.productId
+          : productId // ignore: cast_nullable_to_non_nullable
+              as int?,
+      homeName: freezed == homeName
+          ? _value.homeName
+          : homeName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      warehouseName: freezed == warehouseName
+          ? _value.warehouseName
+          : warehouseName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      productName: freezed == productName
+          ? _value.productName
+          : productName // ignore: cast_nullable_to_non_nullable
               as String?,
       categoryId: freezed == categoryId
           ? _value.categoryId
@@ -443,7 +521,13 @@ class __$$ProductElementImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$ProductElementImpl implements _ProductElement {
   const _$ProductElementImpl(
-      {this.name,
+      {this.id,
+      this.homeId,
+      this.warehouseId,
+      this.productId,
+      this.homeName,
+      this.warehouseName,
+      this.productName,
       this.categoryId,
       this.count,
       this.nameCategory,
@@ -463,7 +547,19 @@ class _$ProductElementImpl implements _ProductElement {
       _$$ProductElementImplFromJson(json);
 
   @override
-  final String? name;
+  final int? id;
+  @override
+  final int? homeId;
+  @override
+  final int? warehouseId;
+  @override
+  final int? productId;
+  @override
+  final String? homeName;
+  @override
+  final String? warehouseName;
+  @override
+  final String? productName;
   @override
   final int? categoryId;
   @override
@@ -495,7 +591,7 @@ class _$ProductElementImpl implements _ProductElement {
 
   @override
   String toString() {
-    return 'ProductElement(name: $name, categoryId: $categoryId, count: $count, nameCategory: $nameCategory, statusId: $statusId, nameStatus: $nameStatus, quantity: $quantity, unitPrice: $unitPrice, totalPrice: $totalPrice, purchaseDate: $purchaseDate, expirationDate: $expirationDate, purchasePlace: $purchasePlace, brand: $brand, additionalNotes: $additionalNotes, image: $image)';
+    return 'ProductElement(id: $id, homeId: $homeId, warehouseId: $warehouseId, productId: $productId, homeName: $homeName, warehouseName: $warehouseName, productName: $productName, categoryId: $categoryId, count: $count, nameCategory: $nameCategory, statusId: $statusId, nameStatus: $nameStatus, quantity: $quantity, unitPrice: $unitPrice, totalPrice: $totalPrice, purchaseDate: $purchaseDate, expirationDate: $expirationDate, purchasePlace: $purchasePlace, brand: $brand, additionalNotes: $additionalNotes, image: $image)';
   }
 
   @override
@@ -503,7 +599,18 @@ class _$ProductElementImpl implements _ProductElement {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$ProductElementImpl &&
-            (identical(other.name, name) || other.name == name) &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.homeId, homeId) || other.homeId == homeId) &&
+            (identical(other.warehouseId, warehouseId) ||
+                other.warehouseId == warehouseId) &&
+            (identical(other.productId, productId) ||
+                other.productId == productId) &&
+            (identical(other.homeName, homeName) ||
+                other.homeName == homeName) &&
+            (identical(other.warehouseName, warehouseName) ||
+                other.warehouseName == warehouseName) &&
+            (identical(other.productName, productName) ||
+                other.productName == productName) &&
             (identical(other.categoryId, categoryId) ||
                 other.categoryId == categoryId) &&
             (identical(other.count, count) || other.count == count) &&
@@ -533,23 +640,30 @@ class _$ProductElementImpl implements _ProductElement {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      name,
-      categoryId,
-      count,
-      nameCategory,
-      statusId,
-      nameStatus,
-      quantity,
-      unitPrice,
-      totalPrice,
-      purchaseDate,
-      expirationDate,
-      purchasePlace,
-      brand,
-      additionalNotes,
-      image);
+  int get hashCode => Object.hashAll([
+        runtimeType,
+        id,
+        homeId,
+        warehouseId,
+        productId,
+        homeName,
+        warehouseName,
+        productName,
+        categoryId,
+        count,
+        nameCategory,
+        statusId,
+        nameStatus,
+        quantity,
+        unitPrice,
+        totalPrice,
+        purchaseDate,
+        expirationDate,
+        purchasePlace,
+        brand,
+        additionalNotes,
+        image
+      ]);
 
   /// Create a copy of ProductElement
   /// with the given fields replaced by the non-null parameter values.
@@ -570,7 +684,13 @@ class _$ProductElementImpl implements _ProductElement {
 
 abstract class _ProductElement implements ProductElement {
   const factory _ProductElement(
-      {final String? name,
+      {final int? id,
+      final int? homeId,
+      final int? warehouseId,
+      final int? productId,
+      final String? homeName,
+      final String? warehouseName,
+      final String? productName,
       final int? categoryId,
       final int? count,
       final String? nameCategory,
@@ -590,7 +710,19 @@ abstract class _ProductElement implements ProductElement {
       _$ProductElementImpl.fromJson;
 
   @override
-  String? get name;
+  int? get id;
+  @override
+  int? get homeId;
+  @override
+  int? get warehouseId;
+  @override
+  int? get productId;
+  @override
+  String? get homeName;
+  @override
+  String? get warehouseName;
+  @override
+  String? get productName;
   @override
   int? get categoryId;
   @override

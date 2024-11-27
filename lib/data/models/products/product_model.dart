@@ -15,7 +15,13 @@ class Product with _$Product {
 @freezed
 class ProductElement with _$ProductElement {
   const factory ProductElement({
-    String? name,
+    int? id,
+    int? homeId,
+    int? warehouseId,
+    int? productId,
+    String? homeName,
+    String? warehouseName,
+    String? productName,
     int? categoryId,
     int? count,
     String? nameCategory,

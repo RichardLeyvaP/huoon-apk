@@ -67,7 +67,7 @@ class ApiService {
         body: jsonEncode(body),
       );
       print('aqui estoy entrando-al metodo-post-task-response.statusCode${response.statusCode}');
-      print('aqui estoy entrando-al metodo-post-${response.body}');
+
       return _processResponse(response);
     } on SocketException catch (e) {
       print('Error de red (SocketException): $e');
@@ -120,8 +120,6 @@ class ApiService {
 
 // Método para procesar la respuesta
   dynamic _processResponse(http.Response response) {
-    print('dando click en la imagen-5:${response.statusCode})');
-    //  print('dando click en la imagen-5:${jsonDecode(response.body)})');
     print('entrando a * - : getCategoriesPriority-3:${response.statusCode}');
 
     switch (response.statusCode) {

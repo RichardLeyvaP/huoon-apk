@@ -12,8 +12,9 @@ Future<void> fetchCategoriesStatusPriority() async {
   isLoadingCSP.value = true; // Indicamos que está cargando
   errorMessageCSP.value = null;
   loadDataCSP.value = false;
+  int homeId = 1;
   try {
-    final jsonResponse = await tasksRepository.getCategoriesStatusPriority();
+    final jsonResponse = await tasksRepository.getCategoriesStatusPriority(homeId); //todo esta fijo el homeId
 
     // Mapeamos los resultados y los actualizamos en las señales
     List<Category> categoriesList = (jsonResponse['taskcategories'] as List<dynamic>).map((categoryJson) {
@@ -39,6 +40,13 @@ Future<void> fetchCategoriesStatusPriority() async {
         id: priorityJson['id'],
       );
     }).toList();
+    List<Roles> rolesList = (jsonResponse['taskroles'] as List<dynamic>).map((rolesJson) {
+      return Roles(
+        id: rolesJson['id'],
+        nameRol: rolesJson['nameRol'],
+        descriptionRol: rolesJson['descriptionRol'],
+      );
+    }).toList();
 
     List<Taskperson> taskpersonList = (jsonResponse['taskpeople'] as List<dynamic>).map((personJson) {
       return Taskperson(
@@ -59,12 +67,13 @@ Future<void> fetchCategoriesStatusPriority() async {
     categoriesCSP.value = categoriesList;
     statusCSP.value = statusList;
     prioritiesCSP.value = prioritiesList;
+    rolesCSP.value = rolesList; //este es nuevo
     taskPersonsCSP.value = taskpersonList;
     selectedPersonIdsCSP.value = taskPersonIds;
     frequencyTaskCSP.value = taskRecurrence; //id
     frequencyCSP.value = stringList;
     loadDataCSP.value = true;
-    print('aqui submitTask :${frequencyCSP.value}');
+    print('aqui submitTask :${rolesCSP}');
   } catch (error) {
     loadDataCSP.value = false;
     errorMessageCSP.value = "Error: ${error.toString()}"; // Si ocurre un error

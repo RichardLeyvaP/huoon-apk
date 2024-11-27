@@ -7,6 +7,7 @@ import 'package:huoon/domain/modelos/category_model.dart';
 import 'package:huoon/ui/Components/category_widget.dart';
 import 'package:huoon/ui/Components/priority_widget.dart';
 import 'package:huoon/ui/Components/state_widget.dart';
+import 'package:huoon/ui/util/util_class.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:signals/signals_flutter.dart';
 
@@ -33,12 +34,12 @@ class _StartTaskPageState extends State<StartTaskPage> {
 
   // Variable para manejar las prioridades seleccionadas
   List<Priority> selectedPriorities = [];
-  String tittle = 'Crear Tarea';
+  String tittle = TranslationManager.translate('createTask');
 
   @override
   Widget build(BuildContext context) {
     if (widget.id != 0) {
-      tittle = 'Modificar Tarea';
+      tittle = TranslationManager.translate('updateTask');
       updateTaskid(widget.id!);
       print('mostrar el id:${widget.id}');
     }
@@ -52,7 +53,8 @@ class _StartTaskPageState extends State<StartTaskPage> {
             child: Column(
               children: [
                 Text(tittle, style: TextStyle(fontSize: 18, color: Colors.black)),
-                Text('(Paso 1 de 2)', style: TextStyle(fontSize: 10, color: Color.fromARGB(150, 0, 0, 0))),
+                Text(TranslationManager.translate('createTaskStep1'),
+                    style: TextStyle(fontSize: 10, color: Color.fromARGB(150, 0, 0, 0))),
               ],
             ),
           ),
@@ -121,10 +123,11 @@ class _StartTaskPageState extends State<StartTaskPage> {
                                   SizedBox(height: 10),
                                   _buildTextFormField(
                                     controller: _titleController,
-                                    labelText: 'Título',
+                                    labelText: TranslationManager.translate('tittleLabel'),
                                     maxLength: 30,
-                                    validator: (value) =>
-                                        (value == null || value.isEmpty) ? 'El título es requerido' : null,
+                                    validator: (value) => (value == null || value.isEmpty)
+                                        ? TranslationManager.translate('requiredTittleLabel')
+                                        : null,
                                   ),
                                   const SizedBox(height: 10),
                                   _buildCategorySection(),
@@ -135,7 +138,7 @@ class _StartTaskPageState extends State<StartTaskPage> {
                                   const SizedBox(height: 20),
                                   _buildTextFormField(
                                     controller: _descriptionController,
-                                    labelText: 'Descripción',
+                                    labelText: TranslationManager.translate('descriptionLabel'),
                                     maxLines: 2,
                                     onFieldSubmitted: (_) => _onSubmit(),
                                   ),
@@ -154,11 +157,11 @@ class _StartTaskPageState extends State<StartTaskPage> {
                               clearCategoryStatusPrioritySignals();
                               GoRouter.of(context).go('/HomePrincipal');
                             },
-                            child: Text("Regresar"),
+                            child: Text(TranslationManager.translate('goBackButton')),
                           ),
                           ElevatedButton(
                             onPressed: _onSubmit,
-                            child: Text("Siguiente"),
+                            child: Text(TranslationManager.translate('nextButton')),
                           ),
                         ],
                       ),
@@ -183,6 +186,11 @@ class _StartTaskPageState extends State<StartTaskPage> {
       textCapitalization: TextCapitalization.sentences,
       textInputAction: TextInputAction.next,
       maxLength: maxLength,
+      onChanged: (value) {
+        print('onChange del text');
+        onTittleChanged(_titleController.text);
+        onDescriptionChanged(_descriptionController.text);
+      },
       maxLines: maxLines ?? 1,
       decoration: InputDecoration(
         labelText: labelText,
@@ -206,6 +214,15 @@ class _StartTaskPageState extends State<StartTaskPage> {
       builder: (context) {
         if (categoriesCSP.watch(context) != null) {
           bool selectMultiple = false;
+          if (widget.id != 0) {
+            //es modificar
+          } else //es insertar que cargue el primero por defecto
+          {
+            if (categoriesCSP.value!.isNotEmpty) {
+              onCategorySelected(categoriesCSP.value!.first.id);
+            }
+          }
+
           return CategoryWidget(
             eventDetails: false,
             fitTextContainer: false,
@@ -215,11 +232,14 @@ class _StartTaskPageState extends State<StartTaskPage> {
             selectMultiple: selectMultiple,
             onSelectionChanged: (selectedCategories) async {
               FocusScope.of(context).unfocus();
-              onCategorySelected(arrayCategory.first);
 
-              // arrayCategory = selectedCategories.map((category) => category.id).toList();
-              // if (arrayCategory.isNotEmpty) {print('Estados seleccionados-elementos de la primera pagina:${arrayCategory}');
-              // }
+              // print('kkkkkkkkkkk:${selectedCategories}');
+
+              arrayCategory = selectedCategories.map((category) => category.id).toList();
+              if (arrayCategory.isNotEmpty) {
+                print('Estados seleccionados-elementos de la primera pagina:${arrayCategory.first}');
+                onCategorySelected(arrayCategory.first);
+              }
             },
           );
         } else if (errorMessageCSP.watch(context) != null) {
@@ -234,12 +254,20 @@ class _StartTaskPageState extends State<StartTaskPage> {
     return Builder(
       builder: (context) {
         if (prioritiesCSP.watch(context) != null) {
-          int? _selectPrioritytask = selectedPriorityIdCSP.value;
+          bool selectMultiple = false;
+          if (widget.id != 0) {
+            //es modificar
+          } else //es insertar que cargue el primero por defecto
+          {
+            if (prioritiesCSP.value!.isNotEmpty) {
+              onPrioritySelected(prioritiesCSP.value!.first.id);
+            }
+          }
           return PriorityWidget(
             priorities: prioritiesCSP.value!,
             titleWidget: 'Prioridad',
-            selectMultiple: false, // Cambia a false si solo quieres una selección
-            selectedPriorityId: _selectPrioritytask,
+            selectMultiple: selectMultiple, // Cambia a false si solo quieres una selección
+            selectedPriorityId: selectedPriorityIdCSP.value,
             onSelectionChanged: _onSelectionChanged,
           );
         } else if (errorMessageCSP.watch(context) != null) {
@@ -253,15 +281,23 @@ class _StartTaskPageState extends State<StartTaskPage> {
   Widget _buildStatusSection() {
     return Builder(
       builder: (context) {
-        if (loadDataCSP.watch(context) == true) {
-          int? _selectStatetask = selectStateTaskCSP.value;
+        if (statusCSP.watch(context) != null) {
+          bool selectMultiple = false;
+          if (widget.id != 0) {
+            //es modificar
+          } else //es insertar que cargue el primero por defecto
+          {
+            if (statusCSP.value!.isNotEmpty) {
+              onTaskStateSelected(statusCSP.value!.first.id);
+            }
+          }
           return StatusWidget(
             status: statusCSP.value!,
             fitTextContainer: false,
             eventDetails: true,
             titleWidget: 'Estado',
-            selectMultiple: false, // Permite seleccionar solo un estado
-            selectedStatusId: _selectStatetask, // Estado preseleccionado
+            selectMultiple: selectMultiple, // Permite seleccionar solo un estado
+            selectedStatusId: selectStateTaskCSP.value, // Estado preseleccionado
             onSelectionChanged: (List<Status> selectedStatuses) {
               FocusScope.of(context).unfocus();
               // Aquí manejas los estados seleccionados
@@ -287,8 +323,8 @@ class _StartTaskPageState extends State<StartTaskPage> {
       FocusScope.of(context).unfocus();
 
       //guardando el estado
-      onTittleChanged(_titleController.text);
-      onDescriptionChanged(_descriptionController.text);
+      //  onTittleChanged(_titleController.text);
+      // onDescriptionChanged(_descriptionController.text);
       // agregando al array para enviar a insertar
       updateTaskTitleDescription(_titleController.text, _descriptionController.text);
       updateTaskCategoryId(selectedCategoryIdCSP.value!);

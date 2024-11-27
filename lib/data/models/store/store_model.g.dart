@@ -19,14 +19,18 @@ Map<String, dynamic> _$$StoreImplToJson(_$StoreImpl instance) =>
 
 _$StoreElementImpl _$$StoreElementImplFromJson(Map<String, dynamic> json) =>
     _$StoreElementImpl(
-      name: json['name'] as String?,
+      id: (json['id'] as num?)?.toInt(),
+      status: (json['status'] as num?)?.toInt(),
+      title: json['title'] as String?,
       description: json['description'] as String?,
       location: json['location'] as String?,
     );
 
 Map<String, dynamic> _$$StoreElementImplToJson(_$StoreElementImpl instance) =>
     <String, dynamic>{
-      'name': instance.name,
+      'id': instance.id,
+      'status': instance.status,
+      'title': instance.title,
       'description': instance.description,
       'location': instance.location,
     };

@@ -72,13 +72,13 @@ class _CategoryWidgetState extends State<CategoryWidget> {
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
               const SizedBox(width: 10),
-              GestureDetector(
-                onTap: _showAddCategoryDialog, // Muestra el modal al hacer clic
-                child: const CircleAvatar(
-                  radius: 15,
-                  child: Icon(Icons.add),
-                ),
-              ),
+              // GestureDetector(
+              //   onTap: _showAddCategoryDialog, // Muestra el modal al hacer clic
+              //   child: const CircleAvatar(
+              //     radius: 15,
+              //     child: Icon(Icons.add),
+              //   ),
+              // ),
             ],
           ),
         ),

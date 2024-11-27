@@ -8,14 +8,15 @@ class StoreRepository {
   StoreRepository({required this.authService});
 
   // Método para obtener las tiendas
-  Future<dynamic> getStore() async {
+  Future<dynamic> getStore(int homeId) async {
     print('Obteniendo tiendas desde la API');
-    // final endpoint = '${Env.apiEndpoint}/stores';
+    final endpoint = '${Env.apiEndpoint}/person-warehouse-home';
     Future.delayed(Duration(seconds: 10));
+    final body = {'home_id': homeId};
     try {
       // Llama al servicio y obtiene la respuesta procesada
-      // final response = await authService.get(endpoint);
-      const response = {
+      final response = await authService.post(endpoint, body: body);
+      /*  const response = {
         "store": [
           {
             "id": 1,
@@ -60,7 +61,8 @@ class StoreRepository {
             "location": "lugar27",
           },
         ]
-      };
+      };*/
+      print('asi esta devolviendo los almacenes:${response}');
       // Verificamos si response es un JSON válido
       if (response is Map<String, dynamic>) {
         // Deserializamos la respuesta a nuestro modelo StoreResponse
@@ -87,7 +89,7 @@ class StoreRepository {
     print('Agregando nueva tienda');
 
     final body = {
-      'name': store.name,
+      'name': store.title,
       'location': store.location,
       'description': store.description,
     };
