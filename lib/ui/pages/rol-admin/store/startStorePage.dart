@@ -8,6 +8,7 @@ import 'package:huoon/domain/blocs/task_cat_state_prior.dart/task_cat_state_prio
 import 'package:huoon/domain/modelos/category_model.dart';
 import 'package:huoon/ui/Components/state_widget.dart';
 import 'package:huoon/ui/pages/rol-admin/Task/selectDays/utils.dart';
+import 'package:huoon/ui/util/util_class.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:signals/signals_flutter.dart';
 
@@ -28,14 +29,22 @@ class _StartStorePageState extends State<StartStorePage> {
 
   final TextEditingController priceController = TextEditingController();
   final int initialQuantity = 1;
-
+  String tittle = 'Nuevo Almacén';
   @override
   Widget build(BuildContext context) {
+    if (isUpdateST.value == true) {
+      tittle = 'Modificar Almacén';
+      if (currentStoreElementST.value != null) {
+        _titleController.text = currentStoreElementST.value!.title!;
+        _descriptionController.text = currentStoreElementST.value!.description!;
+        _placeController.text = currentStoreElementST.value!.location ?? '';
+      }
+    }
     return Scaffold(
       resizeToAvoidBottomInset: true, // Esto permite que el teclado empuje el contenido
       appBar: AppBar(
         toolbarHeight: 70,
-        title: Text('Nuevo Almacén'),
+        title: Text(tittle),
       ),
       floatingActionButton: SafeArea(
         child: Padding(
@@ -71,7 +80,7 @@ class _StartStorePageState extends State<StartStorePage> {
                           textCapitalization: TextCapitalization.sentences,
                           textInputAction: TextInputAction.next,
                           decoration: InputDecoration(
-                            labelText: 'Título',
+                            labelText: TranslationManager.translate('tittleLabel'),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10.0), // Borde redondeado
                             ),
@@ -90,12 +99,9 @@ class _StartStorePageState extends State<StartStorePage> {
                               borderRadius: BorderRadius.circular(10.0), // Borde redondeado
                             ),
                           ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'El título es requerido';
-                            }
-                            return null;
-                          },
+                          validator: (value) => (value == null || value.isEmpty)
+                              ? TranslationManager.translate('requiredTittleLabel')
+                              : null,
                         ),
                         SizedBox(height: 20),
                         TextFormField(
@@ -106,7 +112,7 @@ class _StartStorePageState extends State<StartStorePage> {
                             _onSubmit();
                           },
                           decoration: InputDecoration(
-                            labelText: 'Descripción',
+                            labelText: TranslationManager.translate('descriptionLabel'),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10.0), // Borde redondeado
                             ),
@@ -136,7 +142,7 @@ class _StartStorePageState extends State<StartStorePage> {
                             _onSubmit();
                           },
                           decoration: InputDecoration(
-                            labelText: 'Lugar',
+                            labelText: TranslationManager.translate('placeLabel'),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10.0), // Borde redondeado
                             ),
@@ -177,11 +183,14 @@ class _StartStorePageState extends State<StartStorePage> {
                             GoRouter.of(context).go('/HomePrincipal');
                             //GoRouter.of(context).pop();
                           },
-                          child: Text("Regresar"),
+                          child: Text(TranslationManager.translate('goBackButton')),
                         ),
                         ElevatedButton(
                           onPressed: _onSubmit,
-                          child: Text("Crear"),
+                          child: isUpdateST.value == true
+                              ? //SI ES TRUE ES PARA MODIFICAR
+                              Text(TranslationManager.translate('updateTask'))
+                              : Text(TranslationManager.translate('createTask')), //SINO ES PARA CREAR
                         ),
                       ],
                     ),
@@ -212,7 +221,24 @@ class _StartStorePageState extends State<StartStorePage> {
           // image: 'products/1.jpg',
           );
       //mandar a insertar almacen
-      submitStore(storeElement, 1); //todo fijo mando valor del hogar
+      if (isUpdateST.value == true) {
+        //ES QUE ES PARA MODIFICAR
+        final storeElement = StoreElement(
+            warehouse_id: currentStoreElementST.value!.warehouse_id,
+            id: currentStoreElementST.value!.id,
+            status: selectedStatus,
+            title: _titleController.text, //si emptyTextField = true es que esta vacio
+            description:
+                emptyTextField(_descriptionController.text) ? 'No hay comentario' : _descriptionController.text,
+            location: _placeController.text.isEmpty ? 'No hay localización' : _placeController.text
+            // image: 'products/1.jpg',
+            );
+
+        updateStore(storeElement, 1);
+      } else {
+        submitStore(storeElement, 1); //todo fijo mando valor del hogar
+      }
+
 // Dispara el evento para insertar el producto
       print('mostrando valores de almacen a insertar:${storeElement}');
       // Navegar a la siguiente página
@@ -239,6 +265,13 @@ class _StartStorePageState extends State<StartStorePage> {
       builder: (context) {
         if (statusStoreCSP.value != null) {
           bool selectMultiple = false;
+          int permisSelect = 0;
+          if (isUpdateST.value == true) //SI ES TRUE ES PARA MODIFICAR
+          {
+            permisSelect = currentStoreElementST.value!.status!;
+          } else {
+            permisSelect = statusStoreCSP.value!.first.id;
+          }
 
           return StatusWidget(
             status: statusStoreCSP.value!,
@@ -246,7 +279,7 @@ class _StartStorePageState extends State<StartStorePage> {
             eventDetails: true,
             titleWidget: 'Permisos ',
             selectMultiple: selectMultiple, // Permite seleccionar solo un estado
-            selectedStatusId: statusStoreCSP.value!.first.id, // Estado preseleccionado
+            selectedStatusId: permisSelect, // Estado preseleccionado
             onSelectionChanged: (List<Status> selectedStatuses) {
               FocusScope.of(context).unfocus();
               // Aquí manejas los estados seleccionados

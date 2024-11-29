@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:huoon/data/models/products/product_model.dart';
+import 'package:huoon/domain/blocs/product_cat_state/bloc/product_cat_state_service.dart';
+import 'package:huoon/domain/blocs/product_cat_state/bloc/product_cat_state_signal.dart';
+import 'package:huoon/domain/blocs/products_bloc/products_service.dart';
+import 'package:huoon/domain/modelos/category_model.dart';
+import 'package:huoon/ui/Components/state_widget.dart';
 import 'package:huoon/ui/pages/rol-admin/Task/selectDays/utils.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:signals/signals_flutter.dart';
 
 class StartProductPage extends StatefulWidget {
   final PageController pageController;
@@ -11,6 +18,9 @@ class StartProductPage extends StatefulWidget {
   @override
   _StartProductPageState createState() => _StartProductPageState();
 }
+
+int selectedStatus = 0;
+final TextEditingController _directionController = TextEditingController();
 
 class _StartProductPageState extends State<StartProductPage> {
   final _formKey = GlobalKey<FormState>();
@@ -37,15 +47,10 @@ class _StartProductPageState extends State<StartProductPage> {
           ),
         ),
       ),
-      body: Text('estaba el codigo de abajo'),
-
-      /* BlocBuilder<ProductsBloc, ProductState>(
-        builder: (context, state) {
+      body: Builder(
+        builder: (context) {
           String titleState = '';
-          if (state is ProductSubmittedUpdated) {
-            _titleController.text = state.productElement.name.toString();
-            _descriptionController.text = state.productElement.additionalNotes.toString();
-          }
+
           return SafeArea(
             child: Stack(
               children: [
@@ -118,7 +123,41 @@ class _StartProductPageState extends State<StartProductPage> {
                           ),
                           maxLines: 5,
                         ),
-                        SizedBox(height: 100),
+                        SizedBox(height: 20),
+                        _buildStatusSection(),
+                        SizedBox(height: 20),
+                        TextFormField(
+                          controller: _directionController,
+                          textCapitalization: TextCapitalization.sentences,
+                          textInputAction: TextInputAction.send,
+                          onFieldSubmitted: (_) {
+                            _onSubmit();
+                          },
+                          decoration: InputDecoration(
+                            labelText: 'Dirección',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0), // Borde redondeado
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.grey.shade300, // Borde gris claro cuando no tiene foco
+                                width: 2.0,
+                              ),
+                              borderRadius: BorderRadius.circular(10.0), // Borde redondeado
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.blue, // Borde azul cuando toma foco
+                                width: 2.0,
+                              ),
+                              borderRadius: BorderRadius.circular(10.0), // Borde redondeado
+                            ),
+                          ),
+                          maxLines: 1,
+                        ),
+                        SizedBox(height: 20),
+                        FilePickerButton(),
+                        SizedBox(height: 80),
                         Container()
                       ],
                     ),
@@ -149,7 +188,7 @@ class _StartProductPageState extends State<StartProductPage> {
             ),
           );
         },
-      ),*/
+      ),
     );
   }
 
@@ -163,11 +202,15 @@ class _StartProductPageState extends State<StartProductPage> {
       print(
           'object-test-_descriptionController.text:${emptyTextField(_descriptionController.text) ? 'No hay comentario' : _descriptionController.text}');
       final productElement = ProductElement(
-        productName: _titleController.text, //si emptyTextField = true es que esta vacio
-        additionalNotes:
-            emptyTextField(_descriptionController.text) ? 'No hay comentario' : _descriptionController.text,
-        // image: 'products/1.jpg',
-      );
+          productName: _titleController.text, //si emptyTextField = true es que esta vacio
+          additionalNotes:
+              emptyTextField(_descriptionController.text) ? 'No hay comentario' : _descriptionController.text,
+          statusId: selectedStatusIdSignalPCS.value,
+          purchasePlace: _directionController.text,
+          image: 'image/default.jpg'
+          // image: 'products/1.jpg',
+          );
+      updateProductData(productElement);
 
 // Dispara el evento para insertar el producto
 
@@ -180,5 +223,42 @@ class _StartProductPageState extends State<StartProductPage> {
     if (emptyTextField(_titleController.text)) {
       _titleController.text = '';
     }
+  }
+
+  Widget _buildStatusSection() {
+    return Builder(
+      builder: (context) {
+        if (statusSignalPCS.watch(context) != null) {
+          bool selectMultiple = false;
+          /*    if (widget.id != 0) {
+            //es modificar
+          } else //es insertar que cargue el primero por defecto
+          {
+            if (statusSignalPCS.value!.isNotEmpty) {
+              onTaskStateSelected(statusSignalPCS.value!.first.id);
+            }
+          }*/
+          return StatusWidget(
+            status: statusSignalPCS.value!,
+            fitTextContainer: false,
+            eventDetails: true,
+            titleWidget: 'Estado',
+            selectMultiple: selectMultiple, // Permite seleccionar solo un estado
+            selectedStatusId: selectedStatusIdSignalPCS.value, // Estado preseleccionado
+            onSelectionChanged: (List<Status> selectedStatuses) {
+              FocusScope.of(context).unfocus();
+              // Aquí manejas los estados seleccionados
+              print('Estados seleccionados: ${selectedStatuses.map((e) => e.id).join(', ')}');
+              selectedStatus = selectedStatuses.isNotEmpty ? selectedStatuses.first.id : 0;
+              print('Estados seleccionados: $selectedStatus');
+
+              //seleccionando el estado
+              selectStatus(selectedStatus);
+            },
+          );
+        }
+        return Container();
+      },
+    );
   }
 }

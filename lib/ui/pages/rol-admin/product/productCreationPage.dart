@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:huoon/ui/pages/rol-admin/product/additionalDataPage.dart';
 import 'package:huoon/ui/pages/rol-admin/product/categoryPricePage.dart';
 import 'package:huoon/ui/pages/rol-admin/product/dateTimePage.dart';
 import 'package:huoon/ui/pages/rol-admin/product/startProductPage.dart';
-import 'package:huoon/ui/pages/rol-admin/product/statusProductPage.dart';
 
 class ProductCreation extends StatefulWidget {
   @override
@@ -25,9 +23,9 @@ class _ProductCreationState extends State<ProductCreation> {
           //2 Página
           CategoryPricePage(pageController: _pageController),
           //4 Página
-          StatusPage(pageController: _pageController),
+          // StatusPage(pageController: _pageController),
           //7 Página
-          AdditionalDataPage(pageController: _pageController),
+          //AdditionalDataPage(pageController: _pageController),
           //7 Página
           DateTimePage(pageController: _pageController),
         ],

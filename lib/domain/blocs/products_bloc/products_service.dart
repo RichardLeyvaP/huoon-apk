@@ -32,6 +32,7 @@ Future<void> loadProduct(int homeId, int warehouseId) async {
 // Métodos para actualizar datos del producto
 void updateProductData(ProductElement updatedElement) {
   productElementSignal.value = productElementSignal.value.copyWith(
+    warehouseId: updatedElement.warehouseId ?? productElementSignal.value.warehouseId,
     productName: updatedElement.productName ?? productElementSignal.value.productName,
     additionalNotes: updatedElement.additionalNotes ?? productElementSignal.value.additionalNotes,
     categoryId: updatedElement.categoryId ?? productElementSignal.value.categoryId,
@@ -41,6 +42,9 @@ void updateProductData(ProductElement updatedElement) {
     expirationDate: updatedElement.expirationDate ?? productElementSignal.value.expirationDate,
     purchasePlace: updatedElement.purchasePlace ?? productElementSignal.value.purchasePlace,
     brand: updatedElement.brand ?? productElementSignal.value.brand,
+    count: updatedElement.count ?? productElementSignal.value.count,
+    quantity: updatedElement.quantity ?? productElementSignal.value.quantity,
+    image: updatedElement.image ?? productElementSignal.value.image,
   );
 }
 
@@ -56,12 +60,28 @@ void decreaseQuantity() {
 }
 
 // Método para enviar el producto a la API
-Future<void> submitProduct(ProductsRepository productsRepository) async {
+Future<void> submitProduct() async {
   isProductSubmittingSignal.value = true;
   submitErrorSignal.value = "";
 
   try {
     await productsRepository.addProduct(productElementSignal.value);
+    productSubmittedSuccessSignal.value = true;
+  } catch (error) {
+    submitErrorSignal.value = error.toString();
+    productSubmittedSuccessSignal.value = false;
+  } finally {
+    isProductSubmittingSignal.value = false;
+  }
+}
+
+// Método para enviar el producto a la API
+Future<void> deleteProduct(int id) async {
+  isProductSubmittingSignal.value = true;
+  submitErrorSignal.value = "";
+
+  try {
+    await productsRepository.deleteProduct(id);
     productSubmittedSuccessSignal.value = true;
   } catch (error) {
     submitErrorSignal.value = error.toString();

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:huoon/data/models/products/product_model.dart';
 import 'package:huoon/data/models/store/store_model.dart';
+import 'package:huoon/domain/blocs/product_cat_state/bloc/product_cat_state_service.dart';
 import 'package:huoon/domain/blocs/products_bloc/products_service.dart';
 import 'package:huoon/domain/blocs/products_bloc/products_signal.dart';
 import 'package:huoon/domain/blocs/store_bloc/store_service.dart';
@@ -77,10 +78,7 @@ class _StorePageState extends State<StorePage> {
                 )
               : InkWell(
                   onTap: () {
-                    GoRouter.of(context).go(
-                      //mando a la vista de crear el producto
-                      '/ProductCreation',
-                    );
+                    addProduct();
                   },
                   child: CircleAvatar(
                     child: Icon(
@@ -93,9 +91,9 @@ class _StorePageState extends State<StorePage> {
       body: Stack(
         children: [
           _showProductDetail && _selectedStore != null
-              ? _buildProductListView(_selectedStore!)
-              // ? _buildProductDetailView(_selectedStore!)
-              : _buildStoreListView(),
+              ? _buildProductListView(_selectedStore!) //aqui carga los productos
+
+              : _buildStoreListView(), //aqui carga los almacenes
           // El contenido principal de tu pantalla
           Positioned(
             bottom: 20,
@@ -129,6 +127,8 @@ class _StorePageState extends State<StorePage> {
   }
 
   Widget _buildProductListView(StoreElement selectedStore) {
+    final productElement = ProductElement(warehouseId: selectedStore.warehouse_id);
+    updateProductData(productElement);
     print('_buildProductListView-aqui seleccionando el almacen:${selectedStore.title}');
     return Column(
       children: [
@@ -164,8 +164,8 @@ class _StorePageState extends State<StorePage> {
                     children: [
                       Column(
                         children: products.map((product) {
-                          return buildProductContainer(product.productName.toString(), product.image.toString(),
-                              product.totalPrice.toString(), product.quantity.toString());
+                          return buildProductContainer(product.id!, product.productName.toString(),
+                              product.image.toString(), product.totalPrice.toString(), product.quantity.toString());
                         }).toList(),
                       ),
                     ],
@@ -182,201 +182,451 @@ class _StorePageState extends State<StorePage> {
   }
 
   Widget _buildStoreListView() {
-    return Expanded(
-      child: Builder(
-        builder: (context) {
-          if (isStoreLoadingST.watch(context) == true) {
-            return Center(
-              child: CircularProgressIndicator(
-                color: StyleGlobalApk.getColorPrimary(),
-              ),
-            );
-          } else if (storeErrorST.watch(context) != null) {
-            return Center(child: Text('Error: ${storeErrorST.value}'));
-          } else if (storeEmpyST.watch(context) != null) {
-            return Column(
-              children: [
-                SizedBox(height: 180),
-                Center(child: Text('${storeEmpyST.value}')),
-              ],
-            );
-          } else if (storeDataST.watch(context) != null) {
-            List<StoreElement> stores = storeDataST.value!.store;
+    return Builder(
+      builder: (context) {
+        if (isStoreLoadingST.watch(context) == true) {
+          return Center(
+            child: CircularProgressIndicator(
+              color: StyleGlobalApk.getColorPrimary(),
+            ),
+          );
+        } else if (storeErrorST.watch(context) != null) {
+          return Center(
+            child: Text('Error: ${storeErrorST.value}'),
+          );
+        } else if (storeEmpyST.watch(context) != null) {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(height: 180),
+              Center(child: Text('${storeEmpyST.value}')),
+            ],
+          );
+        } else if (storeDataST.watch(context) != null) {
+          List<StoreElement> stores = storeDataST.value!.store;
 
-            return SingleChildScrollView(
-              child: Column(
-                children: stores.map((store) {
-                  return GestureDetector(
-                    onTap: () async {
-                      print('estore id que necesito:${store.id!}');
-                      await loadProduct(1, store.id!);
-                      _showProductDetails(store);
-                    },
-                    child: buildStoreContainer(
-                        store.title.toString(), store.location.toString(), store.description.toString()),
-                  );
-                }).toList(),
-              ),
-            );
-          } else {
-            return Center(child: const Text('No hay almacenes'));
-          }
-        },
-      ),
+          return SingleChildScrollView(
+            child: Column(
+              children: stores.map((store) {
+                return GestureDetector(
+                  onTap: () async {
+                    await loadProduct(1, store.warehouse_id!);
+                    _showProductDetails(store);
+                  },
+                  child: buildStoreContainer(store),
+                );
+              }).toList(),
+            ),
+          );
+        } else {
+          return Center(
+            child: const Text('No hay almacenes'),
+          );
+        }
+      },
+    );
+  }
+
+  Future<void> addProduct() async {
+    await loadCategories();
+    GoRouter.of(context).go(
+      //mando a la vista de crear el producto
+      '/ProductCreation',
     );
   }
 }
 
-Widget buildProductContainer(String name, String imageUrl, String price, String quantity) {
-  return Card(
-    margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 4),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(15),
-    ),
-    elevation: 5, // Sombra de la tarjeta para hacerla más llamativa
-    child: Padding(
-      padding: const EdgeInsets.all(6.0),
-      child: Row(
-        children: [
-          // Imagen del producto en un avatar circular
-          CircleAvatar(
-            backgroundImage: imageUrl.isNotEmpty
-                ? NetworkImage(imageUrl)
-                : AssetImage('assets/default_product_image.png') as ImageProvider,
-            radius: 25,
-          ),
-          const SizedBox(width: 10),
-          // Información del producto
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Nombre y precio del producto
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      name,
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blueGrey[800],
-                      ),
-                    ),
-                    Text(
-                      '\$$price',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.green,
-                      ),
-                    ),
-                  ],
+// Widget buildProductContainer(String name, String imageUrl, String price, String quantity) {
+//   return Card(
+//     margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 4),
+//     shape: RoundedRectangleBorder(
+//       borderRadius: BorderRadius.circular(15),
+//     ),
+//     elevation: 5, // Sombra de la tarjeta para hacerla más llamativa
+//     child: Padding(
+//       padding: const EdgeInsets.all(6.0),
+//       child: Row(
+//         children: [
+//           // Imagen del producto en un avatar circular
+//           CircleAvatar(
+//             backgroundImage: imageUrl.isNotEmpty
+//                 ? NetworkImage(imageUrl)
+//                 : AssetImage('assets/default_product_image.png') as ImageProvider,
+//             radius: 25,
+//           ),
+//           const SizedBox(width: 10),
+//           // Información del producto
+//           Expanded(
+//             child: Column(
+//               crossAxisAlignment: CrossAxisAlignment.start,
+//               children: [
+//                 // Nombre y precio del producto
+//                 Row(
+//                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                   children: [
+//                     Text(
+//                       name,
+//                       style: TextStyle(
+//                         fontSize: 14,
+//                         fontWeight: FontWeight.bold,
+//                         color: Colors.blueGrey[800],
+//                       ),
+//                     ),
+//                     Text(
+//                       '\$$price',
+//                       style: TextStyle(
+//                         fontSize: 16,
+//                         fontWeight: FontWeight.bold,
+//                         color: Colors.green,
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//                 // Cantidad del producto
+//                 Text(
+//                   'Cantidad: $quantity',
+//                   style: TextStyle(
+//                     fontSize: 12,
+//                     color: Colors.grey[600],
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           ),
+//         ],
+//       ),
+//     ),
+//   );
+// }
+
+Widget buildProductContainer(int id, String name, String imageUrl, String price, String quantity) {
+  bool isOptionsVisible = false; // Controla la visibilidad de las opciones
+
+  return StatefulBuilder(
+    builder: (context, setState) {
+      return GestureDetector(
+        onLongPress: () {
+          setState(() {
+            isOptionsVisible = true; // Muestra las opciones
+          });
+        },
+        child: Stack(
+          children: [
+            // Card principal
+            Opacity(
+              opacity: isOptionsVisible ? 0.3 : 1.0, // Cambia la opacidad cuando se muestran las opciones
+              child: Card(
+                margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 4),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
                 ),
-                // Cantidad del producto
-                Text(
-                  'Cantidad: $quantity',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
+                elevation: 5,
+                child: Padding(
+                  padding: const EdgeInsets.all(6.0),
+                  child: Row(
+                    children: [
+                      // Imagen del producto
+                      CircleAvatar(
+                        backgroundImage: imageUrl.isNotEmpty
+                            ? NetworkImage(imageUrl)
+                            : AssetImage('assets/default_product_image.png') as ImageProvider,
+                        radius: 25,
+                      ),
+                      const SizedBox(width: 10),
+                      // Información del producto
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  name,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.blueGrey[800],
+                                  ),
+                                ),
+                                Text(
+                                  '\$$price',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.green,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Text(
+                              'Cantidad: $quantity',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
+              ),
             ),
-          ),
-        ],
-      ),
-    ),
+            // Opciones superpuestas
+            if (isOptionsVisible)
+              Positioned.fill(
+                child: Center(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            _buildOptionButton(
+                              icon: Icons.edit,
+                              label: "Editar",
+                              color: Colors.blue,
+                              onPressed: () {
+                                print("Editar producto: $name");
+                                setState(() {
+                                  isOptionsVisible = false;
+                                });
+                              },
+                            ),
+                            _buildOptionButton(
+                              icon: Icons.delete,
+                              label: "Eliminar",
+                              color: Colors.red,
+                              onPressed: () {
+                                deleteProduct(id);
+                                print("Eliminar producto: $name");
+                                setState(() {
+                                  isOptionsVisible = false;
+                                });
+                              },
+                            ),
+                            _buildOptionButton(
+                              icon: Icons.close,
+                              label: "Cerrar",
+                              color: Colors.black,
+                              onPressed: () {
+                                setState(() {
+                                  isOptionsVisible = false;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      );
+    },
   );
 }
 
-Widget buildStoreContainer(String name, String location, String description) {
-  return Card(
-    margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 4),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(15),
-    ),
-    elevation: 5, // Sombra de la tarjeta para hacerla más llamativa
-    child: Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // Nombre del "almacén"
-              Expanded(
-                child: Text(
-                  ' $name',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blueGrey[800],
-                  ),
-                  softWrap: true, // Permite que el texto se envuelva en múltiples líneas
-                  overflow: TextOverflow.ellipsis, // Muestra puntos suspensivos si es muy largo
-                ),
-              ),
-              // Icono o avatar opcional
-              Icon(
-                Icons.store_mall_directory, // Ícono que puede representar un almacén
-                color: Colors.blueGrey[400],
-                size: 25,
-              ),
-            ],
-          ),
+Widget buildStoreContainer(StoreElement store) {
+  bool isOptionsVisible = false; // Controla la visibilidad de las opciones
 
-          const SizedBox(height: 2),
-          // Descripción del "almacén"
-          Row(
-            children: [
-              Icon(
-                Icons.list_alt,
-                color: const Color.fromARGB(255, 90, 138, 94),
-                size: 14,
-              ),
-              const SizedBox(width: 4),
-              Expanded(
-                child: Text(
-                  ' $description',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: const Color.fromARGB(255, 117, 117, 117),
+  return StatefulBuilder(
+    builder: (context, setState) {
+      return GestureDetector(
+        onLongPress: () {
+          //si es 0 es creador - si es 1 Colaboradores si es 2 Visualizadores
+
+          setState(() {
+            isOptionsVisible = true;
+          });
+        },
+        child: Stack(
+          children: [
+            // Card principal
+            Opacity(
+              opacity: isOptionsVisible ? 0.2 : 1.0, // Opacidad para el modo opciones
+              child: Card(
+                margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 4),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                elevation: 5,
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              store.title.toString(),
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blueGrey[800],
+                              ),
+                              softWrap: true,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Icon(
+                            Icons.store_mall_directory,
+                            color: Colors.blueGrey[400],
+                            size: 25,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 2),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.list_alt,
+                            color: const Color.fromARGB(255, 90, 138, 94),
+                            size: 14,
+                          ),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              store.description.toString(),
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: const Color.fromARGB(255, 117, 117, 117),
+                              ),
+                              softWrap: true,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 3,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.location_on,
+                            color: Colors.redAccent,
+                            size: 14,
+                          ),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              store.location.toString(),
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey[700],
+                              ),
+                              softWrap: true,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                  softWrap: true, // Permite que la descripción se ajuste en varias líneas
-                  overflow: TextOverflow.ellipsis, // Opcional: agrega puntos suspensivos si es muy largo
-                  maxLines: 3, // Puedes limitar la cantidad de líneas si lo deseas
                 ),
               ),
-            ],
-          ),
-          const SizedBox(height: 5),
-          // Ubicación del "almacén"
-          Row(
-            children: [
-              Icon(
-                Icons.location_on,
-                color: Colors.redAccent,
-                size: 14,
-              ),
-              const SizedBox(width: 4),
-              Expanded(
-                child: Text(
-                  location,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[700],
+            ),
+            // Opciones superpuestas
+            if (isOptionsVisible)
+              Positioned.fill(
+                child: Center(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Visibility(
+                                visible: store.creator! == false && store.status! == 2,
+                                child: Text(
+                                  'No tienes permisos',
+                                  style: TextStyle(fontSize: 18),
+                                )),
+                            Visibility(
+                              visible: store.creator! == true ||
+                                  store.status! ==
+                                      1, //si es 0 es creador - si es 1 Colaboradores si es 2 Visualizadores
+                              child: _buildOptionButton(
+                                icon: Icons.edit,
+                                label: "Editar",
+                                color: Colors.blue,
+                                onPressed: () {
+                                  updateStoreData(store);
+                                  print('mostarr el store:$store');
+                                  //llamar al formulario de editar
+                                  GoRouter.of(context).go(
+                                    //mando a la vista de crear un nuevo almacen
+                                    '/StoreCreation',
+                                  );
+                                  //  updateStore(store, 1);
+                                  setState(() {
+                                    isOptionsVisible = false;
+                                  });
+                                },
+                              ),
+                            ),
+                            Visibility(
+                              visible: store.creator! ==
+                                  true, //si es 0 es creador - si es 1 Colaboradores si es 2 Visualizadores
+                              child: _buildOptionButton(
+                                icon: Icons.delete,
+                                label: "Eliminar",
+                                color: Colors.red,
+                                onPressed: () async {
+                                  await deleteStore(store.id!);
+                                  requestStore();
+                                },
+                              ),
+                            ),
+                            _buildOptionButton(
+                              icon: Icons.close,
+                              label: "Cerrar",
+                              color: Colors.black,
+                              onPressed: () {
+                                setState(() {
+                                  isOptionsVisible = false;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                  softWrap: true,
-                  maxLines: 2, // Puedes limitar la cantidad de líneas si lo deseas
-                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-            ],
-          ),
-        ],
+          ],
+        ),
+      );
+    },
+  );
+}
+
+Widget _buildOptionButton({
+  required IconData icon,
+  required String label,
+  required Color color,
+  required VoidCallback onPressed,
+}) {
+  return Column(
+    children: [
+      IconButton(
+        icon: Icon(icon, color: color, size: 30),
+        onPressed: onPressed,
       ),
-    ),
+      Text(
+        label,
+        style: TextStyle(color: color, fontSize: 12),
+      ),
+    ],
   );
 }

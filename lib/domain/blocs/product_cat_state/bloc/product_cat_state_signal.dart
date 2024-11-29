@@ -1,9 +1,9 @@
-import 'package:huoon/data/models/taskCategoriesStatusPriority/task_categories_status_priority.dart';
+import 'package:huoon/domain/modelos/category_model.dart';
 import 'package:signals/signals.dart';
 
 // Signals para manejar el estado
 final Signal<List<Category>> categoriesSignalPCS = Signal<List<Category>>([]);
-final Signal<List<Status>> statusSignalPCS = Signal<List<Status>>([]);
+final Signal<List<Status>?> statusSignalPCS = Signal<List<Status>?>(null);
 final Signal<int?> selectedStatusIdSignalPCS = Signal<int?>(null);
 final Signal<int?> selectedCategoryIdSignalPCS = Signal<int?>(null);
 final Signal<int?> quantityProductSignalPCS = Signal<int?>(null);

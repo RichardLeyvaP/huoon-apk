@@ -1,6 +1,7 @@
 import 'package:huoon/data/models/products/product_model.dart';
 import 'package:huoon/data/services/globalCallApi/apiService.dart';
 import 'package:huoon/ui/pages/env.dart';
+import 'package:huoon/ui/pages/rol-admin/Task/selectDays/utils.dart';
 
 class ProductsRepository {
   final ApiService authService;
@@ -40,45 +41,35 @@ class ProductsRepository {
   }
 
 //metodo para agregar una tarea
-  Future<dynamic> addProduct(ProductElement product) async {
-    final endpoint = '${Env.apiEndpoint}/products';
-    print('*****************************************************************');
-    print(product.productName);
-    print(product.categoryId);
-    print(product.statusId);
-    print(product.quantity);
-    print(product.unitPrice);
-    print(product.purchaseDate);
-    print(product.purchasePlace);
-    print(product.expirationDate);
-    print(product.brand);
-    print(product.additionalNotes);
+  Future<dynamic> deleteProduct(int id) async {
+    final endpoint = '${Env.apiEndpoint}/person-home-warehouse-product-destroy';
     final body = {
-      'name': product.productName,
+      'id': id,
+    };
+    // Llama al servicio que maneja la API de autenticación para login
+    final response = await authService.post(endpoint, body: body);
+
+    print('si estoy devolviendo esto:1-${response}');
+  }
+
+//metodo para agregar una tarea
+  Future<dynamic> addProduct(ProductElement product) async {
+    final endpoint = '${Env.apiEndpoint}/person-home-warehouse-product';
+    final body = {
+      'home_id': 1,
+      'warehouse_id': product.warehouseId,
+      'status_id': product.statusId,
       'category_id': product.categoryId,
-      'status_id': 4, //todo valor fijo
-      // 'status_id': product.statusId,
-      'quantity': 1,
-      //'quantity': product.quantity,
+      'name': product.productName,
       'unit_price': product.unitPrice,
+      'quantity': product.quantity,
+      'total_price': multiplyAndConvert(product.quantity!, product.unitPrice!), //(int intValue, String stringValue)
       'purchase_date': product.purchaseDate,
       'purchase_place': product.purchasePlace,
       'expiration_date': product.expirationDate?.toLocal().toIso8601String().split('T')[0], // Solo la fecha
       'brand': product.brand,
       'additional_notes': product.additionalNotes,
-      // 'image': product.image,
-      //
-      // 'name': 'tarea nueva apk',
-      // 'category_id': 1,
-      // 'status_id': 1,
-      // 'quantity': 2,
-      // 'unit_price': 20,
-      // 'purchase_date': '2024-12-23 23:20:00',
-      // 'purchase_place': 'lugar',
-      // 'expiration_date': '2024-12-28',
-      // 'brand': null,
-      // 'additional_notes': 'nota',
-      //'image': "products/1.jpg",
+      'image': product.image,
     };
     // Llama al servicio que maneja la API de autenticación para login
     final response = await authService.post(endpoint, body: body);
@@ -89,11 +80,11 @@ class ProductsRepository {
   Future<dynamic> getCategoriesPriority() async {
     print('dando click en la getProduct');
     final endpoint = '${Env.apiEndpoint}/productcategory-productstatus-apk';
-    print('entrando a * - : getCategoriesPriority-2');
+    print('entrando a * - : getCategoriesPriority-2.1-product;INICIO');
     try {
       // Llama al servicio y obtiene la respuesta procesada
       final response = await authService.get(endpoint);
-      print('entrando a * - : getCategoriesPriority-2.1;$response');
+      print('entrando a * - : getCategoriesPriority-2.1-product;$response');
       // Verificamos si response es un JSON válido
       if (response is Map<String, dynamic>) {
         print('entrando a * - : getCategoriesPriority-2.2');

@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:huoon/data/repository/products_repository.dart';
+import 'package:huoon/data/services/globalCallApi/apiService.dart';
 import 'package:huoon/domain/blocs/product_cat_state/bloc/product_cat_state_signal.dart';
 import 'package:huoon/domain/modelos/category_model.dart';
 
+// Repositorio de configuración (se asume que ya está inicializado en otro lugar)
+final ProductsRepository productsRepository = ProductsRepository(authService: ApiService());
 // Método para cargar las categorías y prioridades
-Future<void> loadCategories(ProductsRepository productsRepository) async {
+Future<void> loadCategories() async {
   isLoadingSignalPCS.value = true; // Iniciamos la carga
   isErrorSignalPCS.value = false; // Reseteamos el error
 
   try {
     final jsonResponse = await productsRepository.getCategoriesPriority();
+
     List<Category> categories = (jsonResponse['productcategories'] as List<dynamic>).map((categoryJson) {
       return Category(
         title: categoryJson['nameCategory'],
@@ -27,8 +31,8 @@ Future<void> loadCategories(ProductsRepository productsRepository) async {
     }).toList();
 
     // Actualizamos las señales con los datos obtenidos
-    // categoriesSignalPCS.value = categories;
-    // statusSignalPCS.value = status;
+    categoriesSignalPCS.value = categories;
+    statusSignalPCS.value = status;
 
     isLoadingSignalPCS.value = false; // Finaliza la carga
   } catch (error) {

@@ -246,8 +246,11 @@ class _SecondTaskPageState extends State<SecondTaskPage> {
       builder: (context) {
         if (taskPersonsCSP.watch(context) != null) {
           bool selectMultiple = true;
+          List<Taskperson>? taskpersonsList;
+
           if (widget.id != 0) {
             //es modificar
+            taskpersonsList = convertToTaskpersonList(taskElementTA.value.people!);
           } else //es insertar que cargue el primero por defecto
           {
             if (taskPersonsCSP.value!.isNotEmpty) {
@@ -255,20 +258,7 @@ class _SecondTaskPageState extends State<SecondTaskPage> {
             }
           }
 
-          List<Taskperson> convertToTaskpersonList(List<Person> personList) {
-            return personList.map((person) {
-              return Taskperson(
-                id: person.id,
-                namePerson: person.name,
-                imagePerson: person.image,
-                rolId: person.roleId,
-                nameRole: person.roleName,
-              );
-            }).toList();
-          }
-
 // Luego, puedes usarla así:
-          List<Taskperson> taskpersonsList = convertToTaskpersonList(taskElementTA.value.people!);
 
           return TaskpersonWidget(
             taskpersons: taskPersonsCSP.value!,
@@ -525,6 +515,18 @@ class _SecondTaskPageState extends State<SecondTaskPage> {
         );
       });
     }
+  }
+
+  List<Taskperson> convertToTaskpersonList(List<Person> personList) {
+    return personList.map((person) {
+      return Taskperson(
+        id: person.id,
+        namePerson: person.name,
+        imagePerson: person.image,
+        rolId: person.roleId,
+        nameRole: person.roleName,
+      );
+    }).toList();
   }
 
   /* Widget cardSimpleSelectionFamily(CategoriesStatusPrioritySuccess state, Taskperson status) {

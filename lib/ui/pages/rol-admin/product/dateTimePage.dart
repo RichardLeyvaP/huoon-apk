@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:huoon/data/models/products/product_model.dart';
+import 'package:huoon/domain/blocs/products_bloc/products_service.dart';
 import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -208,6 +209,8 @@ class _DateTimePageState extends State<DateTimePage> {
       // image: 'products/1.jpg',
     );
 // Dispara el evento para insertar el producto
+    updateProductData(productElement);
+    submitProduct();
 
     // Navegar a la siguiente página
 

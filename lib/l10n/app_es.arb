@@ -27,6 +27,7 @@
      "tittleLabel": "Título",
      "requiredTittleLabel": "El Título es requerido",
      "descriptionLabel": "Descripción",
+     "placeLabel": "Lugar",
      "acceptButton": "Aceptar",
      "nextButton": "Siguiente",
      "cancelButton": "Cancelar",
@@ -35,8 +36,8 @@
      "googleButton": "Entrar con Google",
      "facebookButton": "Entrar con Facebook",
      "rememberPassword": "Olvidé mi contraseña",
-     "createTask": "Crear Tarea",
-     "updateTask": "Modificar Tarea",
+     "createTask": "Crear",
+     "updateTask": "Modificar",
      "createTaskStep1": "(Paso 1 de 2)",
      "createTaskStep2": "(Paso 2 de 2)"
 

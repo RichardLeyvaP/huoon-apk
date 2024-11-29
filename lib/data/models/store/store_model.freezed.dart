@@ -171,8 +171,13 @@ StoreElement _$StoreElementFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$StoreElement {
-  int? get id => throw _privateConstructorUsedError;
-  int? get status => throw _privateConstructorUsedError;
+  int? get id =>
+      throw _privateConstructorUsedError; //id de lla relacion del store-hogar
+  int? get warehouse_id =>
+      throw _privateConstructorUsedError; //warehouse_id del almacen
+  int? get status =>
+      throw _privateConstructorUsedError; //si es 0 es creador - si es 1 Colaboradores si es 2 Visualizadores
+  bool? get creator => throw _privateConstructorUsedError;
   String? get title => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
   String? get location => throw _privateConstructorUsedError;
@@ -195,7 +200,9 @@ abstract class $StoreElementCopyWith<$Res> {
   @useResult
   $Res call(
       {int? id,
+      int? warehouse_id,
       int? status,
+      bool? creator,
       String? title,
       String? description,
       String? location});
@@ -217,7 +224,9 @@ class _$StoreElementCopyWithImpl<$Res, $Val extends StoreElement>
   @override
   $Res call({
     Object? id = freezed,
+    Object? warehouse_id = freezed,
     Object? status = freezed,
+    Object? creator = freezed,
     Object? title = freezed,
     Object? description = freezed,
     Object? location = freezed,
@@ -227,10 +236,18 @@ class _$StoreElementCopyWithImpl<$Res, $Val extends StoreElement>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int?,
+      warehouse_id: freezed == warehouse_id
+          ? _value.warehouse_id
+          : warehouse_id // ignore: cast_nullable_to_non_nullable
+              as int?,
       status: freezed == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as int?,
+      creator: freezed == creator
+          ? _value.creator
+          : creator // ignore: cast_nullable_to_non_nullable
+              as bool?,
       title: freezed == title
           ? _value.title
           : title // ignore: cast_nullable_to_non_nullable
@@ -257,7 +274,9 @@ abstract class _$$StoreElementImplCopyWith<$Res>
   @useResult
   $Res call(
       {int? id,
+      int? warehouse_id,
       int? status,
+      bool? creator,
       String? title,
       String? description,
       String? location});
@@ -277,7 +296,9 @@ class __$$StoreElementImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = freezed,
+    Object? warehouse_id = freezed,
     Object? status = freezed,
+    Object? creator = freezed,
     Object? title = freezed,
     Object? description = freezed,
     Object? location = freezed,
@@ -287,10 +308,18 @@ class __$$StoreElementImplCopyWithImpl<$Res>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int?,
+      warehouse_id: freezed == warehouse_id
+          ? _value.warehouse_id
+          : warehouse_id // ignore: cast_nullable_to_non_nullable
+              as int?,
       status: freezed == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as int?,
+      creator: freezed == creator
+          ? _value.creator
+          : creator // ignore: cast_nullable_to_non_nullable
+              as bool?,
       title: freezed == title
           ? _value.title
           : title // ignore: cast_nullable_to_non_nullable
@@ -311,15 +340,28 @@ class __$$StoreElementImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$StoreElementImpl implements _StoreElement {
   const _$StoreElementImpl(
-      {this.id, this.status, this.title, this.description, this.location});
+      {this.id,
+      this.warehouse_id,
+      this.status,
+      this.creator,
+      this.title,
+      this.description,
+      this.location});
 
   factory _$StoreElementImpl.fromJson(Map<String, dynamic> json) =>
       _$$StoreElementImplFromJson(json);
 
   @override
   final int? id;
+//id de lla relacion del store-hogar
+  @override
+  final int? warehouse_id;
+//warehouse_id del almacen
   @override
   final int? status;
+//si es 0 es creador - si es 1 Colaboradores si es 2 Visualizadores
+  @override
+  final bool? creator;
   @override
   final String? title;
   @override
@@ -329,7 +371,7 @@ class _$StoreElementImpl implements _StoreElement {
 
   @override
   String toString() {
-    return 'StoreElement(id: $id, status: $status, title: $title, description: $description, location: $location)';
+    return 'StoreElement(id: $id, warehouse_id: $warehouse_id, status: $status, creator: $creator, title: $title, description: $description, location: $location)';
   }
 
   @override
@@ -338,7 +380,10 @@ class _$StoreElementImpl implements _StoreElement {
         (other.runtimeType == runtimeType &&
             other is _$StoreElementImpl &&
             (identical(other.id, id) || other.id == id) &&
+            (identical(other.warehouse_id, warehouse_id) ||
+                other.warehouse_id == warehouse_id) &&
             (identical(other.status, status) || other.status == status) &&
+            (identical(other.creator, creator) || other.creator == creator) &&
             (identical(other.title, title) || other.title == title) &&
             (identical(other.description, description) ||
                 other.description == description) &&
@@ -348,8 +393,8 @@ class _$StoreElementImpl implements _StoreElement {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, status, title, description, location);
+  int get hashCode => Object.hash(runtimeType, id, warehouse_id, status,
+      creator, title, description, location);
 
   /// Create a copy of StoreElement
   /// with the given fields replaced by the non-null parameter values.
@@ -370,7 +415,9 @@ class _$StoreElementImpl implements _StoreElement {
 abstract class _StoreElement implements StoreElement {
   const factory _StoreElement(
       {final int? id,
+      final int? warehouse_id,
       final int? status,
+      final bool? creator,
       final String? title,
       final String? description,
       final String? location}) = _$StoreElementImpl;
@@ -379,9 +426,14 @@ abstract class _StoreElement implements StoreElement {
       _$StoreElementImpl.fromJson;
 
   @override
-  int? get id;
+  int? get id; //id de lla relacion del store-hogar
   @override
-  int? get status;
+  int? get warehouse_id; //warehouse_id del almacen
+  @override
+  int?
+      get status; //si es 0 es creador - si es 1 Colaboradores si es 2 Visualizadores
+  @override
+  bool? get creator;
   @override
   String? get title;
   @override

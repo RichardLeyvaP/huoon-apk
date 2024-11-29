@@ -9,6 +9,7 @@ final StoreRepository storeRepository = StoreRepository(authService: ApiService(
 
 // Método para obtener tiendas
 Future<void> requestStore() async {
+  isUpdateST.value = false; //esto solo va  atener true cuando se de para modificar
   isStoreLoadingST.value = true;
   storeErrorST.value = null;
   storeEmpyST.value = null;
@@ -33,10 +34,14 @@ Future<void> requestStore() async {
 
 // Método para actualizar datos de la tienda
 void updateStoreData(StoreElement updatedStoreElement) {
+  isUpdateST.value = true;
   currentStoreElementST.value = (currentStoreElementST.value ?? const StoreElement()).copyWith(
+    warehouse_id: updatedStoreElement.warehouse_id ?? currentStoreElementST.value?.warehouse_id,
+    id: updatedStoreElement.id ?? currentStoreElementST.value?.id,
     title: updatedStoreElement.title ?? currentStoreElementST.value?.title,
     description: updatedStoreElement.description ?? currentStoreElementST.value?.description,
     location: updatedStoreElement.location ?? currentStoreElementST.value?.location,
+    status: updatedStoreElement.status ?? currentStoreElementST.value?.status,
   );
 }
 
@@ -53,7 +58,39 @@ Future<void> submitStore(StoreElement updatedStoreElement, int homeId) async {
     isSubmittingST.value = false;
     submitSuccessST.value = false;
     submitErrorST.value = error.toString();
-  }
+  } finally {}
+}
+
+// Método para enviar tienda a la API
+Future<void> updateStore(StoreElement updatedStoreElement, int homeId) async {
+  isSubmittingST.value = true;
+  try {
+    await storeRepository.updateStoreRepository(updatedStoreElement, homeId);
+    // await storeRepository.addStore(currentStoreElementST.value!);
+    isSubmittingST.value = false;
+    submitSuccessST.value = true;
+    submitErrorST.value = null;
+  } catch (error) {
+    isSubmittingST.value = false;
+    submitSuccessST.value = false;
+    submitErrorST.value = error.toString();
+  } finally {}
+}
+
+// Método para enviar tienda a la API
+Future<void> deleteStore(int id) async {
+  isSubmittingST.value = true;
+  try {
+    await storeRepository.deleteStoreRepository(id);
+    // await storeRepository.addStore(currentStoreElementST.value!);
+    isSubmittingST.value = false;
+    submitSuccessST.value = true;
+    submitErrorST.value = null;
+  } catch (error) {
+    isSubmittingST.value = false;
+    submitSuccessST.value = false;
+    submitErrorST.value = error.toString();
+  } finally {}
 }
 
 // Métodos para incrementar y disminuir la cantidad

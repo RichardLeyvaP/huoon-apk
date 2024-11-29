@@ -3,6 +3,7 @@
 
 import 'dart:collection';
 
+import 'package:huoon/domain/blocs/products_bloc/products_service.dart';
 import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -134,6 +135,7 @@ class _QuantitySelectorState extends State<QuantitySelector> {
           icon: Icon(Icons.remove_circle_outline),
           onPressed: quantity > 1
               ? () {
+                  decreaseQuantity();
                   setState(() {
                     quantity--;
                   });
@@ -145,6 +147,7 @@ class _QuantitySelectorState extends State<QuantitySelector> {
         IconButton(
           icon: Icon(Icons.add_circle_outline),
           onPressed: () {
+            increaseQuantity();
             setState(() {
               quantity++;
             });
@@ -231,4 +234,20 @@ IconData getIconFromString(String iconName) {
 bool emptyTextField(String texto) {
   //me dice si tiene texto o no true esta vacio y false es que tiene
   return texto.trim().isEmpty;
+}
+
+String multiplyAndConvert(int intValue, String stringValue) {
+  try {
+    // Convertir el String a double
+    double doubleValue = double.parse(stringValue);
+
+    // Multiplicar el int y el double
+    double result = intValue * doubleValue;
+
+    // Convertir el resultado a String y retornarlo
+    return result.toString();
+  } catch (e) {
+    // Manejo de errores en caso de que la conversión falle
+    return "0.0";
+  }
 }
