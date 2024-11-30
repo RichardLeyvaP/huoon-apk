@@ -5,6 +5,7 @@ import 'package:huoon/domain/blocs/configuration_bloc/configuration_signal.dart'
 import 'package:huoon/ui/Routes/pages_routes.dart';
 import 'package:huoon/ui/pages/loginFb.dart';
 import 'package:huoon/ui/pages/rol-admin/Task/TaskCreationPage.dart';
+import 'package:huoon/ui/pages/rol-admin/chat/audio_recorder.screen.dart';
 import 'package:huoon/ui/pages/rol-admin/product/productCreationPage.dart';
 import 'package:huoon/ui/pages/rol-admin/store/storeCreationPage.dart';
 import 'package:huoon/ui/pages/splash/splash_screen.dart';
@@ -50,10 +51,10 @@ class MyApp extends StatelessWidget {
         path: '/LoadingPage',
         builder: (context, state) => LoadingPage(),
       ),
-      GoRoute(
-        path: '/QRViewExample',
-        builder: (context, state) => const QRViewPage(),
-      ),
+      // GoRoute(
+      //   path: '/QRViewExample',
+      //   builder: (context, state) => const QRViewPage(),
+      // ),
       GoRoute(
         path: '/AuthCheck',
         builder: (context, state) => const AuthCheck(),
@@ -77,6 +78,11 @@ class MyApp extends StatelessWidget {
       GoRoute(
         path: '/StoreCreation',
         builder: (context, state) => const StoreCreation(),
+      ),
+      //RUTAS NUEVAS
+      GoRoute(
+        path: '/ChatPage',
+        builder: (context, state) => const ChatPage(),
       ),
       // Agrega más rutas según sea necesario
     ],

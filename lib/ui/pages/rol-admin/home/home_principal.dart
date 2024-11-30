@@ -162,6 +162,14 @@ class _HomePrincipalState extends State<HomePrincipal> with SingleTickerProvider
             return InkWell(
               onTap: () {
                 print('inde = ${_tabController.index}');
+                if (_tabController.index == 0) {
+                  //llamar a la vista chat
+
+                  print('inde =.... ${_tabController.index}');
+                  GoRouter.of(context).go(
+                    '/ChatPage',
+                  );
+                }
                 if (_tabController.index == 3) {
                   fetchCategoriesStatusPriority();
 
