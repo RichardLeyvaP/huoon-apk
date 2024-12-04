@@ -22,6 +22,12 @@ class StyleGlobalApk {
   //colores
   static Color colorPrimary = const Color.fromARGB(255, 67, 162, 240);
   static Color colorIndicator = const Color.fromRGBO(255, 73, 73, 1.0);
+  //nuevos
+  static Color colorRedOpaque = const Color.fromARGB(255, 218, 113, 113);
+  static Color colorOpaqueBlue = const Color.fromARGB(255, 93, 137, 233);
+  static Color colorGreenBlue = const Color.fromARGB(255, 3, 98, 108);
+  static Color colorDarkGreen = const Color.fromARGB(255, 3, 34, 33);
+  static Color colorYellowBurnt = const Color.fromARGB(255, 228, 159, 57);
 
   static Color getColorIndicador() {
     return colorIndicator; //color rojiso
@@ -29,5 +35,25 @@ class StyleGlobalApk {
 
   static Color getColorPrimary() {
     return colorPrimary; //color azul claro
+  }
+
+  static Color getColorRedOpaque() {
+    return colorRedOpaque; //color azul claro
+  }
+
+  static Color getColorOpaqueBlue() {
+    return colorOpaqueBlue; //color azul claro
+  }
+
+  static Color getColorGreenBlue() {
+    return colorGreenBlue; //color azul claro
+  }
+
+  static Color getColorDarkGreen() {
+    return colorDarkGreen; //color azul claro
+  }
+
+  static Color getColorYellowBurnt() {
+    return colorYellowBurnt; //color azul claro
   }
 }

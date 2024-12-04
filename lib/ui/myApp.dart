@@ -6,6 +6,9 @@ import 'package:huoon/ui/Routes/pages_routes.dart';
 import 'package:huoon/ui/pages/loginFb.dart';
 import 'package:huoon/ui/pages/rol-admin/Task/TaskCreationPage.dart';
 import 'package:huoon/ui/pages/rol-admin/chat/audio_recorder.screen.dart';
+import 'package:huoon/ui/pages/rol-admin/health/dataAnalysisPage.dart';
+import 'package:huoon/ui/pages/rol-admin/health/myHealthPage.dart';
+import 'package:huoon/ui/pages/rol-admin/health/remindersPage.dart';
 import 'package:huoon/ui/pages/rol-admin/product/productCreationPage.dart';
 import 'package:huoon/ui/pages/rol-admin/store/storeCreationPage.dart';
 import 'package:huoon/ui/pages/splash/splash_screen.dart';
@@ -83,6 +86,18 @@ class MyApp extends StatelessWidget {
       GoRoute(
         path: '/ChatPage',
         builder: (context, state) => const ChatPage(),
+      ),
+      GoRoute(
+        path: '/DataAnalysisPage',
+        builder: (context, state) => DataAnalysisPage(),
+      ),
+      GoRoute(
+        path: '/MyHealthPage',
+        builder: (context, state) => MyHealthPage(),
+      ),
+      GoRoute(
+        path: '/RemindersPage',
+        builder: (context, state) => RemindersPage(),
       ),
       // Agrega más rutas según sea necesario
     ],

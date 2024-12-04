@@ -2,6 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:huoon/ui/pages/rol-admin/chat/signal/audio_signal.dart';
+import 'package:huoon/ui/util/utils_class_apk.dart';
 import 'package:signals/signals_flutter.dart';
 
 class ChatPage extends StatefulWidget {
@@ -64,32 +65,29 @@ class _ChatPageState extends State<ChatPage> {
           toolbarHeight: 80,
           backgroundColor: Colors.transparent,
           elevation: 0,
-          title: Center(
-            child: Row(
-              children: [
-                InkWell(
-                    onTap: () {
-                      GoRouter.of(context).go(
-                        '/HomePrincipal',
-                      );
-                    },
-                    child: Icon(Icons.arrow_back)),
-                SizedBox(
-                  width: 5,
-                ),
-                Text('Pacho Pére', style: TextStyle(fontSize: 18, color: Colors.black)),
-              ],
-            ),
+          title: const Row(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Jorge Manuel Pérez',
+                    style: TextStyle(fontSize: 18, color: Colors.black),
+                  ),
+                  Text('Tío', style: TextStyle(fontSize: 12, color: Color.fromARGB(120, 0, 0, 0))),
+                ],
+              ),
+            ],
           ),
           actions: [
             IconButton(
               icon: CircleAvatar(
                 backgroundColor: activeUser.watch(context) == 1
-                    ? const Color.fromARGB(120, 141, 189, 228)
-                    : const Color.fromARGB(120, 76, 175, 79),
+                    ? const Color.fromARGB(0, 141, 189, 228)
+                    : const Color.fromARGB(0, 76, 175, 79),
                 child: Text(
                   '$activeUser',
-                  style: const TextStyle(color: Colors.white, fontSize: 18),
+                  style: TextStyle(color: Colors.transparent, fontSize: 18),
                 ),
               ),
               onPressed: () {
@@ -219,7 +217,7 @@ class _ChatPageState extends State<ChatPage> {
           IconButton(
             icon: Icon(
               isRecording ? Icons.stop : Icons.mic,
-              color: isRecording ? Colors.red : Colors.blue,
+              color: isRecording ? StyleGlobalApk.getColorRedOpaque() : StyleGlobalApk.getColorOpaqueBlue(),
             ),
             onPressed: toggleRecording,
           ),
@@ -237,7 +235,7 @@ class _ChatPageState extends State<ChatPage> {
           Container(
             padding: const EdgeInsets.all(10.0),
             decoration: BoxDecoration(
-              color: isCurrentUser ? Colors.blue[100] : Colors.green[100],
+              color: isCurrentUser ? StyleGlobalApk.getColorOpaqueBlue().withAlpha(80) : Colors.green[100],
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
@@ -280,7 +278,7 @@ class _ChatPageState extends State<ChatPage> {
             child: Container(
               padding: const EdgeInsets.all(10.0),
               decoration: BoxDecoration(
-                  color: isCurrentUser ? Colors.blue[100] : Colors.green[100],
+                  color: isCurrentUser ? StyleGlobalApk.getColorOpaqueBlue().withAlpha(80) : Colors.green[100],
                   borderRadius: isCurrentUser
                       ? const BorderRadius.only(
                           topLeft: Radius.circular(20), topRight: Radius.circular(20), bottomLeft: Radius.circular(20))
