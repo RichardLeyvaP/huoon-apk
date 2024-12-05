@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:huoon/data/models/products/product_model.dart';
+import 'package:huoon/domain/blocs/product_cat_state/bloc/product_cat_state_service.dart';
 import 'package:huoon/domain/blocs/product_cat_state/bloc/product_cat_state_signal.dart';
 import 'package:huoon/domain/blocs/products_bloc/products_service.dart';
 import 'package:huoon/domain/blocs/products_bloc/products_signal.dart';
@@ -21,33 +22,34 @@ class _CategoryPricePageState extends State<CategoryPricePage> {
   int selectedLevel = 0; // Para seleccionar el nivel
   Color colorBotoom = const Color.fromARGB(255, 61, 189, 93);
   Color colorBotoomSel = const Color.fromARGB(255, 199, 64, 59);
-  List<Category> categories = [
-    Category(title: 'Deportes', icon: Icons.sports_basketball, id: 1),
-    Category(title: 'Cocina', icon: Icons.kitchen, id: 2),
-    Category(title: 'Tecnología', icon: Icons.computer, id: 3),
-    Category(title: 'Arte', icon: Icons.brush, id: 4),
-    Category(title: 'Música', icon: Icons.music_note, id: 5),
-    Category(title: 'Viajes', icon: Icons.flight, id: 6),
-    Category(title: 'Deportes2', icon: Icons.sports_basketball, id: 7),
-    Category(title: 'Cocina3', icon: Icons.kitchen, id: 8),
-    Category(title: 'Tecnología5', icon: Icons.shop, id: 9),
-    Category(title: 'Arte4', icon: Icons.brush, id: 10),
-    Category(title: 'Música3', icon: Icons.music_note, id: 11),
-    Category(title: 'Viajes4', icon: Icons.flight, id: 12),
-  ];
-  List<int> arrayCategory = [1]; // Inicializamos la cantidad seleccionada
+
+  List<int> arrayCategory = [categoriesSignalPCS.value.first.id]; // Inicializamos la cantidad seleccionada
 
   final TextEditingController _priceController = TextEditingController();
   final int initialQuantity = 1;
   final TextEditingController _marcaController = TextEditingController();
 
-  int selectedQuantity = 1;
+  String tittle = 'Nuevo Producto';
+  int categoriesProductSelec = categoriesSignalPCS.value.first.id;
 
   @override
   Widget build(BuildContext context) {
+     if (isUpdateProductSignal.value == true) {
+      tittle = 'Modificar Producto';
+      if (productElementSignal.value != null) {
+        _marcaController.text = productElementSignal.value!.brand!;
+        _priceController.text = productElementSignal.value!.unitPrice!;
+        updateQuantity(productElementSignal.value!.quantity!);
+//
+selectCategory(productElementSignal.value!.categoryId!); 
+            categoriesProductSelec = productElementSignal.value!.categoryId!;
+            arrayCategory = [productElementSignal.value!.categoryId!];
+        
+      }
+    }
     return Scaffold(
       appBar: AppBar(
-        title: Text('Datos del producto'),
+        title: Text(tittle),
       ),
       floatingActionButton: SafeArea(
         child: Padding(
@@ -63,7 +65,7 @@ class _CategoryPricePageState extends State<CategoryPricePage> {
         padding: const EdgeInsets.all(16.0),
         child: Builder(
           builder: (context) {
-            selectedQuantity = 1; // Valor por defecto en caso de null
+            
             return Column(
               children: [
                 SizedBox(height: 20),
@@ -102,18 +104,21 @@ class _CategoryPricePageState extends State<CategoryPricePage> {
                 CategoryWidget(
                   categories: categoriesSignalPCS.value,
                   titleWidget: 'Categorías',
-                  selectedCategoryId: categoriesSignalPCS.value.first.id,
+                  selectedCategoryId: categoriesProductSelec,
                   selectMultiple: false,
                   onSelectionChanged: (selectedCategories) {
-                    setState(() {
+                    // setState(() {
                       arrayCategory = selectedCategories
                           .asMap()
                           .entries
                           .map((entry) => selectedCategories[entry.key].id) // Mapea los IDs de las categorías
                           .toList();
-                    });
-                    // Maneja la selección de categorías
-                    // Por ejemplo, puedes guardar las categorías seleccionadas en un estado
+                    // });
+                    selectCategory(arrayCategory[0]);
+                     final productElement = ProductElement(
+      categoryId: arrayCategory[0],
+    );
+                    updateProductData(productElement);
                   },
                 ),
 
@@ -127,7 +132,7 @@ class _CategoryPricePageState extends State<CategoryPricePage> {
                       child: TextFormField(
                         controller: _priceController,
                         onChanged: (value) {
-                          print('value a pecio:${_priceController.text}');
+                          //print('value a pecio:${_priceController.text}');
                         },
                         keyboardType: TextInputType.number,
                         decoration: InputDecoration(
@@ -141,13 +146,14 @@ class _CategoryPricePageState extends State<CategoryPricePage> {
                     ),
                     SizedBox(width: 10), // Espacio entre los dos widgets
                     QuantitySelector(
-                      initialQuantity: selectedQuantity,
-                      onQuantityChanged: (newQuantity) {
-                        // Actualizas el estado del BLoC aquí si es necesario
-                        setState(() {
-                          selectedQuantity = newQuantity;
-                          print('object-test- *******-$selectedQuantity');
-                        });
+                      initialQuantity: quantitySignal.value,
+                      onQuantityChanged: (newQuantity) {                        
+
+                        updateQuantity(newQuantity);
+                         final productElement = ProductElement(
+                          quantity: newQuantity,
+    );
+                    updateProductData(productElement);
                         // context.read<CategoriesPrioritiesBloc>().add(QuantityProductEvent(newQuantity));
                       },
                     )
@@ -186,16 +192,17 @@ class _CategoryPricePageState extends State<CategoryPricePage> {
     // Cierra el teclado si está abierto
     FocusScope.of(context).unfocus();
     // Enviar el evento al BLoC
-    print(
-        'object-test-_marcaController.text:${emptyTextField(_marcaController.text) ? 'No hay Marca' : _marcaController.text}');
-    print('object-test-arrayCategory:${arrayCategory[0]}');
-    print('object-test-_priceController.text:${emptyTextField(_priceController.text) ? '0' : _priceController.text}');
-    print('object-test-selectedQuantity:$selectedQuantity');
+    // print(
+    //     'object-test-_marcaController.text:${emptyTextField(_marcaController.text) ? 'No hay Marca' : _marcaController.text}');
+    // print('object-test-arrayCategory:${arrayCategory[0]}');
+    // print('object-test-arrayCategory2:${arrayCategory.first}');
+    // print('object-test-_priceController.text:${emptyTextField(_priceController.text) ? '0' : _priceController.text}');
+    // print('object-test-selectedQuantity:${quantitySignal.value}');
 
     //todo ahora esta fijo
     final productElement = ProductElement(
       brand: emptyTextField(_marcaController.text) ? 'No hay Marca' : _marcaController.text,
-      categoryId: arrayCategory[0],
+      categoryId: arrayCategory.first,
       unitPrice: emptyTextField(_priceController.text) ? '0' : _priceController.text,
       quantity: quantitySignal.value,
       image: 'products/1.jpg',

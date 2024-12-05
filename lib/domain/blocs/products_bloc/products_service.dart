@@ -31,20 +31,20 @@ Future<void> loadProduct(int homeId, int warehouseId) async {
 
 // Métodos para actualizar datos del producto
 void updateProductData(ProductElement updatedElement) {
-  productElementSignal.value = productElementSignal.value.copyWith(
-    warehouseId: updatedElement.warehouseId ?? productElementSignal.value.warehouseId,
-    productName: updatedElement.productName ?? productElementSignal.value.productName,
-    additionalNotes: updatedElement.additionalNotes ?? productElementSignal.value.additionalNotes,
-    categoryId: updatedElement.categoryId ?? productElementSignal.value.categoryId,
-    statusId: updatedElement.statusId ?? productElementSignal.value.statusId,
-    unitPrice: updatedElement.unitPrice ?? productElementSignal.value.unitPrice,
-    purchaseDate: updatedElement.purchaseDate ?? productElementSignal.value.purchaseDate,
-    expirationDate: updatedElement.expirationDate ?? productElementSignal.value.expirationDate,
-    purchasePlace: updatedElement.purchasePlace ?? productElementSignal.value.purchasePlace,
-    brand: updatedElement.brand ?? productElementSignal.value.brand,
-    count: updatedElement.count ?? productElementSignal.value.count,
-    quantity: updatedElement.quantity ?? productElementSignal.value.quantity,
-    image: updatedElement.image ?? productElementSignal.value.image,
+  productElementSignal.value = productElementSignal.value!.copyWith(
+    warehouseId: updatedElement.warehouseId ?? productElementSignal.value!.warehouseId,
+    productName: updatedElement.productName ?? productElementSignal.value!.productName,
+    additionalNotes: updatedElement.additionalNotes ?? productElementSignal.value!.additionalNotes,
+    categoryId: updatedElement.categoryId ?? productElementSignal.value!.categoryId,
+    statusId: updatedElement.statusId ?? productElementSignal.value!.statusId,
+    unitPrice: updatedElement.unitPrice ?? productElementSignal.value!.unitPrice,
+    purchaseDate: updatedElement.purchaseDate ?? productElementSignal.value!.purchaseDate,
+    expirationDate: updatedElement.expirationDate ?? productElementSignal.value!.expirationDate,
+    purchasePlace: updatedElement.purchasePlace ?? productElementSignal.value!.purchasePlace,
+    brand: updatedElement.brand ?? productElementSignal.value!.brand,
+    count: updatedElement.count ?? productElementSignal.value!.count,
+    quantity: updatedElement.quantity ?? productElementSignal.value!.quantity,
+    image: updatedElement.image ?? productElementSignal.value!.image,
   );
 }
 
@@ -59,13 +59,40 @@ void decreaseQuantity() {
   }
 }
 
+
+void updateQuantity(int quantity) {
+  if (quantity > 0) {
+    quantitySignal.value = quantity;
+  }
+  else{
+    quantitySignal.value = 1;
+  }
+}
+
+
 // Método para enviar el producto a la API
 Future<void> submitProduct() async {
   isProductSubmittingSignal.value = true;
   submitErrorSignal.value = "";
 
   try {
-    await productsRepository.addProduct(productElementSignal.value);
+    await productsRepository.addProduct(productElementSignal.value!);
+    productSubmittedSuccessSignal.value = true;
+  } catch (error) {
+    submitErrorSignal.value = error.toString();
+    productSubmittedSuccessSignal.value = false;
+  } finally {
+    isProductSubmittingSignal.value = false;
+  }
+}
+
+// Método para enviar el producto a la API
+Future<void> updateProduct() async {
+  isProductSubmittingSignal.value = true;
+  submitErrorSignal.value = "";
+
+  try {
+    await productsRepository.updateProductRepository(productElementSignal.value!);
     productSubmittedSuccessSignal.value = true;
   } catch (error) {
     submitErrorSignal.value = error.toString();

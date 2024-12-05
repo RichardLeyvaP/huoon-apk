@@ -1,8 +1,13 @@
+import 'package:huoon/data/models/store/store_model.dart';
 import 'package:huoon/domain/blocs/user_activity_bloc/user_activity_signal.dart';
 import 'package:intl/intl.dart';
 
 // Funciones para manejar las acciones y actualizar las señales
 void onScreenChange(String screenName, {Map<String, dynamic>? additionalData}) {
+  print('onScreenChange-screenName-$screenName');
+  print('onScreenChange-additionalData-$additionalData');
+
+
   // Mantener el valor previo si `additionalData` es null
   final existingAdditionalData = currentScreenUA.value.additionalData;
   currentScreenUA.value = ScreenContext(
@@ -51,6 +56,8 @@ int getIndexCurrentScreenUA() {
     case 'screen_Home_Tasks':
       return 3;
     case 'screen_Home_Store':
+      return 4;      
+    case 'screen_Home_Store_Product':
       return 4;
     case 'screen_Home_Files':
       return 5;
@@ -71,11 +78,31 @@ String getSelectedDate() {
   }
 }
 
+// Obtener el día seleccionado en una pantalla específica (ejemplo: tareas)
+StoreElement? getSelectedIdStore() {
+  final additionalData = currentScreenUA.value.additionalData;
+  if (additionalData != null && additionalData.containsKey('Store')) {
+    return additionalData['Store'];
+  } else {
+    return null;
+  }
+}
+
 // Ejemplo de actualización de contexto para tareas
 void updateTaskScreen(String screen, String selectedDate) {
   onScreenChange(
     screen,
     additionalData: {'selectedDate': selectedDate},
+  );
+}
+
+// Ejemplo de actualización de contexto para tareas
+void updateProductScreen(String screen, StoreElement store) {
+  print('onScreenChange-screenName-$screen');
+  print('onScreenChange-additionalData-$store');
+  onScreenChange(
+    screen,
+    additionalData: {'Store': store},
   );
 }
 

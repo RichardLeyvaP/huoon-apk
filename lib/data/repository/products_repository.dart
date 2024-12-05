@@ -77,6 +77,33 @@ class ProductsRepository {
     print('si estoy devolviendo esto:1-${response}');
   }
 
+
+//metodo para agregar una tarea
+  Future<dynamic> updateProductRepository(ProductElement product) async {
+    final endpoint = '${Env.apiEndpoint}/person-home-warehouse-product';
+    final body = {
+      'home_id': 1,
+      'warehouse_id': product.warehouseId,
+      'status_id': product.statusId,
+      'category_id': product.categoryId,
+      'name': product.productName,
+      'unit_price': product.unitPrice,
+      'quantity': product.quantity,
+      'total_price': multiplyAndConvert(product.quantity!, product.unitPrice!), //(int intValue, String stringValue)
+      'purchase_date': product.purchaseDate,
+      'purchase_place': product.purchasePlace,
+      'expiration_date': product.expirationDate?.toLocal().toIso8601String().split('T')[0], // Solo la fecha
+      'brand': product.brand,
+      'additional_notes': product.additionalNotes,
+      'image': product.image,
+    };
+    // Llama al servicio que maneja la API de autenticación para login
+    final response = await authService.post(endpoint, body: body);
+
+    print('si estoy devolviendo esto:1-${response}');
+  }
+
+
   Future<dynamic> getCategoriesPriority() async {
     print('dando click en la getProduct');
     final endpoint = '${Env.apiEndpoint}/productcategory-productstatus-apk';

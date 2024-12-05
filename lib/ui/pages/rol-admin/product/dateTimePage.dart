@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:huoon/data/models/products/product_model.dart';
 import 'package:huoon/domain/blocs/products_bloc/products_service.dart';
+import 'package:huoon/domain/blocs/products_bloc/products_signal.dart';
 import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -21,34 +22,59 @@ class _DateTimePageState extends State<DateTimePage> {
 
   static final kFirstDay = DateTime(2020, 1, 1);
   static final kLastDay = DateTime(2030, 12, 31);
+  String tittle = 'Nuevo Producto';
 
   // Formato completo con fecha y hora, imprime por separado
   String _formatDateTime(DateTime date) {
     String formattedDate = DateFormat('yyyy-MM-dd').format(date);
-    print('Fecha seleccionada: $formattedDate'); // Imprimir solo la fecha
-    return DateFormat('yyyy-MM-dd').format(date);
+   // print('Fecha seleccionada: $formattedDate'); // Imprimir solo la fecha
+    return formattedDate;
   }
 
   int selectedLevel = 0; // Para seleccionar el nivel
   Color colorBotoom = const Color.fromARGB(255, 61, 189, 93);
   Color colorBotoomSel = const Color.fromARGB(255, 199, 64, 59);
+
+  @override
+  void initState() {
+    super.initState();
+    // Fechas predeterminadas
+
+     if (isUpdateProductSignal.value == true) {
+      tittle = 'Modificar Producto';
+      if (productElementSignal.value != null) {
+        DateTime initialStartDate = DateTime.parse(productElementSignal.value!.purchaseDate!);
+    DateTime initialEndDate = productElementSignal.value!.expirationDate!;
+    
+    // Inicializa el rango seleccionado
+    _selectedDateRange = DateTimeRange(start: initialStartDate, end: initialEndDate);
+
+    // Fija el día enfocado en el calendario
+    _focusedDay = initialStartDate;
+
+    print('Rango inicial: ${_selectedDateRange!.start} - ${_selectedDateRange!.end}');
+      }
+    }
+    
+  }
+
   @override
   Widget build(BuildContext context) {
+   
     return Scaffold(
       appBar: AppBar(
-        title: Text('Fecha'),
+        title: Text(tittle),
       ),
       floatingActionButton: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.only(bottom: 60.0), // Ajusta el valor a tu necesidad
+          padding: const EdgeInsets.only(bottom: 60.0),
           child: FloatingActionButton(
             onPressed: () {},
-            child: Icon(MdiIcons.lightbulbQuestionOutline), // Aquí defines el ícono
+            child: Icon(MdiIcons.lightbulbQuestionOutline),
           ),
         ),
       ),
-      body: // Segunda Página
-          Padding(
+      body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
@@ -58,7 +84,7 @@ class _DateTimePageState extends State<DateTimePage> {
               lastDay: kLastDay,
               focusedDay: _focusedDay,
               calendarFormat: _calendarFormat,
-              rangeSelectionMode: RangeSelectionMode.toggledOn, // Activar selección de rango
+              rangeSelectionMode: RangeSelectionMode.toggledOn,
               selectedDayPredicate: (day) {
                 return _selectedDateRange != null &&
                     (isSameDay(_selectedDateRange!.start, day) || isSameDay(_selectedDateRange!.end, day));
@@ -66,42 +92,38 @@ class _DateTimePageState extends State<DateTimePage> {
               rangeStartDay: _selectedDateRange?.start,
               rangeEndDay: _selectedDateRange?.end,
               onRangeSelected: (start, end, focusedDay) async {
-                // Resetear horas cuando cambia el rango
                 setState(() {
                   _selectedDateRange = DateTimeRange(start: start!, end: end ?? start);
                   _focusedDay = focusedDay;
                 });
-                print('selcct dataHora-zzzzz');
-                print('selcct dataHora-zzzzz-start:$start');
-                print('selcct dataHora-zzzzz-end:$end');
+               // print('selcct dataHora-zzzzz-start:$start');
+              //  print('selcct dataHora-zzzzz-end:$end');
               },
               onPageChanged: (focusedDay) {
                 _focusedDay = focusedDay;
               },
             ),
-            SizedBox(
-              height: 20,
-            ),
+            SizedBox(height: 20),
             Container(
               height: 80,
               width: double.infinity,
               decoration: BoxDecoration(
-                color: Colors.white, // Color de fondo del contenedor
-                borderRadius: BorderRadius.circular(10), // Esquinas redondeadas
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
                 border: Border.all(
                   color: selectedLevel == 2
                       ? colorBotoomSel.withOpacity(0.8)
-                      : colorBotoom.withOpacity(0.4), // Color del borde
-                  width: 2.0, // Grosor del borde
+                      : colorBotoom.withOpacity(0.4),
+                  width: 2.0,
                 ),
                 boxShadow: [
                   BoxShadow(
                     color: selectedLevel == 2
                         ? colorBotoomSel.withOpacity(0.4)
-                        : colorBotoom.withOpacity(0.4), // Sombra roja
-                    spreadRadius: 0, // Asegura que la sombra esté en el borde
-                    blurRadius: 10, // Difumina la sombra
-                    offset: Offset(0, 0), // Posiciona la sombra en las 4 partes
+                        : colorBotoom.withOpacity(0.4),
+                    spreadRadius: 0,
+                    blurRadius: 10,
+                    offset: Offset(0, 0),
                   ),
                 ],
               ),
@@ -113,29 +135,27 @@ class _DateTimePageState extends State<DateTimePage> {
                 ),
               ),
             ),
-            SizedBox(
-              height: 20,
-            ),
+            SizedBox(height: 20),
             Container(
               height: 80,
               width: double.infinity,
               decoration: BoxDecoration(
-                color: Colors.white, // Color de fondo del contenedor
-                borderRadius: BorderRadius.circular(10), // Esquinas redondeadas
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
                 border: Border.all(
                   color: selectedLevel == 2
                       ? colorBotoomSel.withOpacity(0.8)
-                      : colorBotoom.withOpacity(0.4), // Color del borde
-                  width: 2.0, // Grosor del borde
+                      : colorBotoom.withOpacity(0.4),
+                  width: 2.0,
                 ),
                 boxShadow: [
                   BoxShadow(
                     color: selectedLevel == 2
                         ? colorBotoomSel.withOpacity(0.4)
-                        : colorBotoom.withOpacity(0.4), // Sombra roja
-                    spreadRadius: 0, // Asegura que la sombra esté en el borde
-                    blurRadius: 10, // Difumina la sombra
-                    offset: Offset(0, 0), // Posiciona la sombra en las 4 partes
+                        : colorBotoom.withOpacity(0.4),
+                    spreadRadius: 0,
+                    blurRadius: 10,
+                    offset: Offset(0, 0),
                   ),
                 ],
               ),
@@ -168,7 +188,7 @@ class _DateTimePageState extends State<DateTimePage> {
                       _onSubmitIncomple();
                     }
                   },
-                  child: Text("Insertar Producto"),
+                  child: Text(tittle),
                 ),
               ],
             ),
@@ -181,64 +201,56 @@ class _DateTimePageState extends State<DateTimePage> {
   void _onSubmitIncomple() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Escoja la fecha por favor'),
-
-        duration: Duration(seconds: 2), // Duración del SnackBar
+        content: Text(
+          'Escoja la fecha por favor',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.red,
+        duration: Duration(seconds: 2),
         action: SnackBarAction(
           label: 'Aceptar',
-          onPressed: () {
-            // Acción a realizar si se presiona el botón
-          },
+          onPressed: () {},
         ),
       ),
     );
   }
 
-  void _onSubmit() {
-    // Cierra el teclado si está abierto
+  Future<void> _onSubmit() async {
     FocusScope.of(context).unfocus();
-    // Enviar el evento al BLoC
     String _dataStart = _formatDateTime(_selectedDateRange!.start);
     String _dataEnd = _formatDateTime(_selectedDateRange!.end);
-    print('object-dataStart:$_dataStart');
-    print('object-dataEnd:$_dataEnd');
-    //todo ahora esta fijo
     final productElement = ProductElement(
       purchaseDate: _dataStart,
       expirationDate: _selectedDateRange!.end,
-      // image: 'products/1.jpg',
     );
-// Dispara el evento para insertar el producto
     updateProductData(productElement);
-    submitProduct();
+    String msj = isUpdateProductSignal.value == true
+        ? 'Se está modificando el producto...'
+        : 'Se está creando el producto...';
 
-    // Navegar a la siguiente página
+    if (isUpdateProductSignal.value == true) {
+      print('Datos del productos a modificar-${productElementSignal.value}');
+      updateProduct();
+    } else {
+      print('Datos del productos a insertar-${productElementSignal.value}');
+      await submitProduct();
+    }
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Se está creando el producto...'),
-
-        duration: Duration(seconds: 2), // Duración del SnackBar
-        action: SnackBarAction(
-          label: 'Aceptar',
-          onPressed: () {
-            // Acción a realizar si se presiona el botón
-          },
-        ),
+        content: Text(msj),
+        duration: Duration(seconds: 2),
+        action: SnackBarAction(label: 'Aceptar', onPressed: () {}),
       ),
     );
-//llamar que actualice las tareas al dia seleccionado
-//  String date = '2024-09-09'; // La fecha puede ser dinámica
-    // context.read<TasksBloc>().add(TasksRequested('2024-09-16')); // Pasar la fecha al evento
-    Future.delayed(const Duration(seconds: 2), () {
-      GoRouter.of(context).go(
-        '/HomePrincipal',
-        extra: {
-          'name': '',
-          'email': '',
-          'avatarUrl': '',
-        },
-      );
-    });
+
+    GoRouter.of(context).go(
+      '/HomePrincipal',
+      extra: {
+        'name': '',
+        'email': '',
+        'avatarUrl': '',
+      },
+    );
   }
 }

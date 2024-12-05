@@ -19,19 +19,27 @@ class StorePage extends StatefulWidget {
   _StorePageState createState() => _StorePageState();
 }
 
+
 class _StorePageState extends State<StorePage> {
   bool _showProductDetail = false;
   StoreElement? _selectedStore;
+  StoreElement? initialIdStore ;
 
   @override
   void initState() {
     super.initState();
-    //context.read<ProductsBloc>().add(const ProductsRequested()); //cargo los productos
-    // context.read<StoreBloc>().add(const StoreRequested()); //cargo los almacenes
-
+    isUpdateProductSignal.value = false;
     requestStore();
     WidgetsBinding.instance.addPostFrameCallback((_) async {});
+     _selectedStore = getSelectedIdStore();
+     if(_selectedStore != null)
+     {
+      _showProductDetail = true;
+       loadProduct(1, _selectedStore!.warehouse_id!);
+     }
+    print('Devolviendo el id del store-${initialIdStore}');
   }
+
 
   // Función para cambiar a la vista de detalles del producto
   void _showProductDetails(StoreElement product) {
@@ -49,6 +57,8 @@ class _StorePageState extends State<StorePage> {
     });
   }
 
+  
+
   @override
   Widget build(BuildContext context) {
     if (_selectedStore == null) {
@@ -56,7 +66,7 @@ class _StorePageState extends State<StorePage> {
       onScreenChange('screen_Home_Store');
     } else {
       //estoy en productos
-      onScreenChange('screen_Home_Store');
+      updateProductScreen('screen_Home_Store_Product', _selectedStore!); //screen_Home_Tasks
     }
     print('Entrando en página de Almacenes');
     return Scaffold(
@@ -90,7 +100,7 @@ class _StorePageState extends State<StorePage> {
       ),
       body: Stack(
         children: [
-          _showProductDetail && _selectedStore != null
+          _showProductDetail && _selectedStore != null 
               ? _buildProductListView(_selectedStore!) //aqui carga los productos
 
               : _buildStoreListView(), //aqui carga los almacenes
@@ -164,8 +174,7 @@ class _StorePageState extends State<StorePage> {
                     children: [
                       Column(
                         children: products.map((product) {
-                          return buildProductContainer(product.id!, product.productName.toString(),
-                              product.image.toString(), product.totalPrice.toString(), product.quantity.toString());
+                          return buildProductContainer(product);
                         }).toList(),
                       ),
                     ],
@@ -236,70 +245,8 @@ class _StorePageState extends State<StorePage> {
   }
 }
 
-// Widget buildProductContainer(String name, String imageUrl, String price, String quantity) {
-//   return Card(
-//     margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 4),
-//     shape: RoundedRectangleBorder(
-//       borderRadius: BorderRadius.circular(15),
-//     ),
-//     elevation: 5, // Sombra de la tarjeta para hacerla más llamativa
-//     child: Padding(
-//       padding: const EdgeInsets.all(6.0),
-//       child: Row(
-//         children: [
-//           // Imagen del producto en un avatar circular
-//           CircleAvatar(
-//             backgroundImage: imageUrl.isNotEmpty
-//                 ? NetworkImage(imageUrl)
-//                 : AssetImage('assets/default_product_image.png') as ImageProvider,
-//             radius: 25,
-//           ),
-//           const SizedBox(width: 10),
-//           // Información del producto
-//           Expanded(
-//             child: Column(
-//               crossAxisAlignment: CrossAxisAlignment.start,
-//               children: [
-//                 // Nombre y precio del producto
-//                 Row(
-//                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                   children: [
-//                     Text(
-//                       name,
-//                       style: TextStyle(
-//                         fontSize: 14,
-//                         fontWeight: FontWeight.bold,
-//                         color: Colors.blueGrey[800],
-//                       ),
-//                     ),
-//                     Text(
-//                       '\$$price',
-//                       style: TextStyle(
-//                         fontSize: 16,
-//                         fontWeight: FontWeight.bold,
-//                         color: Colors.green,
-//                       ),
-//                     ),
-//                   ],
-//                 ),
-//                 // Cantidad del producto
-//                 Text(
-//                   'Cantidad: $quantity',
-//                   style: TextStyle(
-//                     fontSize: 12,
-//                     color: Colors.grey[600],
-//                   ),
-//                 ),
-//               ],
-//             ),
-//           ),
-//         ],
-//       ),
-//     ),
-//   );
-// }
 
-Widget buildProductContainer(int id, String name, String imageUrl, String price, String quantity) {
+Widget buildProductContainer(ProductElement product) {
   bool isOptionsVisible = false; // Controla la visibilidad de las opciones
 
   return StatefulBuilder(
@@ -327,8 +274,8 @@ Widget buildProductContainer(int id, String name, String imageUrl, String price,
                     children: [
                       // Imagen del producto
                       CircleAvatar(
-                        backgroundImage: imageUrl.isNotEmpty
-                            ? NetworkImage(imageUrl)
+                        backgroundImage: product.image!.isNotEmpty
+                            ? NetworkImage(product.image!)
                             : AssetImage('assets/default_product_image.png') as ImageProvider,
                         radius: 25,
                       ),
@@ -342,7 +289,7 @@ Widget buildProductContainer(int id, String name, String imageUrl, String price,
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  name,
+                                  product.productName!.toString(),
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.bold,
@@ -350,7 +297,7 @@ Widget buildProductContainer(int id, String name, String imageUrl, String price,
                                   ),
                                 ),
                                 Text(
-                                  '\$$price',
+                                  '\$${product.unitPrice!.toString()}',
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
@@ -360,7 +307,7 @@ Widget buildProductContainer(int id, String name, String imageUrl, String price,
                               ],
                             ),
                             Text(
-                              'Cantidad: $quantity',
+                              'Cantidad: ${product.quantity}',
                               style: TextStyle(
                                 fontSize: 12,
                                 color: Colors.grey[600],
@@ -390,7 +337,13 @@ Widget buildProductContainer(int id, String name, String imageUrl, String price,
                               label: "Editar",
                               color: Colors.blue,
                               onPressed: () {
-                                print("Editar producto: $name");
+                                isUpdateProductSignal.value = true;
+                                updateProductData(product);
+                                print("Editar producto: ${product}");
+                                 GoRouter.of(context).go(
+      //mando a la vista de crear el producto
+      '/ProductCreation',
+    );
                                 setState(() {
                                   isOptionsVisible = false;
                                 });
@@ -400,12 +353,11 @@ Widget buildProductContainer(int id, String name, String imageUrl, String price,
                               icon: Icons.delete,
                               label: "Eliminar",
                               color: Colors.red,
-                              onPressed: () {
-                                deleteProduct(id);
-                                print("Eliminar producto: $name");
-                                setState(() {
-                                  isOptionsVisible = false;
-                                });
+                              onPressed: () async {
+                               await deleteProduct(product.id!);
+                               loadProduct(1, product.warehouseId!);
+                                print("Eliminar producto: ${product}");
+                               
                               },
                             ),
                             _buildOptionButton(

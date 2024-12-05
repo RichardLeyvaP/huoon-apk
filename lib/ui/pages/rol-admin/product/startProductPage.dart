@@ -4,6 +4,7 @@ import 'package:huoon/data/models/products/product_model.dart';
 import 'package:huoon/domain/blocs/product_cat_state/bloc/product_cat_state_service.dart';
 import 'package:huoon/domain/blocs/product_cat_state/bloc/product_cat_state_signal.dart';
 import 'package:huoon/domain/blocs/products_bloc/products_service.dart';
+import 'package:huoon/domain/blocs/products_bloc/products_signal.dart';
 import 'package:huoon/domain/modelos/category_model.dart';
 import 'package:huoon/ui/Components/state_widget.dart';
 import 'package:huoon/ui/pages/rol-admin/Task/selectDays/utils.dart';
@@ -29,9 +30,18 @@ class _StartProductPageState extends State<StartProductPage> {
 
   final TextEditingController priceController = TextEditingController();
   final int initialQuantity = 1;
+   String tittle = 'Nuevo Producto';
 
   @override
   Widget build(BuildContext context) {
+     if (isUpdateProductSignal.value == true) {
+      tittle = 'Modificar Producto';
+      if (productElementSignal.value != null) {
+        _titleController.text = productElementSignal.value!.productName!;
+        _descriptionController.text = productElementSignal.value!.additionalNotes!;
+         _directionController.text = productElementSignal.value!.purchasePlace!;
+      }
+    }
     return Scaffold(
       resizeToAvoidBottomInset: true, // Esto permite que el teclado empuje el contenido
       appBar: AppBar(
@@ -198,9 +208,6 @@ class _StartProductPageState extends State<StartProductPage> {
       FocusScope.of(context).unfocus();
       // Enviar el evento al BLoC
 
-      print('object-test-_titleController.text:${_titleController.text}');
-      print(
-          'object-test-_descriptionController.text:${emptyTextField(_descriptionController.text) ? 'No hay comentario' : _descriptionController.text}');
       final productElement = ProductElement(
           productName: _titleController.text, //si emptyTextField = true es que esta vacio
           additionalNotes:
@@ -230,14 +237,9 @@ class _StartProductPageState extends State<StartProductPage> {
       builder: (context) {
         if (statusSignalPCS.watch(context) != null) {
           bool selectMultiple = false;
-          /*    if (widget.id != 0) {
-            //es modificar
-          } else //es insertar que cargue el primero por defecto
-          {
-            if (statusSignalPCS.value!.isNotEmpty) {
-              onTaskStateSelected(statusSignalPCS.value!.first.id);
-            }
-          }*/
+              if (isUpdateProductSignal.value == true) { //es modificar           
+            selectStatus(productElementSignal.value!.statusId!);
+          } 
           return StatusWidget(
             status: statusSignalPCS.value!,
             fitTextContainer: false,
@@ -248,7 +250,7 @@ class _StartProductPageState extends State<StartProductPage> {
             onSelectionChanged: (List<Status> selectedStatuses) {
               FocusScope.of(context).unfocus();
               // Aquí manejas los estados seleccionados
-              print('Estados seleccionados: ${selectedStatuses.map((e) => e.id).join(', ')}');
+           //   print('Estados seleccionados: ${selectedStatuses.map((e) => e.id).join(', ')}');
               selectedStatus = selectedStatuses.isNotEmpty ? selectedStatuses.first.id : 0;
               print('Estados seleccionados: $selectedStatus');
 
