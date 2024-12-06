@@ -29,16 +29,28 @@ class _StorePageState extends State<StorePage> {
   void initState() {
     super.initState();
     isUpdateProductSignal.value = false;
-    requestStore();
+    
+    loadCategoriesProdAndStore();
     WidgetsBinding.instance.addPostFrameCallback((_) async {});
      _selectedStore = getSelectedIdStore();
      if(_selectedStore != null)
      {
       _showProductDetail = true;
-       loadProduct(1, _selectedStore!.warehouse_id!);
+     loadInitProduct();
      }
     print('Devolviendo el id del store-${initialIdStore}');
   }
+
+  loadCategoriesProdAndStore()
+async {
+  await requestStore();
+   await loadCategories();
+}
+
+  loadInitProduct()
+async {
+  await  loadProduct(1, _selectedStore!.warehouse_id!);
+}
 
 
   // Función para cambiar a la vista de detalles del producto
@@ -140,6 +152,7 @@ class _StorePageState extends State<StorePage> {
     final productElement = ProductElement(warehouseId: selectedStore.warehouse_id);
     updateProductData(productElement);
     print('_buildProductListView-aqui seleccionando el almacen:${selectedStore.title}');
+    
     return Column(
       children: [
         Flexible(
@@ -237,7 +250,7 @@ class _StorePageState extends State<StorePage> {
   }
 
   Future<void> addProduct() async {
-    await loadCategories();
+   // await loadCategories();
     GoRouter.of(context).go(
       //mando a la vista de crear el producto
       '/ProductCreation',
@@ -336,7 +349,8 @@ Widget buildProductContainer(ProductElement product) {
                               icon: Icons.edit,
                               label: "Editar",
                               color: Colors.blue,
-                              onPressed: () {
+                              onPressed: () async {
+                              //  await  loadCategories();
                                 isUpdateProductSignal.value = true;
                                 updateProductData(product);
                                 print("Editar producto: ${product}");
@@ -355,7 +369,7 @@ Widget buildProductContainer(ProductElement product) {
                               color: Colors.red,
                               onPressed: () async {
                                await deleteProduct(product.id!);
-                               loadProduct(1, product.warehouseId!);
+                              await loadProduct(1, product.warehouseId!);
                                 print("Eliminar producto: ${product}");
                                
                               },
@@ -535,7 +549,7 @@ Widget buildStoreContainer(StoreElement store) {
                                 color: Colors.red,
                                 onPressed: () async {
                                   await deleteStore(store.id!);
-                                  requestStore();
+                                 await requestStore();
                                 },
                               ),
                             ),

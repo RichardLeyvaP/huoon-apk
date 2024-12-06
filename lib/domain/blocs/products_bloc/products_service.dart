@@ -21,6 +21,7 @@ Future<void> loadProduct(int homeId, int warehouseId) async {
     } else if (result is Product) {
       //hay producto
       productSignal.value = result;
+      print('resultado al devolver los producto-$result');
     }
   } catch (error) {
     productErrorSignal.value = error.toString();
@@ -31,22 +32,32 @@ Future<void> loadProduct(int homeId, int warehouseId) async {
 
 // Métodos para actualizar datos del producto
 void updateProductData(ProductElement updatedElement) {
-  productElementSignal.value = productElementSignal.value!.copyWith(
-    warehouseId: updatedElement.warehouseId ?? productElementSignal.value!.warehouseId,
-    productName: updatedElement.productName ?? productElementSignal.value!.productName,
-    additionalNotes: updatedElement.additionalNotes ?? productElementSignal.value!.additionalNotes,
-    categoryId: updatedElement.categoryId ?? productElementSignal.value!.categoryId,
-    statusId: updatedElement.statusId ?? productElementSignal.value!.statusId,
-    unitPrice: updatedElement.unitPrice ?? productElementSignal.value!.unitPrice,
-    purchaseDate: updatedElement.purchaseDate ?? productElementSignal.value!.purchaseDate,
-    expirationDate: updatedElement.expirationDate ?? productElementSignal.value!.expirationDate,
-    purchasePlace: updatedElement.purchasePlace ?? productElementSignal.value!.purchasePlace,
-    brand: updatedElement.brand ?? productElementSignal.value!.brand,
-    count: updatedElement.count ?? productElementSignal.value!.count,
-    quantity: updatedElement.quantity ?? productElementSignal.value!.quantity,
-    image: updatedElement.image ?? productElementSignal.value!.image,
-  );
+
+  if (productElementSignal.value == null) {
+    // Si es null, asigna el valor directamente
+    productElementSignal.value = updatedElement;
+  } else {
+    // Usa copyWith para actualizar solo los campos necesarios
+    productElementSignal.value = productElementSignal.value!.copyWith(      
+      productId: updatedElement.productId ?? productElementSignal.value!.productId,
+      id: updatedElement.id ?? productElementSignal.value!.id,
+      warehouseId: updatedElement.warehouseId ?? productElementSignal.value!.warehouseId,
+      productName: updatedElement.productName ?? productElementSignal.value!.productName,
+      additionalNotes: updatedElement.additionalNotes ?? productElementSignal.value!.additionalNotes,
+      categoryId: updatedElement.categoryId ?? productElementSignal.value!.categoryId,
+      statusId: updatedElement.statusId ?? productElementSignal.value!.statusId,
+      unitPrice: updatedElement.unitPrice ?? productElementSignal.value!.unitPrice,
+      purchaseDate: updatedElement.purchaseDate ?? productElementSignal.value!.purchaseDate,
+      expirationDate: updatedElement.expirationDate ?? productElementSignal.value!.expirationDate,
+      purchasePlace: updatedElement.purchasePlace ?? productElementSignal.value!.purchasePlace,
+      brand: updatedElement.brand ?? productElementSignal.value!.brand,
+      count: updatedElement.count ?? productElementSignal.value!.count,
+      quantity: updatedElement.quantity ?? productElementSignal.value!.quantity,
+      image: updatedElement.image ?? productElementSignal.value!.image,
+    );
+  }
 }
+
 
 // Métodos para aumentar o disminuir la cantidad
 void increaseQuantity() {

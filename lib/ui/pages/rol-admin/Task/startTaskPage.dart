@@ -330,6 +330,13 @@ class _StartTaskPageState extends State<StartTaskPage> {
       updateTaskCategoryId(selectedCategoryIdCSP.value!);
       updateTaskPriority(selectedPriorityIdCSP.value!);
       updateTaskStatusId(selectStateTaskCSP.value!);
+      print('Primera pagina de tareas-_titleController-${_titleController.text}'); 
+      print('Primera pagina de tareas-_descriptionController-${_descriptionController.text}'); 
+      print('Primera pagina de tareas-selectedCategoryIdCSP-${selectedCategoryIdCSP.value!}'); 
+      print('Primera pagina de tareas-selectedPriorityIdCSP-${selectedPriorityIdCSP.value!}'); 
+      print('Primera pagina de tareas-selectStateTaskCSP-${selectStateTaskCSP.value!}'); 
+
+
 
       // Navegar a la siguiente página
       widget.pageController.nextPage(

@@ -3,15 +3,15 @@ import 'dart:io';
 //import 'package:audio_note_flutter/injector.dart';
 //import 'package:audio_note_flutter/services/firebase.service.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_sound/public/flutter_sound_player.dart';
-import 'package:flutter_sound/public/flutter_sound_recorder.dart';
+// import 'package:flutter_sound/public/flutter_sound_player.dart';
+// import 'package:flutter_sound/public/flutter_sound_recorder.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:signals/signals_flutter.dart';
 
-//todo ****** VARIABLES ******
-final recorder = signal<FlutterSoundRecorder>(FlutterSoundRecorder());
-final player = signal<FlutterSoundPlayer>(FlutterSoundPlayer());
+// //todo ****** VARIABLES ******
+// final recorder = signal<FlutterSoundRecorder>(FlutterSoundRecorder());
+// final player = signal<FlutterSoundPlayer>(FlutterSoundPlayer());
 final messageController = signal<TextEditingController>(TextEditingController());
 final isRecording = signal(false);
 final isPlaying = signal(false);
@@ -24,13 +24,13 @@ final messages = signal<List<Map<String, Object>>>([]);
 // Inicializar grabadora y reproductor
 Future<void> initializeRecorder() async {
   await Permission.microphone.request();
-  await recorder.value.openRecorder();
-  await player.value.openPlayer();
+  // await recorder.value.openRecorder();
+  // await player.value.openPlayer();
 }
 
 Future<void> audioDispose() async {
-  await recorder.value.closeRecorder();
-  await player.value.closePlayer();
+  // await recorder.value.closeRecorder();
+  // await player.value.closePlayer();
 }
 
 Future<String> getNextRecordingFileName() async {
@@ -47,7 +47,7 @@ Future<String> getNextRecordingFileName() async {
 Future<void> startRecording() async {
   try {
     currentFilePath.value = await getNextRecordingFileName();
-    await recorder.value.startRecorder(toFile: currentFilePath.value);
+    // await recorder.value.startRecorder(toFile: currentFilePath.value);
 
     isRecording.value = true;
   } catch (e) {
@@ -56,7 +56,7 @@ Future<void> startRecording() async {
 }
 
 Future<void> stopRecording() async {
-  await recorder.value.stopRecorder();
+  // await recorder.value.stopRecorder();
   if (currentFilePath.value != null) {
     final recordingInfo = {
       'path': currentFilePath.value.toString(),
@@ -74,18 +74,18 @@ Future<void> stopRecording() async {
 
 Future<void> togglePlaying(String filePath, int index) async {
   if (isPlaying.value) {
-    await player.value.stopPlayer();
+    // await player.value.stopPlayer();
 
     isPlaying.value = false;
     playingIndex.value = null;
   } else {
-    await player.value.startPlayer(
-      fromURI: filePath,
-      whenFinished: () {
-        isPlaying.value = false;
-        playingIndex.value = null;
-      },
-    );
+    // await player.value.startPlayer(
+    //   fromURI: filePath,
+    //   whenFinished: () {
+    //     isPlaying.value = false;
+    //     playingIndex.value = null;
+    //   },
+    // );
 
     isPlaying.value = true;
     playingIndex.value = index;

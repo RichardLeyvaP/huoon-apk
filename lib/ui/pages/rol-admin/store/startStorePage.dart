@@ -225,7 +225,7 @@ class _StartStorePageState extends State<StartStorePage> {
         //ES QUE ES PARA MODIFICAR
         final storeElement = StoreElement(
             warehouse_id: currentStoreElementST.value!.warehouse_id,
-            id: currentStoreElementST.value!.id,
+            id: currentStoreElementST.value!.id,            
             status: selectedStatus,
             title: _titleController.text, //si emptyTextField = true es que esta vacio
             description:

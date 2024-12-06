@@ -48,72 +48,75 @@ class FinancePage extends StatelessWidget {
             SizedBox(height: 20),
 
             // Gráficos
-            Row(
-              children: [
-                Expanded(
-                  flex: 2,
-                  child: AspectRatio(
-                    aspectRatio: 1,
-                    child: Card(
-                      elevation: 4,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: PieChart(
-                          PieChartData(
-                            sections: _getPieChartSections(),
-                            borderData: FlBorderData(show: false),
-                            centerSpaceRadius: 40,
-                            sectionsSpace: 4,
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: AspectRatio(
+                      aspectRatio: 1,
+                      child: Card(
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: PieChart(
+                            PieChartData(
+                              sections: _getPieChartSections(),
+                              borderData: FlBorderData(show: false),
+                              centerSpaceRadius: 40,
+                              sectionsSpace: 4,
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                Expanded(
-                  flex: 3,
-                  child: AspectRatio(
-                    aspectRatio: 1.5,
-                    child: Card(
-                      elevation: 4,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: BarChart(
-                          BarChartData(
-                            barGroups: _getBarChartGroups(),
-                            titlesData: FlTitlesData(
-                              leftTitles: AxisTitles(
-                                sideTitles: SideTitles(showTitles: true),
-                              ),
-                              bottomTitles: AxisTitles(
-                                sideTitles: SideTitles(
-                                  showTitles: true,
-                                  getTitlesWidget: (value, meta) {
-                                    switch (value.toInt()) {
-                                      case 0:
-                                        return Text('Ene');
-                                      case 1:
-                                        return Text('Feb');
-                                      case 2:
-                                        return Text('Mar');
-                                      default:
-                                        return Text('');
-                                    }
-                                  },
+                  Expanded(
+                    flex: 3,
+                    child: AspectRatio(
+                      aspectRatio: 1.5,
+                      child: Card(
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: BarChart(
+                            BarChartData(
+                              barGroups: _getBarChartGroups(),
+                              titlesData: FlTitlesData(
+                                leftTitles: AxisTitles(
+                                  sideTitles: SideTitles(showTitles: true),
+                                ),
+                                bottomTitles: AxisTitles(
+                                  sideTitles: SideTitles(
+                                    showTitles: true,
+                                    getTitlesWidget: (value, meta) {
+                                      switch (value.toInt()) {
+                                        case 0:
+                                          return Text('Ene');
+                                        case 1:
+                                          return Text('Feb');
+                                        case 2:
+                                          return Text('Mar');
+                                        default:
+                                          return Text('');
+                                      }
+                                    },
+                                  ),
                                 ),
                               ),
+                              borderData: FlBorderData(show: false),
+                              gridData: FlGridData(show: false),
                             ),
-                            borderData: FlBorderData(show: false),
-                            gridData: FlGridData(show: false),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             SizedBox(height: 20),
 

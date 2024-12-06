@@ -136,7 +136,13 @@ class TasksRepository {
   Future<dynamic> updateTasksRepository(TaskElement task) async {
     final endpoint = '${Env.apiEndpoint}/task-update';
     //  const endpoint = '${Env.apiEndpoint}/task-test';
-    List<Map<String, dynamic>> peopleSelected = getTaskFamiliesFromSelectedPersons(selecteFamilyCSP.value!);
+    List<Map<String, dynamic>> peopleSelected = [];
+    if(selecteFamilyCSP.value != null)
+  {
+     peopleSelected = getTaskFamiliesFromSelectedPersons(selecteFamilyCSP.value!);
+
+  }
+    
     final body = {
       'id': task.id,
       'title': task.title,

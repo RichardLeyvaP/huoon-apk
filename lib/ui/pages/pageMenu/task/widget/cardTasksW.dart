@@ -240,51 +240,49 @@ class _CardTasksState extends State<CardTasks> {
           // Opciones superpuestas
           if (isOptionsVisible)
             Positioned.fill(
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+              child: Padding(
+                padding: const EdgeInsets.only(top:  18.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        _buildOptionButton(
-                          icon: Icons.edit,
-                          label: "Editar",
-                          color: const Color.fromARGB(255, 16, 79, 131),
-                          onPressed: () {
-                            handleNavigation();
-                          },
-                        ),
-                        _buildOptionButton(
-                          icon: Icons.delete,
-                          label: "Eliminar",
-                          color: Colors.red,
-                          onPressed: () async {
-                            await deleteTasks(widget.idTask);
-                            // Obtén la fecha seleccionada inicial desde getSelectedDate
-                            String initialDateString = getSelectedDate();
-                            // carga las tareas
-                            fetchTasks(initialDateString);
-                            updateTaskScreen('screen_Home_Tasks', initialDateString); //screen_Home_Tasks
-                            // setState(() {
-                            //   // task-destroy por post
-                            //   isOptionsVisible = false;
-                            // });
-
-                            // Lógica de eliminación aquí
-                          },
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    IconButton(
-                      icon: const Icon(Icons.close, color: Colors.black),
+                    _buildOptionButton(
+                      icon: Icons.edit,
+                      label: "Editar",
+                      color: const Color.fromARGB(255, 16, 79, 131),
                       onPressed: () {
-                        setState(() {
-                          isOptionsVisible = false;
-                        });
+                        handleNavigation();
                       },
                     ),
+                    _buildOptionButton(
+                      icon: Icons.delete,
+                      label: "Eliminar",
+                      color: Colors.red,
+                      onPressed: () async {
+                        await deleteTasks(widget.idTask);
+                        // Obtén la fecha seleccionada inicial desde getSelectedDate
+                        String initialDateString = getSelectedDate();
+                        // carga las tareas
+                       await fetchTasks(initialDateString);
+                        updateTaskScreen('screen_Home_Tasks', initialDateString); //screen_Home_Tasks
+                        // setState(() {
+                        //   // task-destroy por post
+                        //   isOptionsVisible = false;
+                        // });
+                
+                        // Lógica de eliminación aquí
+                      },
+                    ),
+                    _buildOptionButton(
+                      icon: Icons.close,
+                      label: "Cerrar",
+                      color: Colors.black,
+                      onPressed: () {
+                         setState(() {
+                            isOptionsVisible = false;
+                          });
+                      },
+                    ),
+                      
                   ],
                 ),
               ),

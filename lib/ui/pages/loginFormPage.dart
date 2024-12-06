@@ -40,7 +40,7 @@ class _LoginFormPageState extends State<LoginFormPage> {
     );
   }
 
-  loginFuntion() {
+  loginFuntion() async {
     if (isLoadingLG.watch(context) == true) {
       // Muestra un mensaje de carga
       ScaffoldMessenger.of(context).showSnackBar(
@@ -71,7 +71,7 @@ class _LoginFormPageState extends State<LoginFormPage> {
       DateTime selectedDay = DateTime.now();
       //String date = '2024-09-09'; // La fecha puede ser dinámica
       String date = DateFormat('yyyy-MM-dd').format(selectedDay);
-      fetchTasks(date);
+     await fetchTasks(date);
       //llamar la stareas del día
       // context.read<TasksBloc>().add(TasksRequested(date)); // Pasar la fecha al evento
 

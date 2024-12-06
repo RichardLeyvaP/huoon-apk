@@ -42,11 +42,12 @@ class _StartProductPageState extends State<StartProductPage> {
          _directionController.text = productElementSignal.value!.purchasePlace!;
       }
     }
+    
     return Scaffold(
       resizeToAvoidBottomInset: true, // Esto permite que el teclado empuje el contenido
       appBar: AppBar(
         toolbarHeight: 70,
-        title: Text('Nuevo Producto'),
+        title: Text(tittle),
       ),
       floatingActionButton: SafeArea(
         child: Padding(
@@ -208,11 +209,14 @@ class _StartProductPageState extends State<StartProductPage> {
       FocusScope.of(context).unfocus();
       // Enviar el evento al BLoC
 
-      final productElement = ProductElement(
+      final productElement = ProductElement(        
+        productId: productElementSignal.value!.productId!,
+        id: productElementSignal.value!.id!,
+
           productName: _titleController.text, //si emptyTextField = true es que esta vacio
           additionalNotes:
               emptyTextField(_descriptionController.text) ? 'No hay comentario' : _descriptionController.text,
-          statusId: selectedStatusIdSignalPCS.value,
+          statusId: selectedStatus,
           purchasePlace: _directionController.text,
           image: 'image/default.jpg'
           // image: 'products/1.jpg',

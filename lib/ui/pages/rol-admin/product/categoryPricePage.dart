@@ -23,24 +23,49 @@ class _CategoryPricePageState extends State<CategoryPricePage> {
   Color colorBotoom = const Color.fromARGB(255, 61, 189, 93);
   Color colorBotoomSel = const Color.fromARGB(255, 199, 64, 59);
 
-  List<int> arrayCategory = [categoriesSignalPCS.value.first.id]; // Inicializamos la cantidad seleccionada
+  @override
+  void initState() {
+    super.initState();
+    if(categoriesSignalPCS.value.isEmpty || statusSignalPCS.value == null )
+{
+  loadInit();
+
+}
+else
+{
+  arrayCategory = [categoriesSignalPCS.value.first.id];
+ categoriesProductSelec = categoriesSignalPCS.value.first.id;
+
+}
+    
+  }
+loadInit()
+async {
+   await loadCategories();
+arrayCategory = [categoriesSignalPCS.value.first.id];
+ categoriesProductSelec = categoriesSignalPCS.value.first.id;
+}
+ 
+  List<int> arrayCategory = []; // Inicializamos la cantidad seleccionada
 
   final TextEditingController _priceController = TextEditingController();
   final int initialQuantity = 1;
   final TextEditingController _marcaController = TextEditingController();
 
   String tittle = 'Nuevo Producto';
-  int categoriesProductSelec = categoriesSignalPCS.value.first.id;
+  int categoriesProductSelec = 0;
 
   @override
   Widget build(BuildContext context) {
      if (isUpdateProductSignal.value == true) {
       tittle = 'Modificar Producto';
+      print('aui imprimiendo seleccategory1-${productElementSignal.value}');
       if (productElementSignal.value != null) {
+        print('aui imprimiendo seleccategory-${productElementSignal.value}');
         _marcaController.text = productElementSignal.value!.brand!;
         _priceController.text = productElementSignal.value!.unitPrice!;
         updateQuantity(productElementSignal.value!.quantity!);
-//
+
 selectCategory(productElementSignal.value!.categoryId!); 
             categoriesProductSelec = productElementSignal.value!.categoryId!;
             arrayCategory = [productElementSignal.value!.categoryId!];
@@ -104,7 +129,7 @@ selectCategory(productElementSignal.value!.categoryId!);
                 CategoryWidget(
                   categories: categoriesSignalPCS.value,
                   titleWidget: 'Categorías',
-                  selectedCategoryId: categoriesProductSelec,
+                  selectedCategoryId: selectedCategoryIdSignalPCS.value,
                   selectMultiple: false,
                   onSelectionChanged: (selectedCategories) {
                     // setState(() {
@@ -202,7 +227,7 @@ selectCategory(productElementSignal.value!.categoryId!);
     //todo ahora esta fijo
     final productElement = ProductElement(
       brand: emptyTextField(_marcaController.text) ? 'No hay Marca' : _marcaController.text,
-      categoryId: arrayCategory.first,
+      categoryId: selectedCategoryIdSignalPCS.value,
       unitPrice: emptyTextField(_priceController.text) ? '0' : _priceController.text,
       quantity: quantitySignal.value,
       image: 'products/1.jpg',

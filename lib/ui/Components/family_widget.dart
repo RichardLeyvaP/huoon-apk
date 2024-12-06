@@ -65,6 +65,7 @@ class _TaskpersonWidgetState extends State<TaskpersonWidget> {
         selected.add(widget.taskpersons[i]);
       }
     }
+    print('Primera pagina de tareas-revisando a los familiares-${selected.length}');
     widget.onSelectionChanged(selected, selectedRoles); // Pasamos los roles seleccionados
   }
 
@@ -266,6 +267,7 @@ class _TaskpersonWidgetState extends State<TaskpersonWidget> {
                     setState(() {
                       if (widget.selectMultiple) {
                         selectedPersons[index] = !selectedPersons[index];
+                        print('Primera pagina de tareas-revisando a los familiares-${selectedPersons[index]}');
                       } else {
                         selectedPersons = List<bool>.filled(selectedPersons.length, false);
                         selectedPersons[index] = true;

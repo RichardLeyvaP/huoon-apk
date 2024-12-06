@@ -39,6 +39,45 @@ class _SecondTaskPageState extends State<SecondTaskPage> {
     }).toList();
   }
 
+DateTime _focusedDay = DateTime.now();
+DateTimeRange? _selectedDateRange;
+TimeOfDay? _startTime;
+TimeOfDay? _endTime;
+
+ @override
+  void initState() {
+    super.initState();
+    // Fechas predeterminadas
+
+     if (widget.id != 0) {
+  DateTime initialStartDate = taskElementTA.value.startDate != null
+    ? DateTime.parse(taskElementTA.value.startDate!)
+    : DateTime.now();
+
+DateTime initialEndDate = taskElementTA.value.endDate != null
+    ? DateTime.parse(taskElementTA.value.endDate!)
+    : DateTime.now().add(Duration(days: 1)); // Un día más adelante
+
+
+  // Inicializa el rango seleccionado
+  _selectedDateRange = DateTimeRange(start: initialStartDate, end: initialEndDate);
+
+  // Fija el día enfocado en el calendario
+  _focusedDay = initialStartDate;
+
+  // Extrae la hora y los minutos directamente
+  _startTime = TimeOfDay(hour: initialStartDate.hour, minute: initialStartDate.minute);
+  _endTime = TimeOfDay(hour: initialEndDate.hour, minute: initialEndDate.minute);
+
+  print('Rango inicial: ${_selectedDateRange!.start} - ${_selectedDateRange!.end}');
+  print('Hora de inicio: $_startTime');
+  print('Hora de fin: $_endTime');
+}
+
+    
+  }
+
+
   //**esto es para la localizacion */
 
   List<Taskperson> selectedTaskpersons = [];
@@ -50,6 +89,9 @@ class _SecondTaskPageState extends State<SecondTaskPage> {
     // aqui se agregan los familiares
     updateTaskFamily(persons);
     onFamilySelected(selected);
+    print('Primera pagina de tareas-seleccionando nuevas personas-$persons');
+    print('Primera pagina de tareas-seleccionando nuevas personas-2$selectedTaskpersons');
+
     // Aquí puedes hacer algo con los datos seleccionados
     // print("Estados seleccionados-Personas seleccionadas: ${selectedTaskpersons.length}");
     print("Estados seleccionados-Personas seleccionadas: ${selectedTaskpersons.map((p) => p.id)}");
@@ -77,10 +119,7 @@ class _SecondTaskPageState extends State<SecondTaskPage> {
   }
 
   //**variables del dataTimer */
-  DateTime _focusedDay = DateTime.now();
-  DateTimeRange? _selectedDateRange;
-  TimeOfDay? _startTime;
-  TimeOfDay? _endTime;
+ 
   CalendarFormat _calendarFormat = CalendarFormat.twoWeeks;
 
   static final kFirstDay = DateTime(2020, 1, 1);
@@ -251,6 +290,9 @@ class _SecondTaskPageState extends State<SecondTaskPage> {
           if (widget.id != 0) {
             //es modificar
             taskpersonsList = convertToTaskpersonList(taskElementTA.value.people!);
+            updateTaskFamily(taskElementTA.value.people!);
+            onFamilySelected(taskpersonsList);
+            print('Primera pagina de tareas-updateTaskFamily-${taskElementTA.value.people!}'); 
           } else //es insertar que cargue el primero por defecto
           {
             if (taskPersonsCSP.value!.isNotEmpty) {
@@ -291,6 +333,7 @@ class _SecondTaskPageState extends State<SecondTaskPage> {
       onChanged: (value) {
         //para mantener el estado
         onGeoLocationChanged(controller.text);
+        print('Primera pagina de tareas-onGeoLocationChanged-${controller.text}'); 
       },
       textCapitalization: TextCapitalization.sentences,
       textInputAction: TextInputAction.next,
@@ -456,8 +499,8 @@ class _SecondTaskPageState extends State<SecondTaskPage> {
               FocusScope.of(context).unfocus();
               // Aquí manejas las frecuencias seleccionadas
               print('Estados seleccionados-Frecuencias seleccionadas: ${selectedFrequencies.map((e) => e.title)}');
-              print('Estados seleccionados-Frecuencias seleccionadas2: ${selectedFrequencies.first.title}');
               if (selectedFrequencies.isNotEmpty) {
+                print('Primera pagina de tareas-Frecuencia-${selectedFrequencies.first.title}'); 
                 onFrequencyChanged(selectedFrequencies.first.title);
                 updateTaskRecurrence(selectedFrequencies.first.title);
               }
@@ -494,6 +537,8 @@ class _SecondTaskPageState extends State<SecondTaskPage> {
           ),
         ),
       );
+      
+     
 
       if (tittle == 'Modificar Tarea') {
         await updateTasks();
@@ -528,100 +573,6 @@ class _SecondTaskPageState extends State<SecondTaskPage> {
       );
     }).toList();
   }
-
-  /* Widget cardSimpleSelectionFamily(CategoriesStatusPrioritySuccess state, Taskperson status) {
-    bool isSelected = state.selectedPersonIds.contains(1);
-
-    return Padding(
-      padding: const EdgeInsets.only(top: 10, right: 10.0, bottom: 10),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: isSelected ? colorBotoomSel.withOpacity(0.8) : colorBotoom.withOpacity(0.4),
-            width: 2.0,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: isSelected ? colorBotoomSel.withOpacity(0.4) : colorBotoom.withOpacity(0.4),
-              blurRadius: 10,
-              offset: Offset(0, 0),
-            ),
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: [
-              CircleAvatar(
-                backgroundImage: NetworkImage(status.imagePerson),
-              ),
-              SizedBox(width: 10),
-              Column(
-                children: [
-                  Text(
-                    status.namePerson,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: isSelected ? Colors.red : Colors.black,
-                    ),
-                  ),
-                  Text(
-                    status.nameRole,
-                    style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w200,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }*/
-
-  /*cardSimpleSelectionFrecuncy(CategoriesStatusPrioritySuccess state, String status) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 10, right: 10.0, bottom: 10),
-      child: Container(
-        // height: 20,
-        width: 120,
-        // margin: const EdgeInsets.symmetric(vertical: 20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: state.frequencytask == status ? colorBotoomSel.withOpacity(0.8) : colorBotoom.withOpacity(0.4),
-            width: 2.0,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: state.frequencytask == status ? colorBotoomSel.withOpacity(0.4) : colorBotoom.withOpacity(0.4),
-              blurRadius: 10,
-              offset: Offset(0, 0),
-            ),
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Center(
-            child: Text(
-              status,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: state.frequencytask == status ? Colors.red : Colors.black,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }*/
 
   void _onSubmitIncomple() {
     ScaffoldMessenger.of(context).showSnackBar(

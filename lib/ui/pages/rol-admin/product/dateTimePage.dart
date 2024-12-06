@@ -230,7 +230,8 @@ class _DateTimePageState extends State<DateTimePage> {
 
     if (isUpdateProductSignal.value == true) {
       print('Datos del productos a modificar-${productElementSignal.value}');
-      updateProduct();
+     await updateProduct();
+     
     } else {
       print('Datos del productos a insertar-${productElementSignal.value}');
       await submitProduct();

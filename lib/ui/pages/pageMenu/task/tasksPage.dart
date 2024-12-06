@@ -37,11 +37,15 @@ class _TasksWidgetState extends State<TasksWidget> {
     _selectedDay = initialDate;
     _focusedDay = initialDate;
     // carga las tareas
-    fetchTasks(initialDateString);
+    loadTasks(initialDateString);
     updateTaskScreen('screen_Home_Tasks', initialDateString); //screen_Home_Tasks
 
     // WidgetsBinding.instance.addPostFrameCallback((_) async {
     // });
+  }
+  loadTasks(String initialDateString)
+  async {
+await fetchTasks(initialDateString);
   }
 
   @override
@@ -65,18 +69,20 @@ class _TasksWidgetState extends State<TasksWidget> {
           selectedDayPredicate: (day) {
             return isSameDay(_selectedDay, day);
           },
-          onDaySelected: (selectedDay, focusedDay) {
+          onDaySelected: (selectedDay, focusedDay) async {
             if (!isSameDay(_selectedDay, selectedDay)) {
               // print('calendario seleccion:${DateFormat('yyyy-MM-dd').format(selectedDay)}');
-              setState(() {
-                String date = DateFormat('yyyy-MM-dd').format(selectedDay);
+              setState(()  {
+                
                 _selectedDay = selectedDay;
                 _focusedDay = focusedDay;
                 //actualizo el estado la fecha en que dio para ver la tarea
-                updateTaskScreen('screen_Home_Tasks', date); //screen_Home_Tasks
-                //mando a buscar las tareas de esa fecha
-                fetchTasks(date);
+               
               });
+              String date = DateFormat('yyyy-MM-dd').format(selectedDay);
+               updateTaskScreen('screen_Home_Tasks', date); //screen_Home_Tasks
+                //mando a buscar las tareas de esa fecha
+              await  fetchTasks(date);
             }
           },
           headerStyle: const HeaderStyle(

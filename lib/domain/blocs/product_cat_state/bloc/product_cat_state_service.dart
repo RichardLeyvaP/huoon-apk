@@ -34,6 +34,19 @@ Future<void> loadCategories() async {
     categoriesSignalPCS.value = categories;
     statusSignalPCS.value = status;
 
+    if(statusSignalPCS.value != null && statusSignalPCS.value!.isNotEmpty)
+  {
+selectedStatusIdSignalPCS.value = statusSignalPCS.value!.first.id;
+  }
+  
+    if( categoriesSignalPCS.value.isNotEmpty)
+  {
+selectedCategoryIdSignalPCS.value = categoriesSignalPCS.value.first.id;
+  }
+
+
+    
+
     isLoadingSignalPCS.value = false; // Finaliza la carga
   } catch (error) {
     isErrorSignalPCS.value = true;

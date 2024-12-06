@@ -18,7 +18,7 @@ class HealthPage extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 10),
             Card(
               elevation: 4,
               shape: RoundedRectangleBorder(
@@ -33,7 +33,7 @@ class HealthPage extends StatelessWidget {
                       color: StyleGlobalApk.getColorRedOpaque(),
                       size: 40,
                     ),
-                    SizedBox(width: 16),
+                    SizedBox(width: 10),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,7 +58,7 @@ class HealthPage extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 10),
             Expanded(
               child: GridView.count(
                 crossAxisCount: 2,

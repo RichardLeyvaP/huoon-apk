@@ -14,6 +14,7 @@ class ProductsRepository {
       'home_id': homeId, //todo valor fijo
       'warehouse_id': warehouseId, //todo valor fijo
     };
+    print('resultado al devolver los producto-$body');
     try {
       // Llama al servicio y obtiene la respuesta procesada
       final response = await authService.post(endpoint, body: body);
@@ -80,9 +81,11 @@ class ProductsRepository {
 
 //metodo para agregar una tarea
   Future<dynamic> updateProductRepository(ProductElement product) async {
-    final endpoint = '${Env.apiEndpoint}/person-home-warehouse-product';
+    final endpoint = '${Env.apiEndpoint}/person-home-warehouse-product-update';
     final body = {
       'home_id': 1,
+      'id': product.id,
+      'product_id': product.productId,      
       'warehouse_id': product.warehouseId,
       'status_id': product.statusId,
       'category_id': product.categoryId,
@@ -100,7 +103,7 @@ class ProductsRepository {
     // Llama al servicio que maneja la API de autenticación para login
     final response = await authService.post(endpoint, body: body);
 
-    print('si estoy devolviendo esto:1-${response}');
+    print('al modificar producto recibo esto como respuesta:1-${response}');
   }
 
 
