@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:huoon/domain/blocs/task_cat_state_prior.dart/task_cat_state_prior_service.dart';
@@ -68,18 +69,11 @@ class _TaskChatPageState extends State<TaskChatPage> {
                   onLongPress: isUser ? () => _showEditOption(index) : null,
                   child: Align(
                     alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
-                    child: Container(
-                      margin: EdgeInsets.symmetric(vertical: 5),
-                      padding: EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: isUser ? Colors.blue[100] : Colors.grey[300],
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child:
+                    child: 
                       showWidget(message,keyMessage,isUser) ,
                       
                      
-                    ),
+                    
                   ),
                 );
               },
@@ -256,12 +250,12 @@ class _TaskChatPageState extends State<TaskChatPage> {
   
  Widget showWidget(Map<String, dynamic> message, String? keyMessage, bool isUser) {
   print('este es el Key de la tarea-$keyMessage');
- 
+ Widget showWidgetOption;
  if(message['buttons'] == null)//aun no es el final
  {
    if( message['end'] != null)
    {
-   return Column(
+   showWidgetOption = Column(
                             children: [
                               CircularProgressIndicator(strokeWidth: 1),
                               
@@ -274,7 +268,7 @@ class _TaskChatPageState extends State<TaskChatPage> {
    {
     if( keyMessage =='category')
     {
-      return Column(
+      showWidgetOption = Column(
         children: [
           Text(message['text'] ?? ''),
           _buildCategorySection(),
@@ -284,7 +278,7 @@ class _TaskChatPageState extends State<TaskChatPage> {
 
     }
     else {
-      return Text(message['text'] ?? '');
+      showWidgetOption = Text(message['text'] ?? '');
     }
 
    }
@@ -292,7 +286,7 @@ class _TaskChatPageState extends State<TaskChatPage> {
  }
  else //ya lleg[o al final y esta el cancelar o guardar
  {
- return Column(
+ showWidgetOption = Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(message['text'] ?? ''),
@@ -314,7 +308,29 @@ class _TaskChatPageState extends State<TaskChatPage> {
                             );
 
  }
-                         
+ return 
+keyMessage == 'category' ?
+ SlideInRight
+(
+                      duration: Duration(milliseconds: 1000),
+   child: Container(
+                          margin: EdgeInsets.symmetric(vertical: 5),
+                          padding: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: isUser ? Colors.blue[100] : Colors.grey[300],
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child:  showWidgetOption   ),
+ )
+                        :
+                        Container(
+                        margin: EdgeInsets.symmetric(vertical: 5),
+                        padding: EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: isUser ? Colors.blue[100] : Colors.grey[300],
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child:  showWidgetOption   );                   
 
                           
 
@@ -326,14 +342,7 @@ class _TaskChatPageState extends State<TaskChatPage> {
       builder: (context) {
         if (categoriesCSP.watch(context) != null) {
           bool selectMultiple = false;
-          // if (widget.id != 0) {
-          //   //es modificar
-          // } else //es insertar que cargue el primero por defecto
-          // {
-          //   if (categoriesCSP.value!.isNotEmpty) {
-          //     onCategorySelected(categoriesCSP.value!.first.id);
-          //   }
-          // }
+         
 
           return CategoryWidget(
             eventDetails: false,
@@ -345,7 +354,6 @@ class _TaskChatPageState extends State<TaskChatPage> {
             onSelectionChanged: (selectedCategories) async {
               FocusScope.of(context).unfocus();
 
-              // print('kkkkkkkkkkk:${selectedCategories}');
 
               arrayCategory = selectedCategories.map((category) => category.id).toList();
               if (arrayCategory.isNotEmpty) {
