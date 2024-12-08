@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:huoon/ui/pages/rol-admin/Task/bootStoreTask.dart';
 import 'package:huoon/ui/pages/rol-admin/Task/secondTaskPage.dart';
 import 'package:huoon/ui/pages/rol-admin/Task/startTaskPage.dart';
 
@@ -23,7 +24,8 @@ class _TaskCreationState extends State<TaskCreation> {
         physics: NeverScrollableScrollPhysics(), // Desactiva el deslizamiento con el dedo
         children: [
           // Pasar el ID a las páginas
-          StartTaskPage(pageController: _pageController, id: widget.id),
+         // StartTaskPage(pageController: _pageController, id: widget.id),
+         TaskChatPage(),
           SecondTaskPage(pageController: _pageController, id: widget.id),
         ],
       ),

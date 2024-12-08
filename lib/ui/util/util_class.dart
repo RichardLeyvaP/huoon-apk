@@ -312,3 +312,13 @@ class _LanguageSelectorNewState extends State<LanguageSelectorNew> {
     );
   }
 }
+bool isNegative(String num) {
+  try {
+    double number = double.parse(num);  // Intentar convertir el string a un entero
+    return number < 0;  // Devuelve true si el número es negativo, false si es positivo o cero
+  } catch (e) {
+    // Si ocurre una excepción (por ejemplo, si no es un número válido), se maneja aquí
+    print('Error al parsear el número: $e');
+    return false;  // Devuelve false si no se puede parsear el valor
+  }
+}

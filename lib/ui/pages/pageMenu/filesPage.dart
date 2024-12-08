@@ -10,7 +10,7 @@ class _FilesPageState extends State<FilesPage> {
   final List<Map<String, String>> _files = [
     {'name': 'Factura de Luz.pdf', 'type': 'document'},
     {'name': 'Foto Familiar.png', 'type': 'image'},
-    {'name': 'Cumpleaños de Juan.mp4', 'type': 'video'},
+    {'name': 'Cumpleaños Juan.mp4', 'type': 'video'},
     {'name': 'Lista de Compras.docx', 'type': 'document'},
     {'name': 'Recibo de Agua.pdf', 'type': 'document'},
     {'name': 'Plano de la Casa.png', 'type': 'image'},
@@ -48,113 +48,20 @@ class _FilesPageState extends State<FilesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 50,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
-            Text('Archivos', style: TextStyle(fontSize: 18, color: Colors.black)),
-            Text('Administra tus documentos y medios',
-                style: TextStyle(fontSize: 10, color: Color.fromARGB(150, 0, 0, 0))),
-          ],
-        ),
-        // actions: [
-        //   IconButton(
-        //     icon: const Icon(Icons.upload_file, color: Colors.black),
-        //     onPressed: () {
-        //       // Acción para subir archivos
-        //       showDialog(
-        //         context: context,
-        //         builder: (context) {
-        //           String name = '';
-        //           String type = 'document';
-        //           return AlertDialog(
-        //             title: const Text('Subir Archivo'),
-        //             content: Column(
-        //               mainAxisSize: MainAxisSize.min,
-        //               children: [
-        //                 TextField(
-        //                   onChanged: (value) => name = value,
-        //                   decoration: const InputDecoration(labelText: 'Nombre del archivo'),
-        //                 ),
-        //                 DropdownButtonFormField<String>(
-        //                   value: type,
-        //                   items: [
-        //                     DropdownMenuItem(value: 'document', child: Text('Documento')),
-        //                     DropdownMenuItem(value: 'image', child: Text('Imagen')),
-        //                     DropdownMenuItem(value: 'video', child: Text('Video')),
-        //                   ],
-        //                   onChanged: (value) => type = value!,
-        //                   decoration: const InputDecoration(labelText: 'Tipo de archivo'),
-        //                 ),
-        //               ],
-        //             ),
-        //             actions: [
-        //               TextButton(
-        //                 onPressed: () => Navigator.of(context).pop(),
-        //                 child: const Text('Cancelar'),
-        //               ),
-        //               ElevatedButton(
-        //                 onPressed: () {
-        //                   if (name.isNotEmpty) {
-        //                     _addFile(name, type);
-        //                     Navigator.of(context).pop();
-        //                   }
-        //                 },
-        //                 child: const Text('Subir'),
-        //               ),
-        //             ],
-        //           );
-        //         },
-        //       );
-        //     },
-        //   ),
-        // ],
-        bottom: const PreferredSize(
-          preferredSize: Size.fromHeight(1.0),
-          child: Divider(height: 1.0, thickness: 2.0, color: Color.fromARGB(50, 158, 158, 158)),
-        ),
-      ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            _buildBudgetCardGeneral('Archivos de Salud', 'Ir a mis Archivos'),
+            SizedBox(height: 20,),
             Expanded(
               child: ListView.builder(
                 itemCount: _files.length,
                 itemBuilder: (context, index) {
                   final file = _files[index];
                   return FadeIn(
-                    child: Card(
-                      margin: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: ListTile(
-                        leading: Icon(_getIcon(file['type']!), color: Color.fromARGB(255, 93, 137, 233)),
-                        title: Text(file['name']!),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.delete, color: Color.fromARGB(255, 218, 113, 113)),
-                          onPressed: () => _deleteFile(index),
-                        ),
-                        onTap: () {
-                          // Acción para previsualizar el archivo
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: Text(file['name']!),
-                              content: const Text('Aquí se puede previsualizar el archivo.'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  child: const Text('Cerrar'),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                    ),
+                    child: _buildBudgetCardFiles(file['name']!,file['type']!,'10/08/2023'),
                   );
                 },
               ),
@@ -164,4 +71,104 @@ class _FilesPageState extends State<FilesPage> {
       ),
     );
   }
+    // Widget para mostrar los bloques de presupuesto
+  Widget _buildBudgetCardGeneral(String title, String amount) {
+    return Card(
+      elevation: 1,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          children: [
+            ContainerIcon(const Color.fromARGB(255, 92, 205, 195),Icons.business_center,20),
+            SizedBox(width: 20),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                ),
+                Text(
+              amount,
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+              ],
+            ),
+            
+          ],
+        ),
+      ),
+    );
+  }
+
+    // Widget para mostrar los bloques de presupuesto
+  Widget _buildBudgetCardFiles(String title,String subTitle,  String data) {
+    return Card(
+      elevation: 1,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                ContainerIcon(const Color.fromARGB(255, 92, 205, 195),Icons.attach_money,20),
+                SizedBox(width: 10),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                    ),
+                    Text(
+                      subTitle,
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold,color: const Color.fromARGB(255, 69, 155, 148)),
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                                      'Sugerencia de ',
+                                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500,),
+                                    ),Text(
+                                      'Huoon',
+                                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold ,color: const Color.fromARGB(255, 69, 155, 148)),
+                                    ),
+                      ],
+                    ),
+                  ],
+                ),
+                
+              ],
+            ),
+         Padding(
+           padding: const EdgeInsets.all(8.0),
+           child: Text('10/08/2023',style: TextStyle(fontSize: 10, color: Colors.red),),
+         )
+          ],
+        ),
+      ),
+    );
+  }
+
+
+  Container ContainerIcon(Color colorContainerIcon,IconData icon, double paddingIcon) {
+    return Container(
+        decoration: BoxDecoration(
+          color:colorContainerIcon.withOpacity(0.3), // Color verde con transparencia
+          borderRadius: BorderRadius.circular(20), // Bordes redondeados
+        ),
+        padding: EdgeInsets.all(paddingIcon),
+        child: Icon(
+         icon ,
+          size: 30, // Tamaño del icono
+          color:colorContainerIcon , // Color del icono
+        ),
+      );
+  }
+// Widget para mostrar los bloques de presupuesto
+
 }
