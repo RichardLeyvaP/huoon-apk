@@ -3,7 +3,7 @@ import 'package:huoon/domain/modelos/category_model.dart';
 
 class StatusWidget extends StatefulWidget {
   final List<Status> status;
-  final String titleWidget;
+  final String? titleWidget;
   final bool selectMultiple;
   final bool fitTextContainer; //Permite controlar si el titulo es muy grande que se ajuste o no al container
   final bool eventDetails; //Permite activar o no el doble click y mostrar detalle
@@ -13,7 +13,7 @@ class StatusWidget extends StatefulWidget {
   const StatusWidget({
     Key? key,
     required this.status,
-    required this.titleWidget,
+     this.titleWidget,
     this.selectMultiple = true,
     this.fitTextContainer = false,
     this.eventDetails = false,
@@ -51,6 +51,12 @@ class _StatusWidgetState extends State<StatusWidget> {
     }
     widget.onSelectionChanged(selected); // Llamar al callback con los estados seleccionados
   }
+   String getTitle(){
+    return widget.titleWidget == null ? '':widget.titleWidget!;
+     
+
+  }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +69,7 @@ class _StatusWidgetState extends State<StatusWidget> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                widget.titleWidget,
+                getTitle(),
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
             ],
@@ -96,7 +102,7 @@ class _StatusWidgetState extends State<StatusWidget> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(widget.titleWidget, style: const TextStyle(fontWeight: FontWeight.w900)),
+                      Text(getTitle(), style: const TextStyle(fontWeight: FontWeight.w900)),
                       Text(status.title, style: const TextStyle(fontWeight: FontWeight.w700)),
                     ],
                   ),

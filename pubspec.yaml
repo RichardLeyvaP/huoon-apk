@@ -67,6 +67,9 @@ flutter:
     - assets/env.dart
     - assets/people/default.jpg
     - assets/splash/huoon_splash.jpg
+    - assets/images/icon-Huoon.jpg
+    - assets/images/icon-Huoon-transp.jpg
+
   fonts:
     - family: BebasNeue
       fonts:
