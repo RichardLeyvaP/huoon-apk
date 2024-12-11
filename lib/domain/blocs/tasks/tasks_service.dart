@@ -72,6 +72,16 @@ void updateTaskTitleDescription(String title, String description) {
   taskElementTA.value = taskElementTA.value.copyWith(title: title, description: description);
   taskElementUpdateTA.value = true;
 }
+// Actualizar título y descripción de la tarea
+void updateTaskTitle(String title) {
+  taskElementTA.value = taskElementTA.value.copyWith(title: title);
+  taskElementUpdateTA.value = true;
+}
+// Actualizar título y descripción de la tarea
+void updateTaskDescription(String description) {
+  taskElementTA.value = taskElementTA.value.copyWith( description: description);
+  taskElementUpdateTA.value = true;
+}
 
 // Actualizar título y descripción de la tarea
 void updateTaskDateTime(String startDate, String endDate) {

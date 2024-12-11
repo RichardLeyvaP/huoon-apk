@@ -1,13 +1,17 @@
+import 'dart:async';
+
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:huoon/data/models/tasks/tasks_model.dart';
+import 'package:huoon/domain/blocs/login_bloc/login_signal.dart';
 import 'package:huoon/domain/blocs/task_cat_state_prior.dart/task_cat_state_prior_service.dart';
 import 'package:huoon/domain/blocs/task_cat_state_prior.dart/task_cat_state_prior_signal.dart';
 import 'package:huoon/domain/blocs/tasks/tasks_service.dart';
 import 'package:huoon/domain/modelos/category_model.dart';
 import 'package:huoon/ui/Components/category_widget.dart';
 import 'package:huoon/ui/Components/family_widget.dart';
+import 'package:huoon/ui/Components/frequency_widget.dart';
 import 'package:huoon/ui/Components/priority_widget.dart';
 import 'package:huoon/ui/Components/state_widget.dart';
 import 'package:huoon/ui/pages/rol-admin/product/startProductPage.dart';
@@ -26,18 +30,25 @@ class _TaskChatPageState extends State<TaskChatPage> {
   final Map<String, String> _taskData = {};
   int _currentStep = 0;
   bool _isTyping = false;
+  int _isTypingTime = 1;
+
   int? _editingMessageIndex;
   bool _showInputField = true;
   bool _isFinalStepReached = false;
 
   final List<Map<String, String>> _conversationSteps = [
-    {'key': 'title', 'message': 'Empecemos, ¿me puedes dar el título de la tarea?', 'hint': 'Título de la tarea'},
-    {'key': 'description', 'message': 'Perfecto. Ahora, ¿puedes darme una breve descripción?', 'hint': 'Descripción de la tarea'},
-    {'key': 'category', 'message': '¿A qué categoría pertenece esta tarea?', 'hint': ''},
-    {'key': 'status', 'message': '¿Que estado tendría?', 'hint': ''},
-    {'key': 'priority', 'message': 'Muy bien! Ahora que prioridad le das a esta tarea?', 'hint': ''},
-    {'key': 'family', 'message': 'Ya estamos terminando! Que familiar vas a darle participacion en la tarea?', 'hint': ''},
-    {'key': 'calendar', 'message': 'Solo falta la fecha..', 'hint': ''},
+    
+  {'key': 'title', 'message': 'Empecemos, ¿me puedes dar el título de la tarea? ✍️', 'hint': 'Título de la tarea'},
+  {'key': 'description', 'message': 'Perfecto. Ahora, ¿puedes darme una breve descripción? 📝', 'hint': 'Descripción de la tarea'},
+  {'key': 'category', 'message': '¿A qué categoría pertenece esta tarea? 📂', 'hint': ''},
+  {'key': 'status', 'message': '¿Qué estado tendría? ✅', 'hint': ''},
+  {'key': 'priority', 'message': '¡Muy bien! ¿Ahora qué prioridad le das a esta tarea? 🔥⬆️', 'hint': ''},
+  {'key': 'frequencie', 'message': 'Escoge la Frecuencia que deseas darle 📝', 'hint': ''},
+
+  {'key': 'family', 'message': '¡Ya estamos terminando! ¿Qué familiar va a participar en la tarea? 👨‍👩‍👧‍👦', 'hint': ''},
+  {'key': 'calendar', 'message': '¡Solo falta la fecha de Inicio y Final! 👏👏', 'hint': ''},
+
+
     
 
     {'key': 'done', 'message': '¡Genial! He registrado todos los datos. ¿Quieres guardar la tarea?', 'hint': 'Confirmar tarea'}
@@ -78,7 +89,7 @@ class _TaskChatPageState extends State<TaskChatPage> {
   });
 
 // aqui se agregan los familiares
-    updateTaskFamily(persons);
+    //updateTaskFamily(persons);
     onFamilySelected(selected);
   }
 
@@ -167,17 +178,74 @@ TimeOfDay? _endTime;
   String tittle = 'Crear Tarea';
 
   //**variables del dataTimer */
+bool isActive = true; // Variable para alternar colores
+int isActive2seg = 1; // Variable para alternar colores
+Timer? _timer;
 
   @override
   void initState() {
     super.initState();
     _showInitialMessages();
+    // Iniciar un temporizador que cambie el estado cada 2 segundos
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (mounted) { // Verifica si el widget sigue montado
+    //verifico si ya pasaron 10segundos le mando un mensaje
+    
+    if(_isTypingTime == 25)//si e sfalse mando un mensaje
+    {
+     ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('👋 Hola! ${currentUserLG.value!.userName} 😊 Estamos esperando una respuesta para continuar...'),
+
+        duration: Duration(seconds: 3), // Duración del SnackBar
+       
+      ),
+    );
+      _isTypingTime=1;
+
+    }
+    else{
+      _isTypingTime++;
+    }
+
+
+      if(isActive2seg == 5)
+      {
+        isActive2seg = 1;
+
+        setState(() {
+        isActive = false; // Cambiar entre activo e inactivo
+      });
+
+      }
+     else
+    {
+      if(isActive == false)
+      {
+        setState(() {
+        isActive = true; // Cambiar entre activo e inactivo
+      });
+
+      }       
+      isActive2seg++;
+    }
+    }
+
+    });
+  }
+
+  
+  @override
+  void dispose() {
+    _textController.dispose();
+    _timer?.cancel(); // Cancela el Timer
+    super.dispose();
   }
 
   void _showInitialMessages() async {
     await Future.delayed(Duration(milliseconds: 500));
     setState(() {
-      _messages.add({'key': 'init','text': 'Hola, Ramón. Vi que quieres agregar una nueva tarea.', 'sender': 'bot'});
+      _messages.add({'key': 'init','text': '👋 Hola! ${currentUserLG.value!.userName}. Te ayudaremos a crear una nueva tarea.', 'sender': 'bot'});
     });
     await Future.delayed(Duration(milliseconds: 1500));
     _simulateResponse();
@@ -185,6 +253,8 @@ TimeOfDay? _endTime;
 
   @override
   Widget build(BuildContext context) {
+    
+    
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -215,7 +285,7 @@ TimeOfDay? _endTime;
             width: 12, // Tamaño del punto verde
             height: 12, 
             decoration: BoxDecoration(
-              color: Colors.green, // Color del punto verde
+              color: isActive ? Colors.green :  Colors.white, // Color del punto verde
               shape: BoxShape.circle, // Forma circular
               border: Border.all(
                 color: Colors.white, // Borde blanco para destacar
@@ -233,7 +303,7 @@ TimeOfDay? _endTime;
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('HUOON',style: TextStyle(height: 1.2,fontSize: 18,fontWeight:FontWeight.bold,color: Colors.black ),),
-                  Text('Inteligencia Artificial',style: TextStyle(height: 1.2,fontSize: 12,color: Color.fromARGB(120, 0, 0, 0) ),),
+                  Text('Creando Tarea',style: TextStyle(height: 1.2,fontSize: 12,color: Color.fromARGB(120, 0, 0, 0) ),),
           
                 ],
               ),
@@ -259,6 +329,8 @@ TimeOfDay? _endTime;
                   isUserUpdateMens =  message['key'] == 'category_user' || 
                   message['key'] == 'status_user' ||
                    message['key'] == 'priority_user' || 
+                   message['key'] == 'frequencie_user' || 
+
                    message['key'] == 'family_user';//
                 }
                 
@@ -296,7 +368,7 @@ TimeOfDay? _endTime;
                 ],
               ),
             ),
-          if (_showInputField) _buildInputField(),
+          if (_showInputField ) _buildInputField(),
         ],
       ),
     );
@@ -335,7 +407,16 @@ TimeOfDay? _endTime;
   void _handleUserInput(String input) {
     if (_currentStep >= _conversationSteps.length || input.isEmpty) return;
 
-    if (_editingMessageIndex != null) {
+    // Guardar datos
+      final currentStepKey = _conversationSteps[_currentStep]['key'];
+      print('imprimir aqui que es lo que va a guardar---$currentStepKey');
+      if(currentStepKey != 'category' && currentStepKey != 'status' &&
+                    currentStepKey != 'priority' && 
+                   currentStepKey != 'frequencie'  &&
+
+                  currentStepKey != 'family' )//si no es ninguno de estos que selecciona si puede modificar e insertar
+      {
+         if (_editingMessageIndex != null) {
       // Editar mensaje existente
       setState(() {
         _messages[_editingMessageIndex!] = {'text': input, 'sender': 'user'};
@@ -348,8 +429,24 @@ TimeOfDay? _endTime;
         _messages.insert(0, {'text': input, 'sender': 'user'}); // Insertar al inicio
       });
 
-      // Guardar datos
-      final currentStepKey = _conversationSteps[_currentStep]['key'];
+      
+//     title
+// description
+// category
+// status
+// priority
+// frequencie
+// family
+// calendar
+      if(currentStepKey == 'title')
+    {
+      updateTaskTitle(input); //updateTaskDescription
+    }
+
+    else if(currentStepKey == 'description')
+    {
+      updateTaskDescription(input); //updateTaskDescription
+    }
       if (currentStepKey != 'done') {
         _taskData[currentStepKey!] = input;
       }
@@ -365,7 +462,12 @@ TimeOfDay? _endTime;
         _showInputField = false; // Ocultar el campo de texto al finalizar
       }
     }
-    _textController.clear();
+    
+
+      }
+      _textController.clear();
+
+   
   }
 
   void _handleUserSessions(String input,String key) {
@@ -396,7 +498,10 @@ TimeOfDay? _endTime;
 
   void _simulateResponse() async {
     setState(() {
+
       _isTyping = true;
+      _isTypingTime = 1;
+
     });
 
     await Future.delayed(Duration(seconds: 2));
@@ -442,6 +547,40 @@ TimeOfDay? _endTime;
       ),
     );
   }
+  
+  void _showConfirmation() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Confirmar'),
+        content: Text('Si cancelas se perderan todos los datos insertados'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            
+            },
+            child: Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              setState(() {
+      _messages.insert(0, {
+        'key': 'end',
+        'end' : 'end',
+        'text''Perfecto estamos guardando la  tarea que creaste... solo un momento.'
+        'sender': 'bot'
+      });
+    });
+              //cierro todo
+            },
+            child: Text('Confirmar'),
+          ),
+        ],
+      ),
+    );
+  }
 
   void _startEditing(int index) {
     setState(() {
@@ -452,18 +591,19 @@ TimeOfDay? _endTime;
   }
 
   void _handleConfirmation(bool isSave) async {
-    setState(() {
-      _messages.insert(0, {
-        'key': 'end',
-        'end' : 'end',
-        'text': isSave
-            ? 'Perfecto Ramón, estamos guardando la nueva tarea que creaste... solo un momento.'
-            : 'Entendido Ramón, estamos cancelando la creación de la tarea... solo un momento.',
-        'sender': 'bot'
-      });
-    });
+    if(!isSave)
+    {
+      _showConfirmation();
+    }
+    
 
-    await Future.delayed(Duration(seconds: 3));
+   else if(isSave)
+    {
+       eventDate();
+
+   // await Future.delayed(Duration(seconds: 3));
+    //ENVIAR DATOS A LA API
+    await storeTask();
 
     GoRouter.of(context).go(
       '/HomePrincipal',
@@ -473,13 +613,37 @@ TimeOfDay? _endTime;
         'avatarUrl': '',
       },
     );
-  }
 
-  @override
-  void dispose() {
-    _textController.dispose();
-    super.dispose();
+    }
+    else
+    {
+      //mostrar un modal diciendo que va  aperder tds los datos
+    }
+
+   
   }
+   
+    void eventDate() {
+    //mandar la fecha
+    if (_selectedDateRange == null) //si el rango es null que coja la fecha actual
+    {
+      // Si _selectedDateRange es null, asignamos la fecha actual como inicio y fin.
+      final DateTime startDate = _selectedDateRange?.start ?? DateTime.now();
+      final DateTime endDate = _selectedDateRange?.end ?? DateTime.now();
+
+      // Si _startTime es null, asignamos las 7:00 AM como hora predeterminada.
+      final TimeOfDay startTime = _startTime ?? TimeOfDay(hour: 7, minute: 0);
+
+// Si _endTime es null, asignamos las 6:00 PM como hora predeterminada.
+      final TimeOfDay endTime = _endTime ?? TimeOfDay(hour: 18, minute: 0);
+
+      updateTaskDateTime(_formatDateTime(startDate, startTime), _formatDateTime(endDate, endTime));
+    } else {
+      updateTaskDateTime(
+          _formatDateTime(_selectedDateRange!.start, _startTime), _formatDateTime(_selectedDateRange!.end, _endTime));
+    }
+  }
+ 
   
  Widget showWidget(Map<String, dynamic> message, String? keyMessage, bool isUser) {
   print('este es el Key de la tarea-$keyMessage');
@@ -549,7 +713,17 @@ TimeOfDay? _endTime;
          _buildCalendarSection(),
 
         ],
-      );//_buildFamilySection
+      );//_buildRecurrenceSection
+         }
+            else if( keyMessage =='frequencie')
+    {
+      showWidgetOption = Column(
+        children: [
+          Text(message['text'] ?? ''),
+         _buildRecurrenceSection(),
+
+        ],
+      );//
          }
     else {
       showWidgetOption = Text(message['text'] ?? '');
@@ -636,6 +810,7 @@ TimeOfDay? _endTime;
   }
 });
 onCategorySelected(arrayCategory.first);
+updateTaskCategoryId(arrayCategory.first);
 
               }
             },
@@ -655,9 +830,7 @@ onCategorySelected(arrayCategory.first);
         if (statusCSP.watch(context) != null) {
           bool selectMultiple = false;
           
-            if (statusCSP.value!.isNotEmpty) {
-              onTaskStateSelected(statusCSP.value!.first.id);
-            }
+            
           
           return StatusWidget(
             status: statusCSP.value!,
@@ -673,8 +846,7 @@ onCategorySelected(arrayCategory.first);
               selectedStatus = selectedStatuses.isNotEmpty ? selectedStatuses.first.id : 0;
               print('Estados seleccionados: $selectedStatus');
 
-              //seleccionando el estado
-              onTaskStateSelected(selectedStatus);
+              
               final existingIndex = _messages.indexWhere((message) => message['key'] == 'status_user');
 setState(()  {
   if (existingIndex != -1) {
@@ -691,7 +863,9 @@ setState(()  {
   }
   });
 
-
+//seleccionando el estado
+              onTaskStateSelected(selectedStatus);
+              updateTaskStatusId(selectedStatus);
             },
           );
         } else if (errorMessageCSP.watch(context) != null) {
@@ -708,9 +882,6 @@ setState(()  {
         if (prioritiesCSP.watch(context) != null) {
           bool selectMultiple = false;
           
-            if (prioritiesCSP.value!.isNotEmpty) {
-              onPrioritySelected(prioritiesCSP.value!.first.id);
-            }
           
           return PriorityWidget(
             priorities: prioritiesCSP.value!,
@@ -742,6 +913,7 @@ setState(()  {
   }
 });
     onPrioritySelected(selectedPriority);
+    updateTaskPriority(selectedPriority);
     //este va actualizando el arreglo para mandar a insertar o eliminar
   }
           );
@@ -758,23 +930,18 @@ _buildFamilySection() {
       builder: (context) {
         if (taskPersonsCSP.watch(context) != null) {
           bool selectMultiple = true;
-          List<Taskperson>? taskpersonsList;
 
-         
-            if (taskPersonsCSP.value!.isNotEmpty) {
-              onPersonSelected(taskPersonsCSP.value!.first.id);
-            }
-          
 
 // Luego, puedes usarla así:
 
           return TaskpersonWidget(
             taskpersons: taskPersonsCSP.value!,
-            selectTaskpersons: taskpersonsList,
+            selectTaskpersons: selecteFamilyCSP.value,
             titleWidget: '',
             selectMultiple: selectMultiple, // Permitir selección múltiple
             enableRoleSelection: true, // Habilitar selección de rol
-            selectedPersonId: selectedPersonIdsCSP.value.first,
+           // selectedPersonId: selectedPersonIdsCSP.value.first,
+            
             rolesList: rolesCSP.value,
             onSelectionChanged: _onSelectionChanged, // Manejar cambios de selección
           );
@@ -785,9 +952,6 @@ _buildFamilySection() {
       },
     );
   }
-
-
-
 
   _buildCalendarSection() {
     return Padding(
@@ -831,10 +995,33 @@ _buildFamilySection() {
                 // Selecciona la hora de inicio
                 if (start != null) {
                   await _selectTime(context, true); // Seleccionar hora para la fecha de fin
+                  
                 }
                 // Selecciona la hora de fin solo si hay una fecha final seleccionada
                 if (end != null) {
                   await _selectTime(context, false); // Seleccionar hora para la fecha de fin
+                }
+                if (_selectedDateRange != null && _startTime != null && _endTime != null)
+                {
+                 
+                   final existingIndex = _messages.indexWhere((message) => message['key'] == 'calendar_user');
+                 setState(()  {
+
+  if (existingIndex != -1) {
+    // Si existe, modificarlo
+    _messages[existingIndex] = {
+      'key': 'calendar_user',
+      'text': 'Nueva Fecha seleccionada',
+      'sender': 'user',
+
+    };
+  } else {
+      //verificar si ya existe que lo modifique
+                  _handleUserSessions('Fecha seleccionada correctamente','calendar_user');
+  
+  }
+});
+
                 }
               },
               onPageChanged: (focusedDay) {
@@ -842,6 +1029,7 @@ _buildFamilySection() {
               },
             ),
             if (_selectedDateRange != null && _startTime != null && _endTime != null) ...[
+           
               Container(
                 height: 50,
                 width: double.infinity,
@@ -901,5 +1089,68 @@ _buildFamilySection() {
       ),
     );
   }
+
+
+  _buildRecurrenceSection() {
+    return Builder(
+      builder: (context) {
+        if (frequencyCSP.watch(context) != null) {
+          // Supongamos que 'frequencies' es una lista de nombres de frecuencias.[Diaria, Semanal, Mensual, Anual]
+          final frequenciesData = frequencyCSP.value; // Cambia según tu fuente de datos
+          int frecuencyId = 1;
+
+          List<Frequency> frequencies = frequenciesData!.map((item) {
+            final title = item; // Asegúrate de que item sea un String
+            if (title == frequencyTaskCSP.value) {
+              frecuencyId = frequenciesData.indexOf(item) + 1;
+            }
+            return Frequency(
+              id: frequenciesData.indexOf(item) +
+                  1, // Asigna un id basado en el índice, puedes cambiar esto si tienes otra lógica
+              title: title,
+              description: '', // Si no tienes descripción, puedes dejarlo vacío o manejarlo de otra manera
+            );
+          }).toList();
+
+          return FrequencyWidget(
+            frequencies: frequencies,
+            titleWidget: '',
+            selectMultiple: false, // Permite seleccionar solo una frecuencia
+            selectedFrequencyId: frecuencyId, // Frecuencia preseleccionada (Opcional)
+            onSelectionChanged: (List<Frequency> selectedFrequencies) {
+              FocusScope.of(context).unfocus();
+              // Aquí manejas las frecuencias seleccionadas
+              print('Estados seleccionados-Frecuencias seleccionadas: ${selectedFrequencies.map((e) => e.title)}');
+              if (selectedFrequencies.isNotEmpty) {
+                print('Primera pagina de tareas-Frecuencia-${selectedFrequencies.first.title}'); 
+              
+                final existingIndex = _messages.indexWhere((message) => message['key'] == 'frequencie_user');
+                 setState(()  {
+
+  if (existingIndex != -1) {
+    // Si existe, modificarlo
+    _messages[existingIndex] = {
+      'key': 'frequencie_user',
+      'text': selectedFrequencies.first.title,
+      'sender': 'user',
+
+    };
+  } else {
+                  _handleUserSessions(selectedFrequencies.first.title,'frequencie_user');
+  
+  }
+});
+  onFrequencyChanged(selectedFrequencies.first.title);
+              }
+            },
+          );
+        } else if (errorMessageCSP.watch(context) != null) {
+          return Center(child: Text('Error: ${errorMessageCSP.value}'));
+        }
+        return Container();
+      },
+    );
+  }
+
 
 }

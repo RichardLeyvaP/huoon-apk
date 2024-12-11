@@ -175,7 +175,10 @@ class _HomePrincipalState extends State<HomePrincipal> with SingleTickerProvider
 
                   print('inde =.... ${_tabController.index}');
                   //context.goNamed('taskCreation', pathParameters: {'id': ''}); // Pasando un valor vacío
-                  context.goNamed('taskCreation', pathParameters: {'id': '0'});
+                 // context.goNamed('taskCreation', pathParameters: {'id': '0'});
+                  GoRouter.of(context).push('/taskCreation/0'); // '123' es el valor del parámetro 'id'
+
+                 // GoRouter.of(context).push('/DataAnalysisPage');
                 } else if (_tabController.index == 4) {
                   //agregar productos
                   print('inde =.... ${_tabController.index}');
