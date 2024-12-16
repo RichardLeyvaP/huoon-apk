@@ -20,75 +20,45 @@ import 'package:signals/signals_flutter.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class TaskChatPage extends StatefulWidget {
-  final List<Map<String, String>> conversationSteps;
-  final String title;
-  final String module;
-  final Color colorButton;
-  final Color colorButtonSelected;
-  final DateTime? focusedDay;
-  final CalendarFormat calendarFormat;
-  final DateTimeRange? selectedDateRange;
-  final TimeOfDay? startTime;
-  final TimeOfDay? endTime;
-
-  const TaskChatPage({
-    Key? key,
-    required this.conversationSteps,
-    required this.title,
-    required this.module,
-    this.colorButton = const Color.fromARGB(255, 61, 189, 93),
-    this.colorButtonSelected = const Color.fromARGB(255, 199, 64, 59),
-    this.focusedDay,
-    this.calendarFormat = CalendarFormat.twoWeeks,
-    this.selectedDateRange,
-    this.startTime,
-    this.endTime,
-  }) : super(key: key);
-
   @override
   _TaskChatPageState createState() => _TaskChatPageState();
 }
 
-
 class _TaskChatPageState extends State<TaskChatPage> {
-   late TextEditingController _textController;
-  late List<Map<String, dynamic>> _messages;
-  late Map<String, String> _taskData;
+  final TextEditingController _textController = TextEditingController();
+  final List<Map<String, dynamic>> _messages = [];
+  final Map<String, String> _taskData = {};
   int _currentStep = 0;
   bool _isTyping = false;
   int _isTypingTime = 1;
-  late  List<Map<String, String>> _conversationSteps =List.empty();
+
+  int? _editingMessageIndex;
+  String? _editingMessageKey = 'vacio';
+
+  bool _showInputField = true;
+  bool _isFinalStepReached = false;
+
+  final List<Map<String, String>> _conversationSteps = [
+    
+  {'key': 'title', 'message': 'Empecemos, ¿me puedes dar el título de la tarea? ✍️', 'hint': 'Título de la tarea'},
+  {'key': 'description', 'message': 'Perfecto. Ahora, ¿puedes darme una breve descripción? 📝', 'hint': 'Descripción de la tarea'},
+  {'key': 'category', 'message': '¿A qué categoría pertenece esta tarea? 📂', 'hint': ''},
+  {'key': 'status', 'message': '¿Qué estado tendría? ✅', 'hint': ''},
+  {'key': 'priority', 'message': '¡Muy bien! ¿Ahora qué prioridad le das a esta tarea? 🔥⬆️', 'hint': ''},
+  {'key': 'frequencie', 'message': 'Escoge la Frecuencia que deseas darle 📝', 'hint': ''},
+
+  {'key': 'family', 'message': '¡Ya estamos terminando! ¿Qué familiar va a participar en la tarea? 👨‍👩‍👧‍👦', 'hint': ''},
+  {'key': 'calendar', 'message': '¡Solo falta la fecha de Inicio y Final! 👏👏', 'hint': ''},
 
 
- //**variables del dataTimer */
-bool isActive = true; // Variable para alternar colores
-int isActive2seg = 1; // Variable para alternar colores
-  //variables especificas para la tarea******************************************************************
-   DateTime _focusedDay = DateTime.now();
-DateTimeRange? _selectedDateRange;
-TimeOfDay? _startTime;
-TimeOfDay? _endTime;
-  // Formato completo con fecha y hora, imprime por separado
-  String _formatDateTime(DateTime date, TimeOfDay? time) {
-    if (time == null) {
-      String formattedDate = DateFormat('yyyy-MM-dd').format(date);
-      print('Fecha seleccionada: $formattedDate'); // Imprimir solo la fecha
-      return DateFormat('yyyy-MM-dd').format(date);
-    } else {
-      final DateTime dateTime = DateTime(date.year, date.month, date.day, time.hour, time.minute);
+    
 
-      // Formateamos por separado
-      String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
-      String formattedTime = DateFormat('HH:mm:ss').format(dateTime);
+    {'key': 'done', 'message': '¡Genial! He registrado todos los datos. ¿Quieres guardar la tarea?', 'hint': 'Confirmar tarea'}
+    //ENVIANDO A INSERTAR
+        // await storeTask();
+  ];
 
-      // Imprimimos fecha y hora por separado
-      print('ffff-Fecha seleccionada: $formattedDate');
-      print('ffff-Hora seleccionada: $formattedTime');
-
-      return DateFormat('yyyy-MM-dd HH:mm:ss').format(dateTime);
-    }
-  }
-   List<int> arrayCategory = [1];
+  List<int> arrayCategory = [1];
    // Variable para manejar las prioridades seleccionadas
   List<Priority> selectedPriorities = [];
    int selectedPriority = 0;
@@ -125,10 +95,49 @@ TimeOfDay? _endTime;
     //updateTaskFamily(persons);
     onFamilySelected(selected);
   }
+
+   List<Person> convertToPersonList(List<Taskperson> taskpersons) {
+    return taskpersons.map((taskperson) {
+      return Person(
+        id: taskperson.id,
+        name: taskperson.namePerson!, // Mapear namePerson a name
+        image: taskperson.imagePerson!, // Mapear imagePerson a image
+        //roleId: taskperson.rolId!,
+        //roleName: taskperson.nameRole!
+      );
+    }).toList();
+  }
+
+  //**variables del dataTimer */
+
+  
+  int selectedLevel = 0; // Para seleccionar el nivel
+  Color colorBotoom = const Color.fromARGB(255, 61, 189, 93);
+  Color colorBotoomSel = const Color.fromARGB(255, 199, 64, 59);
+
+  String getRecurrence(int index) {
+    String _recurrence = 'Diaria';
+    if (selectedLevel == index) {
+      _recurrence = 'Semanal';
+    } else if (selectedLevel == index) {
+      _recurrence = 'Mensual';
+    } else if (selectedLevel == index) {
+      _recurrence = 'Anual';
+    }
+    return _recurrence;
+  }
+
+  DateTime _focusedDay = DateTime.now();
+DateTimeRange? _selectedDateRange;
+TimeOfDay? _startTime;
+TimeOfDay? _endTime;
+ 
   CalendarFormat _calendarFormat = CalendarFormat.twoWeeks;
-static final kFirstDay = DateTime(2020, 1, 1);
+
+  static final kFirstDay = DateTime(2020, 1, 1);
   static final kLastDay = DateTime(2030, 12, 31);
-    // Selección de horas
+
+  // Selección de horas
   Future<void> _selectTime(BuildContext context, bool isStart) async {
     final TimeOfDay? pickedTime = await showTimePicker(
       context: context,
@@ -147,41 +156,39 @@ static final kFirstDay = DateTime(2020, 1, 1);
       });
     }
   }
- int selectedLevel = 0; // Para seleccionar el nivel
-  Color colorBotoom = const Color.fromARGB(255, 61, 189, 93);
-  Color colorBotoomSel = const Color.fromARGB(255, 199, 64, 59);
 
- //variables para la tarea ******************************************************************************
-  
+  // Formato completo con fecha y hora, imprime por separado
+  String _formatDateTime(DateTime date, TimeOfDay? time) {
+    if (time == null) {
+      String formattedDate = DateFormat('yyyy-MM-dd').format(date);
+      print('Fecha seleccionada: $formattedDate'); // Imprimir solo la fecha
+      return DateFormat('yyyy-MM-dd').format(date);
+    } else {
+      final DateTime dateTime = DateTime(date.year, date.month, date.day, time.hour, time.minute);
 
-  int? _editingMessageIndex;
-  String? _editingMessageKey = 'vacio';
+      // Formateamos por separado
+      String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
+      String formattedTime = DateFormat('HH:mm:ss').format(dateTime);
 
-  bool _showInputField = true;
-  bool _isFinalStepReached = false;
-  Timer? _timer;
+      // Imprimimos fecha y hora por separado
+      print('ffff-Fecha seleccionada: $formattedDate');
+      print('ffff-Hora seleccionada: $formattedTime');
 
-  void _showInitialMessages(String module ) async {
-    await Future.delayed(Duration(milliseconds: 500));
-    setState(() {
-     if(module == 'storeTask')
-     {
-      _messages.add({'key': 'init','text': '👋 Hola! ${currentUserLG.value!.userName}. Te ayudaremos a crear una nueva tarea.', 'sender': 'bot'});
-     }
-    });
-    await Future.delayed(Duration(milliseconds: 1500));
-    _simulateResponse();
+      return DateFormat('yyyy-MM-dd HH:mm:ss').format(dateTime);
+    }
   }
+
+  String tittle = 'Crear Tarea';
+
+  //**variables del dataTimer */
+bool isActive = true; // Variable para alternar colores
+int isActive2seg = 1; // Variable para alternar colores
+Timer? _timer;
 
   @override
   void initState() {
     super.initState();
-    _textController = TextEditingController();
-    _messages = [];
-    _taskData = {};
-    _conversationSteps = widget.conversationSteps;
-
-      _showInitialMessages(widget.module);
+    _showInitialMessages();
     // Iniciar un temporizador que cambie el estado cada 2 segundos
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (mounted) { // Verifica si el widget sigue montado
@@ -228,13 +235,26 @@ static final kFirstDay = DateTime(2020, 1, 1);
     }
 
     });
-  
   }
 
-  void someFunction() {
-    print(widget.title); // Accede al título
-    print(widget.colorButton); // Accede al color
+  
+  @override
+  void dispose() {
+    _textController.dispose();
+    _timer?.cancel(); // Cancela el Timer
+    super.dispose();
   }
+
+  void _showInitialMessages() async {
+    await Future.delayed(Duration(milliseconds: 500));
+    setState(() {
+     
+      _messages.add({'key': 'init','text': '👋 Hola! ${currentUserLG.value!.userName}. Te ayudaremos a crear una nueva tarea.', 'sender': 'bot'});
+    });
+    await Future.delayed(Duration(milliseconds: 1500));
+    _simulateResponse();
+  }
+
   @override
   Widget build(BuildContext context) {
     
