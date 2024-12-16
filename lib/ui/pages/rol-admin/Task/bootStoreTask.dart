@@ -33,6 +33,8 @@ class _TaskChatPageState extends State<TaskChatPage> {
   int _isTypingTime = 1;
 
   int? _editingMessageIndex;
+  String? _editingMessageKey = 'vacio';
+
   bool _showInputField = true;
   bool _isFinalStepReached = false;
 
@@ -74,6 +76,7 @@ class _TaskChatPageState extends State<TaskChatPage> {
   String nombres = selected.map((person) => person.namePerson).join(', ');
   final existingIndex = _messages.indexWhere((message) => message['key'] == 'family_user');
     setState(()  {
+      _isTypingTime = 1;
   if (existingIndex != -1) {
     // Si existe, modificarlo
     _messages[existingIndex] = {
@@ -245,6 +248,7 @@ Timer? _timer;
   void _showInitialMessages() async {
     await Future.delayed(Duration(milliseconds: 500));
     setState(() {
+     
       _messages.add({'key': 'init','text': '👋 Hola! ${currentUserLG.value!.userName}. Te ayudaremos a crear una nueva tarea.', 'sender': 'bot'});
     });
     await Future.delayed(Duration(milliseconds: 1500));
@@ -410,15 +414,17 @@ Timer? _timer;
     // Guardar datos
       final currentStepKey = _conversationSteps[_currentStep]['key'];
       print('imprimir aqui que es lo que va a guardar---$currentStepKey');
-      if(currentStepKey != 'category' && currentStepKey != 'status' &&
+      if((currentStepKey != 'category' && currentStepKey != 'status' &&
                     currentStepKey != 'priority' && 
                    currentStepKey != 'frequencie'  &&
 
-                  currentStepKey != 'family' )//si no es ninguno de estos que selecciona si puede modificar e insertar
+                  currentStepKey != 'family') || _editingMessageKey == null )//si no es ninguno de estos que selecciona si puede modificar e insertar
       {
          if (_editingMessageIndex != null) {
       // Editar mensaje existente
       setState(() {
+         _editingMessageKey = 'vacio';
+        _isTypingTime = 1;
         _messages[_editingMessageIndex!] = {'text': input, 'sender': 'user'};
         _editingMessageIndex = null;
         _showInputField = !_isFinalStepReached; // Ocultar solo si se alcanzó el paso final
@@ -426,6 +432,7 @@ Timer? _timer;
     } else {
       // Nuevo mensaje
       setState(() {
+        _isTypingTime = 1;
         _messages.insert(0, {'text': input, 'sender': 'user'}); // Insertar al inicio
       });
 
@@ -565,14 +572,7 @@ Timer? _timer;
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
-              setState(() {
-      _messages.insert(0, {
-        'key': 'end',
-        'end' : 'end',
-        'text''Perfecto estamos guardando la  tarea que creaste... solo un momento.'
-        'sender': 'bot'
-      });
-    });
+             
               //cierro todo
             },
             child: Text('Confirmar'),
@@ -586,7 +586,9 @@ Timer? _timer;
     setState(() {
       _editingMessageIndex = index;
       _textController.text = _messages[index]['text'];
+      _editingMessageKey = _messages[index]['key'];
       _showInputField = true; // Mostrar el campo de texto al editar
+      //_isTypingTime = 1;
     });
   }
 
@@ -597,12 +599,13 @@ Timer? _timer;
     }
     
 
-   else if(isSave)
+   else 
     {
        eventDate();
 
    // await Future.delayed(Duration(seconds: 3));
     //ENVIAR DATOS A LA API
+    
     await storeTask();
 
     GoRouter.of(context).go(
@@ -615,10 +618,7 @@ Timer? _timer;
     );
 
     }
-    else
-    {
-      //mostrar un modal diciendo que va  aperder tds los datos
-    }
+   
 
    
   }
@@ -795,7 +795,7 @@ Timer? _timer;
   // Verificar si ya existe un mensaje con 'key': 'category_user'
   final existingIndex = _messages.indexWhere((message) => message['key'] == 'category_user');
                  setState(()  {
-
+_isTypingTime = 1;
   if (existingIndex != -1) {
     // Si existe, modificarlo
     _messages[existingIndex] = {
@@ -849,6 +849,7 @@ updateTaskCategoryId(arrayCategory.first);
               
               final existingIndex = _messages.indexWhere((message) => message['key'] == 'status_user');
 setState(()  {
+  _isTypingTime = 1;
   if (existingIndex != -1) {
     // Si existe, modificarlo
     _messages[existingIndex] = {
@@ -898,7 +899,7 @@ setState(()  {
     // Verificar si ya existe un mensaje con 'key': 'priority_user'
   final existingIndex = _messages.indexWhere((message) => message['key'] == 'priority_user');
                  setState(()  {
-
+_isTypingTime = 1;
   if (existingIndex != -1) {
     // Si existe, modificarlo
     _messages[existingIndex] = {
@@ -1006,7 +1007,7 @@ _buildFamilySection() {
                  
                    final existingIndex = _messages.indexWhere((message) => message['key'] == 'calendar_user');
                  setState(()  {
-
+_isTypingTime = 1;
   if (existingIndex != -1) {
     // Si existe, modificarlo
     _messages[existingIndex] = {
@@ -1126,7 +1127,7 @@ _buildFamilySection() {
               
                 final existingIndex = _messages.indexWhere((message) => message['key'] == 'frequencie_user');
                  setState(()  {
-
+_isTypingTime = 1;
   if (existingIndex != -1) {
     // Si existe, modificarlo
     _messages[existingIndex] = {
@@ -1136,6 +1137,7 @@ _buildFamilySection() {
 
     };
   } else {
+     
                   _handleUserSessions(selectedFrequencies.first.title,'frequencie_user');
   
   }
