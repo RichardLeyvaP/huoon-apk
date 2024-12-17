@@ -52,6 +52,7 @@ class StoreRepository {
     };
 
     try {
+      print('Tienda agregada exitosamente: $body');
       // Llama al servicio que maneja la API para agregar la tienda
       final response = await authService.post(endpoint, body: body);
       print('Tienda agregada exitosamente: $response');

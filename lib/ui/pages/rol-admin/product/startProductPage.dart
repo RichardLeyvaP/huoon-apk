@@ -207,11 +207,17 @@ class _StartProductPageState extends State<StartProductPage> {
     if (_formKey.currentState?.validate() == true && !emptyTextField(_titleController.text)) {
       // Cierra el teclado si está abierto
       FocusScope.of(context).unfocus();
-      // Enviar el evento al BLoC
+      // Enviar el evento al BLoC 
+      int? idProd;
+      int? elementId;
+      if(isUpdateProductSignal.value == true){
+idProd = productElementSignal.value!.productId!;
+elementId = productElementSignal.value!.id!;
+      }
 
       final productElement = ProductElement(        
-        productId: productElementSignal.value!.productId!,
-        id: productElementSignal.value!.id!,
+        productId: idProd,
+        id: elementId,
 
           productName: _titleController.text, //si emptyTextField = true es que esta vacio
           additionalNotes:

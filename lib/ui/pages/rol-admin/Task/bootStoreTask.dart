@@ -3,8 +3,16 @@ import 'dart:async';
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:huoon/data/models/products/product_model.dart';
+import 'package:huoon/data/models/store/store_model.dart';
 import 'package:huoon/data/models/tasks/tasks_model.dart';
 import 'package:huoon/domain/blocs/login_bloc/login_signal.dart';
+import 'package:huoon/domain/blocs/product_cat_state/bloc/product_cat_state_service.dart';
+import 'package:huoon/domain/blocs/product_cat_state/bloc/product_cat_state_signal.dart';
+import 'package:huoon/domain/blocs/products_bloc/products_service.dart';
+import 'package:huoon/domain/blocs/products_bloc/products_signal.dart';
+import 'package:huoon/domain/blocs/store_bloc/store_service.dart';
+import 'package:huoon/domain/blocs/store_bloc/store_signal.dart';
 import 'package:huoon/domain/blocs/task_cat_state_prior.dart/task_cat_state_prior_service.dart';
 import 'package:huoon/domain/blocs/task_cat_state_prior.dart/task_cat_state_prior_signal.dart';
 import 'package:huoon/domain/blocs/tasks/tasks_service.dart';
@@ -58,12 +66,19 @@ class _TaskChatPageState extends State<TaskChatPage> {
   bool _isTyping = false;
   int _isTypingTime = 1;
   late  List<Map<String, String>> _conversationSteps =List.empty();
-
-
  //**variables del dataTimer */
 bool isActive = true; // Variable para alternar colores
 int isActive2seg = 1; // Variable para alternar colores
-  //variables especificas para la tarea******************************************************************
+
+  int? _editingMessageIndex;
+  String? _editingMessageKey = 'vacio';
+
+  bool _showInputField = true;
+  bool _isFinalStepReached = false;
+  Timer? _timer;
+
+
+  // ============================================ TASK SECTION ============================================
    DateTime _focusedDay = DateTime.now();
 DateTimeRange? _selectedDateRange;
 TimeOfDay? _startTime;
@@ -151,25 +166,44 @@ static final kFirstDay = DateTime(2020, 1, 1);
   Color colorBotoom = const Color.fromARGB(255, 61, 189, 93);
   Color colorBotoomSel = const Color.fromARGB(255, 199, 64, 59);
 
- //variables para la tarea ******************************************************************************
+// ============================================ TASK SECTION FIN ============================================
+//
+//
+ // ============================================ STORE SECTION  ============================================
+
+
+  // ============================================ STORE SECTION FIN ========================================
+
+//DECLARAR LAS VARIABLES QUE SE NECESITAN PARA EL MODULO
   
 
-  int? _editingMessageIndex;
-  String? _editingMessageKey = 'vacio';
-
-  bool _showInputField = true;
-  bool _isFinalStepReached = false;
-  Timer? _timer;
 
   void _showInitialMessages(String module ) async {
     await Future.delayed(Duration(milliseconds: 500));
     setState(() {
+
+      //AQUI PONER EL PRIMER MENSAJE QUE QUIERAS DEPENDIENDO DEL MODULO
      if(module == 'storeTask')
      {
       _messages.add({'key': 'init','text': '👋 Hola! ${currentUserLG.value!.userName}. Te ayudaremos a crear una nueva tarea.', 'sender': 'bot'});
      }
+     //
+     //
+     if(module == 'storeStore')
+     {
+      _messages.add({'key': 'init','text': '👋 Hola! ${currentUserLG.value!.userName}. Te ayudaremos a crear un Almacen.', 'sender': 'bot'});
+     }
+     //
+     //
+     
+     if(module == 'storeProduct')
+     {
+      _messages.add({'key': 'init','text': '👋 Hola! ${currentUserLG.value!.userName}. Te ayudaremos a crear un Producto.', 'sender': 'bot'});
+     }
+     //
+     //
     });
-    await Future.delayed(Duration(milliseconds: 1500));
+    await Future.delayed(Duration(milliseconds: 800));
     _simulateResponse();
   }
 
@@ -231,13 +265,9 @@ static final kFirstDay = DateTime(2020, 1, 1);
   
   }
 
-  void someFunction() {
-    print(widget.title); // Accede al título
-    print(widget.colorButton); // Accede al color
-  }
+ 
   @override
-  Widget build(BuildContext context) {
-    
+  Widget build(BuildContext context) {    
     
     return Scaffold(
       appBar: AppBar(
@@ -283,11 +313,11 @@ static final kFirstDay = DateTime(2020, 1, 1);
           
           const SizedBox(width: 15,),
                 
-              const Column(
+               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('HUOON',style: TextStyle(height: 1.2,fontSize: 18,fontWeight:FontWeight.bold,color: Colors.black ),),
-                  Text('Creando Tarea',style: TextStyle(height: 1.2,fontSize: 12,color: Color.fromARGB(120, 0, 0, 0) ),),
+                  Text(widget.title,style: TextStyle(height: 1.2,fontSize: 12,color: Color.fromARGB(120, 0, 0, 0) ),),
           
                 ],
               ),
@@ -308,14 +338,38 @@ static final kFirstDay = DateTime(2020, 1, 1);
                 final message = _messages[index];
                 bool isUser = message['sender'] == 'user';
                   bool isUserUpdateMens = false;
+                  //PONER LOS KEY DE LOS SELECCIONAR
                 if(message['key'] != null)
                 {
-                  isUserUpdateMens =  message['key'] == 'category_user' || 
+                  // ============================================ TASK SECTION ============================================
+                  if(widget.module == 'storeTask')//tarea
+                  {
+                    isUserUpdateMens =  message['key'] == 'category_user' || 
                   message['key'] == 'status_user' ||
                    message['key'] == 'priority_user' || 
                    message['key'] == 'frequencie_user' || 
+                   message['key'] == 'family_user';
+                  }                  
+                   // ============================================ TASK SECTION FIN ============================================
+                   //
+                   //
+                   // ============================================ STORE SECTION  ============================================
+                   else if(widget.module == 'storeStore')//almacen
+                  {
+                    isUserUpdateMens = message['key'] == 'status_store_user' ;
+                  } 
+                  // ============================================ STORE SECTION FIN ============================================
+                  //
+                  //
+                   // ============================================ PRODUCT SECTION FIN ============================================
+                   else if(widget.module == 'storeProduct')//almacen
+                  {
+                    isUserUpdateMens = message['key'] == 'quantity_product_user' ;
+                  } 
+                  // ============================================ PRODUCT SECTION FIN ============================================
 
-                   message['key'] == 'family_user';//
+
+
                 }
                 
 
@@ -343,12 +397,21 @@ static final kFirstDay = DateTime(2020, 1, 1);
             ),
           ),
           if (_isTyping)
-            const Padding(
-              padding: EdgeInsets.all(8.0),
+             Padding(
+              padding: EdgeInsets.all(14.0),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  SizedBox(width: 10),
-                  Text('Escribiendo...',style: TextStyle(fontWeight: FontWeight.bold),),
+                  Container(
+                            margin: EdgeInsets.symmetric(vertical: 5),
+                            padding: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color:  Colors.grey[300],
+                              borderRadius: 
+                              BorderRadius.only(topLeft: Radius.circular(12),topRight: Radius.circular(12),bottomRight: Radius.circular(12))
+                            ),
+                    child: Text('...',style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
+                  ),
                 ],
               ),
             ),
@@ -362,7 +425,7 @@ static final kFirstDay = DateTime(2020, 1, 1);
     String hint = _currentStep < _conversationSteps.length
         ? _conversationSteps[_currentStep]['hint'] ?? ''
         : '';
-
+String moduleAct = widget.module;
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
@@ -376,25 +439,32 @@ static final kFirstDay = DateTime(2020, 1, 1);
                   borderRadius: BorderRadius.circular(8.0),
                 ),
               ),
-              onSubmitted: _handleUserInput,
+              onSubmitted: (value) {
+  _handleUserInput(value, moduleAct);
+},
             ),
           ),
           IconButton(
             icon: Icon(Icons.send),
-            onPressed: () => _handleUserInput(_textController.text),
+            onPressed: () => _handleUserInput(_textController.text,moduleAct),
           ),
         ],
       ),
     );
   }
 
-  void _handleUserInput(String input) {
+  void _handleUserInput(String input,String module) {
     if (_currentStep >= _conversationSteps.length || input.isEmpty) return;
 
     // Guardar datos
       final currentStepKey = _conversationSteps[_currentStep]['key'];
       print('imprimir aqui que es lo que va a guardar---$currentStepKey');
-      if((currentStepKey != 'category' && currentStepKey != 'status' &&
+
+//PONER AQUI TODOS LOS KEY DE SELECT
+  // ============================================ TASK SECTION ============================================
+if(module == 'storeTask')
+{
+  if((currentStepKey != 'category' && currentStepKey != 'status' &&
                     currentStepKey != 'priority' && 
                    currentStepKey != 'frequencie'  &&
 
@@ -415,17 +485,9 @@ static final kFirstDay = DateTime(2020, 1, 1);
         _isTypingTime = 1;
         _messages.insert(0, {'text': input, 'sender': 'user'}); // Insertar al inicio
       });
+      //PONER AQUI TODOS LOS KEY QUE NO SON SELCT PARA GUARDAR EL ESTADO
 
-      
-//     title
-// description
-// category
-// status
-// priority
-// frequencie
-// family
-// calendar
-      if(currentStepKey == 'title')
+        if(currentStepKey == 'title')
     {
       updateTaskTitle(input); //updateTaskDescription
     }
@@ -452,6 +514,161 @@ static final kFirstDay = DateTime(2020, 1, 1);
     
 
       }
+
+}
+  // ============================================ TASK SECTION FIN ============================================
+  //
+  //
+  // ============================================ STORE SECTION  ============================================
+  else if(module == 'storeStore')
+{
+  if((currentStepKey != 'status_store' ) || _editingMessageKey == null )//si no es ninguno de estos que selecciona si puede modificar e insertar
+      {
+         if (_editingMessageIndex != null) {
+      // Editar mensaje existente
+      setState(() {
+         _editingMessageKey = 'vacio';
+        _isTypingTime = 1;
+        _messages[_editingMessageIndex!] = {'text': input, 'sender': 'user'};
+        _editingMessageIndex = null;
+        _showInputField = !_isFinalStepReached; // Ocultar solo si se alcanzó el paso final
+      });
+    } else {
+      // Nuevo mensaje
+      setState(() {
+        _isTypingTime = 1;
+        _messages.insert(0, {'text': input, 'sender': 'user'}); // Insertar al inicio
+      });
+
+        if(currentStepKey == 'title_store')
+    {
+      
+      final storeElement = StoreElement(
+          title: input, 
+          );
+          updateStoreData(storeElement);
+    }
+
+    else if(currentStepKey == 'description_store')
+    {
+      final storeElement = StoreElement(
+          description: input,
+          );
+          updateStoreData(storeElement);
+    }
+    
+    else if(currentStepKey == 'place_store')
+    {
+      final storeElement = StoreElement(
+          location: input,
+          );
+          updateStoreData(storeElement);
+    }
+      if (currentStepKey != 'done') {
+        _taskData[currentStepKey!] = input;
+      }
+
+      _textController.clear();
+      _currentStep++;
+
+      if (_currentStep < _conversationSteps.length) {
+        _simulateResponse();
+      } else {
+        print('Datos del almacen $_taskData');
+        _isFinalStepReached = true;
+        _showInputField = false; // Ocultar el campo de texto al finalizar
+      }
+    }
+    
+
+      }
+
+}
+    // ============================================ STORE SECTION FIN ============================================  
+    //
+    //
+    //
+  //
+  // ============================================ PRODUCT SECTION  ============================================
+  else if(module == 'storeProduct')
+{
+  if((currentStepKey != 'quantity_product' ) || _editingMessageKey == null )//si no es ninguno de estos que selecciona si puede modificar e insertar
+      {
+         if (_editingMessageIndex != null) {
+      // Editar mensaje existente
+      setState(() {
+         _editingMessageKey = 'vacio';
+        _isTypingTime = 1;
+        _messages[_editingMessageIndex!] = {'text': input, 'sender': 'user'};
+        _editingMessageIndex = null;
+        _showInputField = !_isFinalStepReached; // Ocultar solo si se alcanzó el paso final
+      });
+    } else {
+      // Nuevo mensaje
+      setState(() {
+        _isTypingTime = 1;
+        _messages.insert(0, {'text': input, 'sender': 'user'}); // Insertar al inicio
+      });
+
+        if(currentStepKey == 'title_product')
+    {
+      
+      final productElement = ProductElement( 
+          productName: input,        
+          image: 'image/default.jpg'
+          );
+      updateProductData(productElement);
+    }
+
+    else if(currentStepKey == 'description_product')
+    {
+      final productElement = ProductElement(    
+          additionalNotes: input,  
+          );
+      updateProductData(productElement);
+    }
+    
+    else if(currentStepKey == 'price_product')
+    {
+      final productElement = ProductElement(    
+          unitPrice: input, 
+          );
+      updateProductData(productElement);
+    }
+    
+    else if(currentStepKey == 'location_product')
+    {
+      final productElement = ProductElement( 
+          purchasePlace: input
+          );
+      updateProductData(productElement);
+    }
+      if (currentStepKey != 'done') {
+        _taskData[currentStepKey!] = input;
+      }
+
+      _textController.clear();
+      _currentStep++;
+
+      if (_currentStep < _conversationSteps.length) {
+        _simulateResponse();
+      } else {
+        print('Datos del almacen $_taskData');
+        _isFinalStepReached = true;
+        _showInputField = false; // Ocultar el campo de texto al finalizar
+      }
+    }
+    
+
+      }
+
+}
+    // ============================================ PRODUCT SECTION FIN ============================================
+    //
+    //
+
+
+
       _textController.clear();
 
    
@@ -475,7 +692,7 @@ static final kFirstDay = DateTime(2020, 1, 1);
       if (_currentStep < _conversationSteps.length) {
         _simulateResponse();
       } else {
-        print('Datos de la tarea: $_taskData');
+        print('Datos del modulo: $_taskData');
         _isFinalStepReached = true;
         _showInputField = false; // Ocultar el campo de texto al finalizar
       }
@@ -581,13 +798,14 @@ static final kFirstDay = DateTime(2020, 1, 1);
 
    else 
     {
-       eventDate();
-
+       
+        // ============================================ TASK SECTION  ============================================
+        if(widget.module == 'storeTask')
+        {
+          eventDate();
    // await Future.delayed(Duration(seconds: 3));
-    //ENVIAR DATOS A LA API
-    
+    //ENVIAR DATOS A LA API    
     await storeTask();
-
     GoRouter.of(context).go(
       '/HomePrincipal',
       extra: {
@@ -596,6 +814,51 @@ static final kFirstDay = DateTime(2020, 1, 1);
         'avatarUrl': '',
       },
     );
+
+        }       
+         // ============================================ TASK SECTION FIN ============================================
+         //
+         //
+         // ============================================ STORE SECTION  ============================================
+         if(widget.module == 'storeStore')
+        {
+          
+    //ENVIAR DATOS A LA API    
+    if(currentStoreElementST.value != null)
+    {
+      print('datos del almacen enviados a la api: ${currentStoreElementST.value}');
+    await  submitStore(currentStoreElementST.value!, 1); //todo fijo mando valor del hogar
+    GoRouter.of(context).go(
+      '/HomePrincipal',
+      extra: {
+        'name': '',
+        'email': '',
+        'avatarUrl': '',
+      },
+    );
+
+    }
+    else
+    {
+       SnackBar(
+        content: Text('Error! Revisa que hay problemas al enviar los datos del almacen'),
+
+        duration: Duration(seconds: 3), // Duración del SnackBar
+       
+      );
+    }
+    
+    
+
+        } 
+         // ============================================ STORE SECTION FIN ============================================
+
+         //YA EL FINAL PARA MANDAR LOS DATOS A LA API
+
+
+
+
+
 
     }
    
@@ -643,7 +906,12 @@ static final kFirstDay = DateTime(2020, 1, 1);
    }
    else
    {
-    if( keyMessage =='category')
+
+    //AQUI PONER LOS COMPONENTES DE SELECT QUE HAY QUE CARGAR
+    // ============================================ TASK SECTION  ============================================    
+    if(widget.module == 'storeTask')
+    {
+       if( keyMessage =='category')
     {
       showWidgetOption = Column(
         children: [
@@ -705,9 +973,74 @@ static final kFirstDay = DateTime(2020, 1, 1);
         ],
       );//
          }
+         
     else {
       showWidgetOption = Text(message['text'] ?? '');
     }
+
+    }
+     // ============================================ TASK SECTION FIN ============================================
+     //
+     //
+      // ============================================ STORE SECTION FIN ============================================
+if(widget.module == 'storeStore')
+{
+  if( keyMessage =='status_store')
+    {
+      showWidgetOption = Column(
+        children: [
+          Text(message['text'] ?? ''),
+         _buildStatusSectionStore(),
+
+        ],
+      );//priority
+         }
+         else {
+      showWidgetOption = Text(message['text'] ?? '');
+    }
+  
+}
+ // ============================================ STORE SECTION FIN ============================================
+ //
+ //
+      // ============================================ PRODUCT SECTION FIN ============================================
+if(widget.module == 'storeProduct')
+{
+  if( keyMessage =='quantity_product')
+    {
+      showWidgetOption = Column(
+        children: [
+          Text(message['text'] ?? ''),
+         //cargar aqui el de aumentar o disminuir
+
+        ],
+      );//priority
+         }
+         if( keyMessage =='status_product')
+    {
+      showWidgetOption = Column(
+        children: [
+          Text(message['text'] ?? ''),
+         _buildStatusSectionProduct(),
+
+        ],
+      );//priority
+         }
+         else {
+      showWidgetOption = Text(message['text'] ?? '');
+    }
+  
+}
+ // ============================================ PRODUCT SECTION FIN ============================================
+ //
+ //
+     
+    else//este es el por defecto
+    {
+      showWidgetOption = Text(message['text'] ?? '');
+    }
+   
+   
 
    }
 
@@ -752,6 +1085,8 @@ static final kFirstDay = DateTime(2020, 1, 1);
  }
 
 
+
+// ============================================ TASK SECTION FIN ============================================
   Widget _buildCategorySection() {
     return Builder(
       builder: (context) {
@@ -1072,7 +1407,6 @@ _isTypingTime = 1;
     );
   }
 
-
   _buildRecurrenceSection() {
     return Builder(
       builder: (context) {
@@ -1134,6 +1468,135 @@ _isTypingTime = 1;
       },
     );
   }
+// ============================================ TASK SECTION FIN ============================================
+//
+//
+// ============================================ STORE SECTION  ============================================
+  Widget _buildStatusSectionStore() {
+    return Builder(
+      builder: (context) {
+        if (statusStoreCSP.value != null) {
+          bool selectMultiple = false;
+          int permisSelect = 0;
+          // if (isUpdateST.value == true) //SI ES TRUE ES PARA MODIFICAR
+          // {
+          //   permisSelect = currentStoreElementST.value!.status!;
+          // } else {
+          //   permisSelect = statusStoreCSP.value!.first.id;
+          // }
+
+          return StatusWidget(
+            status: statusStoreCSP.value!,
+            fitTextContainer: false,
+            eventDetails: true,
+            titleWidget: '',
+            selectMultiple: selectMultiple, // Permite seleccionar solo un estado
+            selectedStatusId: permisSelect, // Estado preseleccionado
+            onSelectionChanged: (List<Status> selectedStatuses) {
+              FocusScope.of(context).unfocus();
+              // Aquí manejas los estados seleccionados
+              print('Estados del almacen seleccionados-1: ${selectedStatuses.map((e) => e.id).join(', ')}');
+              selectedStatus = selectedStatuses.isNotEmpty ? selectedStatuses.first.id : 0;
+              print('Estados del almacen seleccionados-2: $selectedStatus');
 
 
+  final existingIndex = _messages.indexWhere((message) => message['key'] == 'status_store_user');
+                 setState(()  {
+_isTypingTime = 1;
+  if (existingIndex != -1) {
+    // Si existe, modificarlo
+    _messages[existingIndex] = {
+      'key': 'status_store_user',
+      'text': selectedStatuses.first.title,
+      'sender': 'user',
+
+    };
+  } else {
+     
+                  _handleUserSessions(selectedStatuses.first.title,'status_store_user');
+  
+  }
+});
+
+
+
+              final storeElement = StoreElement(
+          status: selectedStatus,
+
+          );
+          updateStoreData(storeElement);
+
+              //seleccionando el estado
+              // onTaskStateSelected(selectedStatus);
+            },
+          );
+        } else if (errorMessageCSP.watch(context) != null) {
+          return Center(child: Text('Error: ${errorMessageCSP.value}'));
+        }
+        return Container();
+      },
+    );
+  }
+// ============================================ STORE SECTION FIN ============================================
+
+//CARGAR ALGUN MODULO QUE HAGA FALTA
+// ============================================ PRODUCT SECTION  ============================================
+  Widget _buildStatusSectionProduct() {
+    return Builder(
+      builder: (context) {
+        if (statusSignalPCS.watch(context) != null) {
+          bool selectMultiple = false;
+          //     if (isUpdateProductSignal.value == true) { //es modificar           
+          //   selectStatus(productElementSignal.value!.statusId!);
+          // } 
+          return StatusWidget(
+            status: statusSignalPCS.value!,
+            fitTextContainer: false,
+            eventDetails: true,
+            titleWidget: '',
+            selectMultiple: selectMultiple, // Permite seleccionar solo un estado
+            selectedStatusId: selectedStatusIdSignalPCS.value, // Estado preseleccionado
+            onSelectionChanged: (List<Status> selectedStatuses) {
+              FocusScope.of(context).unfocus();
+              // Aquí manejas los estados seleccionados
+           //   print('Estados seleccionados: ${selectedStatuses.map((e) => e.id).join(', ')}');
+              selectedStatus = selectedStatuses.isNotEmpty ? selectedStatuses.first.id : 0;
+              print('Estados seleccionados: $selectedStatus');
+ final existingIndex = _messages.indexWhere((message) => message['key'] == 'status_product_user');
+                 setState(()  {
+_isTypingTime = 1;
+  if (existingIndex != -1) {
+    // Si existe, modificarlo
+    _messages[existingIndex] = {
+      'key': 'status_product_user',
+      'text': selectedStatuses.first.title,
+      'sender': 'user',
+
+    };
+  } else {
+     
+                  _handleUserSessions(selectedStatuses.first.title,'status_product_user');
+  
+  }
+});
+              //seleccionando el estado
+              selectStatus(selectedStatus);
+            },
+          );
+        }
+        return Container();
+      },
+    );
+  }
+
+// ============================================ PRODUCT SECTION FIN ============================================
+
+
+
+
+
+
+
+//
+//
 }
