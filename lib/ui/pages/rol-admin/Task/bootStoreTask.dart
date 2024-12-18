@@ -701,6 +701,7 @@ if(module == 'storeTask')
   }
 
   void _simulateResponse() async {
+    if (!mounted) return; // Verifica antes de iniciar cualquier acción
     setState(() {
 
       _isTyping = true;

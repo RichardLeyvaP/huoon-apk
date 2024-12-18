@@ -92,21 +92,52 @@ async {
                       '/StoreCreation',
                     );
                   },
-                  child: CircleAvatar(
-                    child: Icon(
-                      MdiIcons.storeOutline, // Icono que corresponde a insertar almacen
-                    ),
-                  ),
+                  child:CircleAvatar(
+                backgroundColor: StyleGlobalApk.getColorPrimary(),
+                child: 
+                Image.asset(
+              'assets/images/icon-Huoon.jpg', // Ruta de tu imagen en los assets
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: double.infinity,
+            ),
+                //****OJO ESTE ERA EL QUE ESTABA*** */
+                // Icon(
+                //   _tabIcons[_tabController.index], // Icono que corresponde al Tab seleccionado
+                // ),
+              ),
+                  
+                  //  CircleAvatar(
+                  //   child: Icon(
+                  //     MdiIcons.storeOutline, // Icono que corresponde a insertar almacen
+                  //   ),
+                  // ),
                 )
               : InkWell(
                   onTap: () {
                     addProduct();
                   },
-                  child: CircleAvatar(
-                    child: Icon(
-                      MdiIcons.tagOutline, // Icono que corresponde a insertar producto
-                    ),
-                  ),
+                  child:
+                  CircleAvatar(
+                backgroundColor: StyleGlobalApk.getColorPrimary(),
+                child: 
+                Image.asset(
+              'assets/images/icon-Huoon.jpg', // Ruta de tu imagen en los assets
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: double.infinity,
+            ),
+                //****OJO ESTE ERA EL QUE ESTABA*** */
+                // Icon(
+                //   _tabIcons[_tabController.index], // Icono que corresponde al Tab seleccionado
+                // ),
+              ), 
+                  
+                  // CircleAvatar(
+                  //   child: Icon(
+                  //     MdiIcons.tagOutline, // Icono que corresponde a insertar producto
+                  //   ),
+                  // ),
                 );
         },
       ),

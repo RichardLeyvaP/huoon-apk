@@ -20,7 +20,7 @@ class StyleGlobalApk {
   //
   //
   //colores
-  static Color colorPrimary = const Color.fromARGB(255, 67, 162, 240);
+  static Color colorPrimary = const Color(0xFF007878);
   static Color colorIndicator = const Color.fromRGBO(255, 73, 73, 1.0);
   //nuevos
   static Color colorRedOpaque = const Color.fromARGB(255, 218, 113, 113);
@@ -32,6 +32,10 @@ class StyleGlobalApk {
   static Color colorDarkBlue = const Color(0xFF000F81); //AZUL FUERTE
   static const Color colorDarkTeal = Color(0xFF032221); // #032221 VERDE OSCURO
 static const Color colorSeaGreen = Color(0xFF03626C); // #03626C VERDE AZUL
+
+static const Color colorSeaGreenClaro =  Color(0xFF02cc84a); // #03626C VERDE AZUL
+
+
 
 
   static Color getColorDarkBlue() {

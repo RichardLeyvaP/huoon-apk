@@ -119,11 +119,11 @@ await fetchTasks(initialDateString);
           },
           calendarStyle: CalendarStyle(
             todayDecoration: BoxDecoration(
-              color: StyleGlobalApk.colorIndicator.withOpacity(0.5), // Color para el día de hoy
+              color: StyleGlobalApk.getColorPrimary().withOpacity(0.5), // Color para el día de hoy
               shape: BoxShape.circle,
             ),
             selectedDecoration: BoxDecoration(
-              color: StyleGlobalApk.colorIndicator, // Color para el día de hoy
+              color: StyleGlobalApk.getColorPrimary(), // Color para el día de hoy
               shape: BoxShape.circle,
             ),
           ),

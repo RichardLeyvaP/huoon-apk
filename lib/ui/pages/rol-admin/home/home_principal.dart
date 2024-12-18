@@ -14,6 +14,7 @@ import 'package:huoon/ui/pages/pageMenu/healthPage.dart';
 import 'package:huoon/ui/pages/pageMenu/store/storePage.dart';
 import 'package:huoon/ui/pages/pageMenu/wishesPage.dart';
 import 'package:huoon/ui/util/util_class.dart';
+import 'package:huoon/ui/util/utils_class_apk.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 import '../../pageMenu/task/tasksPage.dart';
@@ -192,14 +193,28 @@ class _HomePrincipalState extends State<HomePrincipal> with SingleTickerProvider
                 }
                 //  dialogComponet(context, _tabTexts[_tabController.index]);
               },
-              child: CircleAvatar(
-                child: Icon(
-                  _tabIcons[_tabController.index], // Icono que corresponde al Tab seleccionado
-                ),
+              child: 
+              
+              
+              CircleAvatar(
+                backgroundColor: StyleGlobalApk.getColorPrimary(),
+                child: 
+                Image.asset(
+              'assets/images/icon-Huoon.jpg', // Ruta de tu imagen en los assets
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: double.infinity,
+            ),
+                //****OJO ESTE ERA EL QUE ESTABA*** */
+                // Icon(
+                //   _tabIcons[_tabController.index], // Icono que corresponde al Tab seleccionado
+                // ),
               ),
             );
           },
+          
         ),
+        
       ),
     );
   }
@@ -323,6 +338,7 @@ Widget appBarWidget(context, IconData icon1, IconData icon2, String avatar, Stri
                       Text(
                         nameApp,
                         style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                          color: StyleGlobalApk.colorPrimary,
                             // Cambia alguna propiedad aqui
                             ),
                       ),
@@ -385,7 +401,7 @@ Widget searchWidget(setState) {
           borderRadius: BorderRadius.circular(30.0),
           boxShadow: [
             BoxShadow(
-              color: Colors.red.withOpacity(0.3),
+              color: StyleGlobalApk.colorPrimary.withOpacity(0.3),
               blurRadius: 8.0,
               spreadRadius: 2.0,
             ),
@@ -394,17 +410,19 @@ Widget searchWidget(setState) {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+           
             CircleAvatar(
-              radius: 16,
-              backgroundColor: const Color.fromARGB(255, 218, 113, 113),
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 3),
-                child: Icon(
-                  MdiIcons.robot,
-                  color: Colors.white,
-                ),
-              ),
+          backgroundColor:  StyleGlobalApk.colorPrimary,
+          radius: 15, // Define el tamaño del CircleAvatar
+          child: ClipOval(
+            child: Image.asset(
+              'assets/images/icon-Huoon.jpg', // Ruta de tu imagen en los assets
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: double.infinity,
             ),
+          ),
+              ),
             const SizedBox(width: 8.0),
             Expanded(
               child: Column(
@@ -476,7 +494,7 @@ Widget cardMenu(_tabController) {
     child: TabBar(
       isScrollable: true, // Permite que el TabBar sea desplazable si hay muchas pestañas
       tabAlignment: TabAlignment.start,
-      indicatorColor: Colors.black, // Cambia el color de la barra inferior
+      indicatorColor: StyleGlobalApk.getColorPrimary().withOpacity(0.8), // Cambia el color de la barra inferior
       controller: _tabController,
       // indicatorPadding: const EdgeInsets.only(bottom: 0), // Ajusta el indicador para que esté más cerca del icono
       labelPadding: EdgeInsets.symmetric(horizontal: 10.0), // Ajusta el padding horizontal
