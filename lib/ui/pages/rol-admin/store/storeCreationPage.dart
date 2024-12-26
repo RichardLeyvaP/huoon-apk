@@ -25,13 +25,12 @@ class _StoreCreationState extends State<StoreCreation> {
   {'key': 'title_store', 'message': 'Empecemos, ¿me puedes dar el título del Almacén? ✍️', 'hint': 'Título del almacén'},
   {'key': 'description_store', 'message': 'Perfecto. Ahora, ¿puedes darme una breve descripción? 📝', 'hint': 'Descripción del Almacén'},
   {'key': 'place_store', 'message': '¿Qué lugar tendría? 📂', 'hint': ''},
-  {'key': 'status_store', 'message': '¿Qué permiso vas asignar a este almacén? ✅', 'hint': ''},    
+  {'key': 'status_store', 'message': '¿Qué permiso vas asignar a este almacén? ', 'hint': ''},    
 
     {'key': 'done', 'message': '¡Genial! He registrado todos los datos. ¿Quieres guardar el nuevo Almacén?', 'hint': 'Confirmar Almacén'}
     //ENVIANDO A INSERTAR
         // await storeTask();
   ],title: 'Crear Almacén',module: 'storeStore',),
-        //  StartStorePage(pageController: _pageController),
         ],
       ),
     );

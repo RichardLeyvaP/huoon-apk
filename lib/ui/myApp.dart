@@ -5,12 +5,16 @@ import 'package:huoon/domain/blocs/configuration_bloc/configuration_signal.dart'
 import 'package:huoon/ui/Routes/pages_routes.dart';
 import 'package:huoon/ui/pages/loginFb.dart';
 import 'package:huoon/ui/pages/rol-admin/Task/TaskCreationPage.dart';
+import 'package:huoon/ui/pages/rol-admin/chat/ChatHealthPage.dart';
 import 'package:huoon/ui/pages/rol-admin/chat/audio_recorder.screen.dart';
+import 'package:huoon/ui/pages/rol-admin/chat/ChatPageFinancePage.dart';
 import 'package:huoon/ui/pages/rol-admin/health/dataAnalysisPage.dart';
 import 'package:huoon/ui/pages/rol-admin/health/myHealthPage.dart';
 import 'package:huoon/ui/pages/rol-admin/health/remindersPage.dart';
 import 'package:huoon/ui/pages/rol-admin/product/productCreationPage.dart';
+import 'package:huoon/ui/pages/rol-admin/product/productUpdatePage.dart';
 import 'package:huoon/ui/pages/rol-admin/store/storeCreationPage.dart';
+import 'package:huoon/ui/pages/rol-admin/store/storeUpdatePage.dart';
 import 'package:huoon/ui/pages/splash/splash_screen.dart';
 import 'package:huoon/ui/util/util_class.dart';
 import 'package:huoon/ui/util/utils_class_apk.dart';
@@ -78,14 +82,34 @@ class MyApp extends StatelessWidget {
         path: '/ProductCreation',
         builder: (context, state) => ProductCreation(),
       ),
+      
+      GoRoute(
+        path: '/ProductUpdate',
+        builder: (context, state) => ProductUpdatePage(),
+      ),
       GoRoute(
         path: '/StoreCreation',
         builder: (context, state) => const StoreCreation(),
       ),
+      
+      GoRoute(
+        path: '/StoreUpdate',
+        builder: (context, state) => const StoreUpdatePage(),
+      ),
       //RUTAS NUEVAS
       GoRoute(
         path: '/ChatPage',
-        builder: (context, state) => const ChatPage(),
+        builder: (context, state) =>  const ChatPage(),
+      ),
+      //RUTAS NUEVAS
+      GoRoute(
+        path: '/ChatPageFinancePage',
+        builder: (context, state) =>  const ChatPageFinancePage(),
+      ),
+      
+      GoRoute(
+        path: '/ChatHealthPage',
+        builder: (context, state) =>  const ChatHealthPage(),
       ),
       GoRoute(
         path: '/DataAnalysisPage',
@@ -109,13 +133,13 @@ class MyApp extends StatelessWidget {
       fontFamily: StyleGlobalApk.globalTextStyle.fontFamily,
       primaryColor: const Color.fromARGB(255, 67, 162, 240),
       colorScheme: ColorScheme.fromSwatch().copyWith(
-        primary: Colors.blue,
+        primary: StyleGlobalApk.colorPrimary,
         secondary: Colors.orange,
         surface: Colors.white,
       ),
       appBarTheme: AppBarTheme(
         toolbarHeight: 120,
-        backgroundColor: Colors.blue,
+        backgroundColor: StyleGlobalApk.colorPrimary,
         titleTextStyle: StyleGlobalApk.globalTextStyle.copyWith(
           fontSize: 24.0,
           fontWeight: FontWeight.bold,
@@ -151,7 +175,7 @@ class MyApp extends StatelessWidget {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(
-          backgroundColor: WidgetStateProperty.all<Color>(Colors.blue),
+          backgroundColor: WidgetStateProperty.all<Color>(StyleGlobalApk.colorPrimary),
           foregroundColor: WidgetStateProperty.all<Color>(Colors.white),
           textStyle: WidgetStateProperty.all<TextStyle>(
             StyleGlobalApk.globalTextStyle.copyWith(
@@ -170,9 +194,9 @@ class MyApp extends StatelessWidget {
           color: Colors.grey,
           fontWeight: FontWeight.normal,
         ),
-        focusedBorder: const OutlineInputBorder(
+        focusedBorder:  OutlineInputBorder(
           borderSide: BorderSide(
-            color: Colors.blue,
+            color: StyleGlobalApk.colorPrimary,
           ),
         ),
       ),

@@ -69,6 +69,7 @@ flutter:
     - assets/splash/huoon_splash.jpg
     - assets/images/icon-Huoon.jpg
     - assets/images/icon-Huoon-transp.jpg
+    - assets/gif/writing.gif
 
   fonts:
     - family: BebasNeue

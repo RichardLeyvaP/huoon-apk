@@ -57,6 +57,10 @@ void updateProductData(ProductElement updatedElement) {
     );
   }
 }
+getPrice()
+{
+  return productElementSignal.value!.unitPrice;
+}
 
 
 // Métodos para aumentar o disminuir la cantidad

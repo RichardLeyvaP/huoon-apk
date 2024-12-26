@@ -1,11 +1,12 @@
 import 'dart:async';
 
-import 'package:animate_do/animate_do.dart';
+// import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:huoon/data/models/products/product_model.dart';
 import 'package:huoon/data/models/store/store_model.dart';
 import 'package:huoon/data/models/tasks/tasks_model.dart';
+import 'package:huoon/domain/blocs/chat_ia_bloc/chat_ia_service.dart';
 import 'package:huoon/domain/blocs/login_bloc/login_signal.dart';
 import 'package:huoon/domain/blocs/product_cat_state/bloc/product_cat_state_service.dart';
 import 'package:huoon/domain/blocs/product_cat_state/bloc/product_cat_state_signal.dart';
@@ -22,7 +23,9 @@ import 'package:huoon/ui/Components/family_widget.dart';
 import 'package:huoon/ui/Components/frequency_widget.dart';
 import 'package:huoon/ui/Components/priority_widget.dart';
 import 'package:huoon/ui/Components/state_widget.dart';
+import 'package:huoon/ui/pages/rol-admin/Task/selectDays/utils.dart';
 import 'package:huoon/ui/pages/rol-admin/product/startProductPage.dart';
+import 'package:huoon/ui/util/utils_class_apk.dart';
 import 'package:intl/intl.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -170,13 +173,165 @@ static final kFirstDay = DateTime(2020, 1, 1);
 //
 //
  // ============================================ STORE SECTION  ============================================
-
-
   // ============================================ STORE SECTION FIN ========================================
+  //
+  //
+   // ============================================ PRODUCT SECTION  ============================================
+   // Formato completo con fecha y hora, imprime por separado
+  String _formatDateTimeProduct(DateTime date) {
+    String formattedDate = DateFormat('yyyy-MM-dd').format(date);
+   // print('Fecha seleccionada: $formattedDate'); // Imprimir solo la fecha
+    return formattedDate;
+  }
+    // ============================================ PRODUCT SECTION FIN ============================================
+
+
+ // ============================================ IA-TRAVEL SECTION  ============================================
+// Función para construir el prompt
+String buildPrompt(List<Map<String, String>> steps) {
+  if (widget.module == 'chatIaTravel') {
+    String destination = steps.firstWhere(
+      (step) => step['key'] == 'boot_promt1_travel',
+      orElse: () => {'response': 'un destino'},
+    )['response'] ?? 'un destino';
+
+    String motive = steps.firstWhere(
+      (step) => step['key'] == 'boot_promt2_travel',
+      orElse: () => {'response': 'un motivo'},
+    )['response'] ?? 'un motivo';
+
+    String duration = steps.firstWhere(
+      (step) => step['key'] == 'boot_promt3_travel',
+      orElse: () => {'response': 'una duración'},
+    )['response'] ?? 'una duración';
+
+    String companionship = steps.firstWhere(
+      (step) => step['key'] == 'boot_promt4_travel',
+      orElse: () => {'response': 'solo'},
+    )['response'] ?? 'solo';
+
+    String interest = steps.firstWhere(
+      (step) => step['key'] == 'boot_promt5_travel_fin',
+      orElse: () => {'response': 'ningún interés específico'},
+    )['response'] ?? 'ningún interés específico';
+
+    return 'Quiero viajar a $destination por $motive. Planeo quedarme $duration y viajaré $companionship. '
+        'Mis intereses principales incluyen $interest. ¿Qué recomendaciones tienes para este viaje? y la respuesta dala en no mas de 400 caracteres';
+  } 
+  else
+   if (widget.module == 'chatIaFinance') {
+    String goal = steps.firstWhere(
+      (step) => step['key'] == 'boot_promt1_finance',
+      orElse: () => {'response': 'un objetivo financiero'},
+    )['response'] ?? 'un objetivo financiero';
+
+    String income = steps.firstWhere(
+      (step) => step['key'] == 'boot_promt2_finance',
+      orElse: () => {'response': 'un ingreso mensual promedio'},
+    )['response'] ?? 'un ingreso mensual promedio';
+
+    String expenses = steps.firstWhere(
+      (step) => step['key'] == 'boot_promt3_finance',
+      orElse: () => {'response': 'principales gastos mensuales'},
+    )['response'] ?? 'principales gastos mensuales';
+
+    String savings = steps.firstWhere(
+      (step) => step['key'] == 'boot_promt4_finance',
+      orElse: () => {'response': 'ningún ahorro o inversión'},
+    )['response'] ?? 'ningún ahorro o inversión';
+
+    String riskLevel = steps.firstWhere(
+      (step) => step['key'] == 'boot_promt5_finance_fin',
+      orElse: () => {'response': 'un nivel de riesgo bajo'},
+    )['response'] ?? 'un nivel de riesgo bajo';
+
+    return 'Mi objetivo financiero es $goal. Tengo un ingreso mensual promedio de $income y mis principales gastos incluyen $expenses. '
+        'Actualmente tengo $savings y estoy dispuesto a asumir $riskLevel. ¿Qué recomendaciones puedes darme para mejorar mis finanzas? y la respuesta dala en no mas de 400 caracteres';
+  } 
+
+
+  else if (widget.module == 'chatIaHealth') {
+    String healthGoal = steps.firstWhere(
+      (step) => step['key'] == 'boot_promt1_health',
+      orElse: () => {'response': 'mejorar mi bienestar general'},
+    )['response'] ?? 'mejorar mi bienestar general';
+
+    String activityLevel = steps.firstWhere(
+      (step) => step['key'] == 'boot_promt2_health',
+      orElse: () => {'response': 'un nivel bajo de actividad física'},
+    )['response'] ?? 'un nivel bajo de actividad física';
+
+    String dietType = steps.firstWhere(
+      (step) => step['key'] == 'boot_promt3_health',
+      orElse: () => {'response': 'una dieta estándar'},
+    )['response'] ?? 'una dieta estándar';
+
+    String sleepPattern = steps.firstWhere(
+      (step) => step['key'] == 'boot_promt4_health',
+      orElse: () => {'response': '7 horas de sueño por noche'},
+    )['response'] ?? '7 horas de sueño por noche';
+
+    String healthConcerns = steps.firstWhere(
+      (step) => step['key'] == 'boot_promt5_health_fin',
+      orElse: () => {'response': 'ninguna preocupación específica'},
+    )['response'] ?? 'ninguna preocupación específica';
+
+    return 'Mi objetivo de salud es $healthGoal. Tengo $activityLevel, sigo $dietType, y generalmente duermo $sleepPattern. '
+        'Mis preocupaciones actuales incluyen $healthConcerns. ¿Qué recomendaciones puedes darme para mejorar mi salud?  y la respuesta dala en no mas de 400 caracteres';
+  }
+  
+  else {
+
+    if (widget.module == 'chatIaTravel') 
+    {
+     return 'Eres un experto en viajes, necesito los mejores cosejos. ¿Qué recomendaciones tienes para mí? y la respuesta dala en no mas de 400 caracteres';
+  }
+  
+   else if (widget.module == 'chatIaFinance') 
+    {
+     return 'Eres un experto en finanzas, necesito los mejores cosejos. ¿Qué recomendaciones tienes para mí? y la respuesta dala en no mas de 400 caracteres';
+  }
+  
+   else if (widget.module == 'chatIaHealth') 
+    {
+     return 'Eres un experto en salud, necesito los mejores cosejos. ¿Qué recomendaciones tienes para mí? y la respuesta dala en no mas de 400 caracteres';
+  }
+  else
+  {
+     return 'Dependiendo lo que te pregunte tu eres un experto en el tema, necesito los mejores cosejos.y la respuesta dala en no mas de 400 caracteres';
+  }
+    }
+}
+
+String buildPromptInput(String input) {
+  return 'Sigue el hilo de la conversación y responde basado en lo siguiente: $input y  la respuesta dala en no mas de 400 caracteres';
+   }
+
+
+
+// Ejemplo de cómo actualizar las respuestas
+void updateResponse(String key, String response) {
+  for (var step in _conversationSteps) {
+    if (step['key'] == key) {
+      step['response'] = response;
+      break;
+    }
+  }
+}
+
+//String prompt = buildPrompt(conversationSteps);
+//  print(prompt);
+// ============================================ IA-TRAVEL SECTION FIN ============================================
 
 //DECLARAR LAS VARIABLES QUE SE NECESITAN PARA EL MODULO
   
-
+void _addConversationStep(Map<String, String> newStep) {
+   // setState(() {
+      _conversationSteps.add(newStep); // Agrega un nuevo paso.
+      // _messages.add(newStep);
+    
+  //  });
+  }
 
   void _showInitialMessages(String module ) async {
     await Future.delayed(Duration(milliseconds: 500));
@@ -202,6 +357,12 @@ static final kFirstDay = DateTime(2020, 1, 1);
      }
      //
      //
+     if(module == 'chatIaTravel')
+     {
+      _messages.add({'key': 'init','text': '👋 Hola! ${currentUserLG.value!.userName}. Soy Huoon estoy aqui para ayudarte.', 'sender': 'bot'});
+     }
+     //
+     //
     });
     await Future.delayed(Duration(milliseconds: 800));
     _simulateResponse();
@@ -221,7 +382,7 @@ static final kFirstDay = DateTime(2020, 1, 1);
       if (mounted) { // Verifica si el widget sigue montado
     //verifico si ya pasaron 10segundos le mando un mensaje
     
-    if(_isTypingTime == 30)//si e sfalse mando un mensaje
+    if(_isTypingTime == 35)//si e sfalse mando un mensaje
     {
      ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -243,18 +404,18 @@ static final kFirstDay = DateTime(2020, 1, 1);
       {
         isActive2seg = 1;
 
-        setState(() {
-        isActive = false; // Cambiar entre activo e inactivo
-      });
+      //   setState(() {
+      //   isActive = false; // Cambiar entre activo e inactivo
+      // });
 
       }
      else
     {
       if(isActive == false)
       {
-        setState(() {
-        isActive = true; // Cambiar entre activo e inactivo
-      });
+      //   setState(() {
+      //   isActive = true; // Cambiar entre activo e inactivo
+      // });
 
       }       
       isActive2seg++;
@@ -270,13 +431,15 @@ static final kFirstDay = DateTime(2020, 1, 1);
   Widget build(BuildContext context) {    
     
     return Scaffold(
+      backgroundColor: const Color.fromARGB(100, 194, 191, 191),
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
         title: 
       
       Column(
         children: [
           Row(
+            
             children: [
               Stack(
             children: [
@@ -311,7 +474,7 @@ static final kFirstDay = DateTime(2020, 1, 1);
             ],
           ),
           
-          const SizedBox(width: 15,),
+          const SizedBox(width: 10,),
                 
                Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -324,7 +487,7 @@ static final kFirstDay = DateTime(2020, 1, 1);
               
             ],
           ),
-       const Divider(height: 1.0, thickness: 2.0, color: Color.fromARGB(30, 158, 158, 158)),
+      // const Divider(height: 1.0, thickness: 2.0, color: Color.fromARGB(30, 158, 158, 158)),
         ],
       )),
       body: Column(
@@ -364,7 +527,8 @@ static final kFirstDay = DateTime(2020, 1, 1);
                    // ============================================ PRODUCT SECTION FIN ============================================
                    else if(widget.module == 'storeProduct')//almacen
                   {
-                    isUserUpdateMens = message['key'] == 'quantity_product_user' ;
+                    isUserUpdateMens = message['key'] == 'quantity_product_user' || 
+                  message['key'] == 'status_product_user' || message['key'] == 'category_product_user';
                   } 
                   // ============================================ PRODUCT SECTION FIN ============================================
 
@@ -387,7 +551,20 @@ static final kFirstDay = DateTime(2020, 1, 1);
                   child: Align(
                     alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
                     child: 
-                      showWidget(message,keyMessage,isUser) ,
+                      FutureBuilder<Widget>(
+          future: showWidget(message, keyMessage, isUser),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return CircularProgressIndicator();
+            } else if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            } else if (snapshot.hasData) {
+              return snapshot.data!;
+            } else {
+              return Text('No hay datos');
+            }
+          },
+        ),
                       
                      
                     
@@ -410,7 +587,14 @@ static final kFirstDay = DateTime(2020, 1, 1);
                               borderRadius: 
                               BorderRadius.only(topLeft: Radius.circular(12),topRight: Radius.circular(12),bottomRight: Radius.circular(12))
                             ),
-                    child: Text('...',style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
+                    child: 
+                    Image(
+                      image: AssetImage('assets/gif/writing.gif'),
+                      height: 30,
+
+                    
+                    ) ,
+                    //Text('...',style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
                   ),
                 ],
               ),
@@ -432,28 +616,54 @@ String moduleAct = widget.module;
         children: [
           Expanded(
             child: TextField(
-              controller: _textController,
-              decoration: InputDecoration(
-                hintText: hint,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-              ),
-              onSubmitted: (value) {
-  _handleUserInput(value, moduleAct);
-},
+  controller: _textController,
+  decoration: InputDecoration(
+    hintText: hint,
+    filled: true, // Habilita el relleno
+    fillColor: Colors.white, // Fondo blanco
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8.0),
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: const Color.fromARGB(133, 158, 158, 158), width: 1.0), // Borde cuando está habilitado
+      borderRadius: BorderRadius.circular(8.0),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: StyleGlobalApk.colorPrimary, width: 2.0), // Borde cuando está enfocado
+      borderRadius: BorderRadius.circular(8.0),
+    ),
+    errorBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.red, width: 1.5), // Borde cuando hay un error
+      borderRadius: BorderRadius.circular(8.0),
+    ),
+    focusedErrorBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.redAccent, width: 2.0), // Borde cuando hay error y está enfocado
+      borderRadius: BorderRadius.circular(8.0),
+    ),
+  ),
+  onSubmitted: (value) {
+    _handleUserInput(value, moduleAct);
+  },
+),
+),
+SizedBox(
+  width: 10,
+),
+          CircleAvatar(
+            backgroundColor: StyleGlobalApk.colorPrimary,
+            child: IconButton(
+              icon: Icon(Icons.send,color: Colors.white,),
+              onPressed: () => _handleUserInput(_textController.text,moduleAct),
             ),
-          ),
-          IconButton(
-            icon: Icon(Icons.send),
-            onPressed: () => _handleUserInput(_textController.text,moduleAct),
           ),
         ],
       ),
     );
   }
 
-  void _handleUserInput(String input,String module) {
+  Future<void> _handleUserInput(String input,String module) async {
+
+
     if (_currentStep >= _conversationSteps.length || input.isEmpty) return;
 
     // Guardar datos
@@ -474,7 +684,7 @@ if(module == 'storeTask')
       // Editar mensaje existente
       setState(() {
          _editingMessageKey = 'vacio';
-        _isTypingTime = 1;
+        _isTypingTime = 1;        
         _messages[_editingMessageIndex!] = {'text': input, 'sender': 'user'};
         _editingMessageIndex = null;
         _showInputField = !_isFinalStepReached; // Ocultar solo si se alcanzó el paso final
@@ -592,7 +802,7 @@ if(module == 'storeTask')
   // ============================================ PRODUCT SECTION  ============================================
   else if(module == 'storeProduct')
 {
-  if((currentStepKey != 'quantity_product' ) || _editingMessageKey == null )//si no es ninguno de estos que selecciona si puede modificar e insertar
+  if((currentStepKey != 'quantity_product' && currentStepKey != 'status_product' && currentStepKey != 'category_product') || _editingMessageKey == null )//si no es ninguno de estos que selecciona si puede modificar e insertar
       {
          if (_editingMessageIndex != null) {
       // Editar mensaje existente
@@ -643,6 +853,14 @@ if(module == 'storeTask')
           );
       updateProductData(productElement);
     }
+    
+    else if(currentStepKey == 'brand_product')
+    {
+      final productElement = ProductElement( 
+        brand:input ,
+          );
+      updateProductData(productElement);
+    }
       if (currentStepKey != 'done') {
         _taskData[currentStepKey!] = input;
       }
@@ -666,6 +884,100 @@ if(module == 'storeTask')
     // ============================================ PRODUCT SECTION FIN ============================================
     //
     //
+   
+     else if(module == 'chatIaTravel' || module == 'chatIaFinance'|| module == 'chatIaHealth')
+{
+  if( _editingMessageKey == null ||   _editingMessageKey == 'vacio')//si no es ninguno de estos que selecciona si puede modificar e insertar
+      {
+         if (_editingMessageIndex != null) {
+      // Editar mensaje existente
+      setState(() {
+         _editingMessageKey = 'vacio';
+        _isTypingTime = 1;
+        _messages[_editingMessageIndex!] = {'text': input, 'sender': 'user'};
+        _editingMessageIndex = null;
+        _showInputField = !_isFinalStepReached; // Ocultar solo si se alcanzó el paso final
+      });
+    } else {
+      // Nuevo mensaje
+
+      String responseIA = '';
+
+      if((currentStepKey == 'boot_promt5_travel_fin' || currentStepKey == 'boot_promt5_finance_fin' || currentStepKey == 'boot_promt5_health_fin'  ) && _isTyping == false)//esta es la primer vez, aqui poner el promt
+      {_textController.clear();
+        setState(()  {
+        _isTyping = true; });
+        _isTypingTime = 1;   
+        _messages.insert(0, {'text': input, 'sender': 'user'}); // Insertar al inicio     
+ responseIA = await  requestChatIa(buildPrompt(_conversationSteps),buildPrompt(_conversationSteps));
+      }
+      else if((currentStepKey == 'boot_promt_extra') && _isTyping == false)
+      {
+        setState(()  {
+        _isTyping = true; });
+        _isTypingTime = 1;
+        _messages.insert(0, {'text': input, 'sender': 'user'}); // Insertar al inicio
+ responseIA = await  requestChatIa(buildPromptInput(input),buildPrompt(_conversationSteps));
+      }
+      else
+      {
+        setState(()  {
+        _isTypingTime = 1;
+        _messages.insert(0, {'text': input, 'sender': 'user'}); // Insertar al inicio
+       
+      });
+
+      }
+    
+      
+        
+         if(currentStepKey == 'boot_promt5_travel_fin' || currentStepKey == 'boot_promt5_finance_fin' || currentStepKey == 'boot_promt5_health_fin'   || currentStepKey == 'boot_promt_extra')
+    {
+  _taskData[currentStepKey!] = input;
+        setState(()  {
+       
+         _addConversationStep({
+    'key': 'boot_promt_extra',
+    'message': responseIA,
+    'hint': '',
+  });
+     _isTyping = false;
+        });
+ 
+    }
+   
+
+        if(currentStepKey != 'boot_promt_extra')
+    {
+      
+      updateResponse(currentStepKey!, input);
+    }
+     
+    
+    
+
+      _textController.clear();
+      _currentStep++;
+
+      if (_currentStep < _conversationSteps.length) {
+        _simulateResponse();
+      } else {
+
+        if(widget.module != 'chatIaTravel')
+        {
+          print('Datos para la IA$_taskData');
+        _isFinalStepReached = true;
+        _showInputField = false; // Ocultar el campo de texto al finalizar
+
+        }
+        
+      }
+    }
+    
+
+      }
+
+}
 
 
 
@@ -709,7 +1021,7 @@ if(module == 'storeTask')
 
     });
 
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(Duration(milliseconds: 800));
 
     setState(() {
       _isTyping = false;
@@ -821,7 +1133,7 @@ if(module == 'storeTask')
          //
          //
          // ============================================ STORE SECTION  ============================================
-         if(widget.module == 'storeStore')
+        else if(widget.module == 'storeStore')
         {
           
     //ENVIAR DATOS A LA API    
@@ -849,47 +1161,63 @@ if(module == 'storeTask')
       );
     }
     
-    
-
         } 
          // ============================================ STORE SECTION FIN ============================================
+         //
+         //
+         // ============================================ PRODUCT SECTION  ============================================
+         else if(widget.module == 'storeProduct')
+        {
+          
+    //ENVIAR DATOS A LA API    
+     FocusScope.of(context).unfocus();
+    String _dataStart = _formatDateTimeProduct(_selectedDateRange!.start);
+    String _dataEnd = _formatDateTimeProduct(_selectedDateRange!.end);
+    final productElement = ProductElement(
+      purchaseDate: _dataStart,
+      expirationDate: _selectedDateRange!.end,
+    );
+    updateProductData(productElement);
+    String msj = isUpdateProductSignal.value == true
+        ? 'Se está modificando el producto...'
+        : 'Se está creando el producto...';
+
+    
+      print('Datos del productos a insertar-${productElementSignal.value}');
+      await submitProduct();
+    
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(msj),
+        duration: Duration(seconds: 2),
+        action: SnackBarAction(label: 'Aceptar', onPressed: () {}),
+      ),
+    );
+
+    GoRouter.of(context).go(
+      '/HomePrincipal',
+      extra: {
+        'name': '',
+        'email': '',
+        'avatarUrl': '',
+      },
+    );
+    
+    
+        } 
+         // ============================================ PRODUCT SECTION FIN ============================================
 
          //YA EL FINAL PARA MANDAR LOS DATOS A LA API
 
 
-
-
-
-
     }
-   
-
    
   }
    
-    void eventDate() {
-    //mandar la fecha
-    if (_selectedDateRange == null) //si el rango es null que coja la fecha actual
-    {
-      // Si _selectedDateRange es null, asignamos la fecha actual como inicio y fin.
-      final DateTime startDate = _selectedDateRange?.start ?? DateTime.now();
-      final DateTime endDate = _selectedDateRange?.end ?? DateTime.now();
-
-      // Si _startTime es null, asignamos las 7:00 AM como hora predeterminada.
-      final TimeOfDay startTime = _startTime ?? TimeOfDay(hour: 7, minute: 0);
-
-// Si _endTime es null, asignamos las 6:00 PM como hora predeterminada.
-      final TimeOfDay endTime = _endTime ?? TimeOfDay(hour: 18, minute: 0);
-
-      updateTaskDateTime(_formatDateTime(startDate, startTime), _formatDateTime(endDate, endTime));
-    } else {
-      updateTaskDateTime(
-          _formatDateTime(_selectedDateRange!.start, _startTime), _formatDateTime(_selectedDateRange!.end, _endTime));
-    }
-  }
- 
   
- Widget showWidget(Map<String, dynamic> message, String? keyMessage, bool isUser) {
+  //ESTE ES UN METODO QUE PERTENECE AL MODULO COMO TAL DEL BOOT, DEVUELVE EL MENSAJE DEL BOOT 
+ Future<Widget> showWidget(Map<String, dynamic> message, String? keyMessage, bool isUser) async {
   print('este es el Key de la tarea-$keyMessage');
  Widget showWidgetOption;
  if(message['buttons'] == null)//aun no es el final
@@ -984,7 +1312,7 @@ if(module == 'storeTask')
      //
      //
       // ============================================ STORE SECTION FIN ============================================
-if(widget.module == 'storeStore')
+else if(widget.module == 'storeStore')
 {
   if( keyMessage =='status_store')
     {
@@ -1005,24 +1333,45 @@ if(widget.module == 'storeStore')
  //
  //
       // ============================================ PRODUCT SECTION FIN ============================================
-if(widget.module == 'storeProduct')
+else if(widget.module == 'storeProduct')
 {
-  if( keyMessage =='quantity_product')
+  if( keyMessage == 'quantity_product')
     {
       showWidgetOption = Column(
         children: [
           Text(message['text'] ?? ''),
-         //cargar aqui el de aumentar o disminuir
+           _buildQuantitySectionProduct(),
 
         ],
       );//priority
          }
-         if( keyMessage =='status_product')
+       else  if( keyMessage == 'status_product')
     {
       showWidgetOption = Column(
         children: [
           Text(message['text'] ?? ''),
          _buildStatusSectionProduct(),
+
+        ],
+      );//priority
+         }
+        else  if( keyMessage == 'category_product')
+    {
+      showWidgetOption = Column(
+        children: [
+          Text(message['text'] ?? ''),
+         _buildStatusCategoryProduct(),
+
+        ],
+      );//priority
+         }
+         
+        else  if( keyMessage == 'date_product')
+    {
+      showWidgetOption = Column(
+        children: [
+          Text(message['text'] ?? ''),
+         _buildCalendarSectionProduct(),     
 
         ],
       );//priority
@@ -1035,6 +1384,7 @@ if(widget.module == 'storeProduct')
  // ============================================ PRODUCT SECTION FIN ============================================
  //
  //
+ 
      
     else//este es el por defecto
     {
@@ -1048,6 +1398,16 @@ if(widget.module == 'storeProduct')
  }
  else //ya lleg[o al final y esta el cancelar o guardar
  {
+ 
+
+//  si llego al final y estoy ne el modulo de la ia, ahi la ia e sla que le sigue
+  
+ if(widget.module == 'chatIaTravel' || widget.module == 'chatIaFinance' || widget.module == 'chatIaHealth'  ){
+ showWidgetOption = Text(message['text'] ?? '');
+                     
+   }
+   else
+   {
  showWidgetOption = Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -1068,6 +1428,11 @@ if(widget.module == 'storeProduct')
                                 ),
                               ],
                             );
+   }
+    
+    
+  
+
 
  }
  return 
@@ -1075,7 +1440,7 @@ if(widget.module == 'storeProduct')
                         margin: EdgeInsets.symmetric(vertical: 5),
                         padding: EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: isUser ? Colors.blue[100] : Colors.grey[300],
+                          color: isUser ? const Color.fromARGB(255, 188, 236, 177) : Colors.white,
                           borderRadius: isUser ?BorderRadius.only(topLeft: Radius.circular(12),topRight: Radius.circular(12),bottomLeft: Radius.circular(12)):
                           BorderRadius.only(topLeft: Radius.circular(12),topRight: Radius.circular(12),bottomRight: Radius.circular(12))
                         ),
@@ -1084,7 +1449,6 @@ if(widget.module == 'storeProduct')
                           
 
  }
-
 
 
 // ============================================ TASK SECTION FIN ============================================
@@ -1140,6 +1504,27 @@ updateTaskCategoryId(arrayCategory.first);
     );
   }
 
+  void eventDate() {
+    //mandar la fecha
+    if (_selectedDateRange == null) //si el rango es null que coja la fecha actual
+    {
+      // Si _selectedDateRange es null, asignamos la fecha actual como inicio y fin.
+      final DateTime startDate = _selectedDateRange?.start ?? DateTime.now();
+      final DateTime endDate = _selectedDateRange?.end ?? DateTime.now();
+
+      // Si _startTime es null, asignamos las 7:00 AM como hora predeterminada.
+      final TimeOfDay startTime = _startTime ?? TimeOfDay(hour: 7, minute: 0);
+
+// Si _endTime es null, asignamos las 6:00 PM como hora predeterminada.
+      final TimeOfDay endTime = _endTime ?? TimeOfDay(hour: 18, minute: 0);
+
+      updateTaskDateTime(_formatDateTime(startDate, startTime), _formatDateTime(endDate, endTime));
+    } else {
+      updateTaskDateTime(
+          _formatDateTime(_selectedDateRange!.start, _startTime), _formatDateTime(_selectedDateRange!.end, _endTime));
+    }
+  }
+ 
 
   Widget _buildStatusSection() {
     return Builder(
@@ -1319,8 +1704,8 @@ _buildFamilySection() {
                 if (end != null) {
                   await _selectTime(context, false); // Seleccionar hora para la fecha de fin
                 }
-                if (_selectedDateRange != null && _startTime != null && _endTime != null)
-                {
+              //  if (_selectedDateRange != null && _startTime != null && _endTime != null)
+               // {
                  
                    final existingIndex = _messages.indexWhere((message) => message['key'] == 'calendar_user');
                  setState(()  {
@@ -1340,7 +1725,7 @@ _isTypingTime = 1;
   }
 });
 
-                }
+                //}
               },
               onPageChanged: (focusedDay) {
                 _focusedDay = focusedDay;
@@ -1540,12 +1925,13 @@ _isTypingTime = 1;
   }
 // ============================================ STORE SECTION FIN ============================================
 
-//CARGAR ALGUN MODULO QUE HAGA FALTA
+
 // ============================================ PRODUCT SECTION  ============================================
   Widget _buildStatusSectionProduct() {
+    
     return Builder(
       builder: (context) {
-        if (statusSignalPCS.watch(context) != null) {
+        if (statusSignalPCS.value != null) {
           bool selectMultiple = false;
           //     if (isUpdateProductSignal.value == true) { //es modificar           
           //   selectStatus(productElementSignal.value!.statusId!);
@@ -1582,22 +1968,224 @@ _isTypingTime = 1;
 });
               //seleccionando el estado
               selectStatus(selectedStatus);
+              final productElement = ProductElement(
+                homeId: 1,//todo por defecto
+                        statusId: selectedStatuses.first.id,
+                        nameStatus: selectedStatuses.first.title
+  );
+                  updateProductData(productElement);
             },
           );
         }
-        return Container();
+        return Text('No hay estados');
       },
     );
   }
 
+ QuantitySelector _buildQuantitySectionProduct() {
+   return QuantitySelector(
+                    initialQuantity: quantitySignal.value,
+                    onQuantityChanged: (newQuantity) {                        
+
+                      updateQuantity(newQuantity);
+                      int? price = int.tryParse(getPrice());
+if (price != null) {
+  print("El precio convertido es $price.");
+} else {
+  print("No se pudo convertir el precio.");
+}
+
+                       final productElement = ProductElement(
+                        quantity: newQuantity,
+                        totalPrice: price != null ?(price*newQuantity).toString():'0',
+  );
+
+  final existingIndex = _messages.indexWhere((message) => message['key'] == 'quantity_product_user');
+               setState(()  {
+_isTypingTime = 1;
+if (existingIndex != -1) {
+  // Si existe, modificarlo
+  _messages[existingIndex] = {
+    'key': 'quantity_product_user',
+    'text': newQuantity.toString(),
+    'sender': 'user',
+
+  };
+} else {
+   
+                _handleUserSessions(newQuantity.toString(),'quantity_product_user');
+
+}
+});
+
+                  updateProductData(productElement);
+
+                      // context.read<CategoriesPrioritiesBloc>().add(QuantityProductEvent(newQuantity));
+                    },
+                  );
+ }
+
+ CategoryWidget _buildStatusCategoryProduct() {
+    return CategoryWidget(
+                categories: categoriesSignalPCS.value,
+                titleWidget: '',
+                selectedCategoryId: selectedCategoryIdSignalPCS.value,
+                selectMultiple: false,
+                onSelectionChanged: (selectedCategories) {
+                  // setState(() {
+                    arrayCategory = selectedCategories
+                        .asMap()
+                        .entries
+                        .map((entry) => selectedCategories[entry.key].id) // Mapea los IDs de las categorías
+                        .toList();
+                  // });
+
+                   final existingIndex = _messages.indexWhere((message) => message['key'] == 'category_product_user');
+                 setState(()  {
+_isTypingTime = 1;
+  if (existingIndex != -1) {
+    // Si existe, modificarlo
+    _messages[existingIndex] = {
+      'key': 'category_product_user',
+      'text': selectedCategories.first.title,
+      'sender': 'user',
+
+    };
+  } else {
+     
+                  _handleUserSessions(selectedCategories.first.title,'category_product_user');
+  
+  }
+});
+                  selectCategory(selectedCategories.first.id);
+                   final productElement = ProductElement(
+    categoryId: selectedCategories.first.id,
+    nameCategory: selectedCategories.first.title
+  );
+                  updateProductData(productElement);
+                },
+              );
+  }
+
+ Column _buildCalendarSectionProduct() {
+   return Column(
+        children: [
+          TableCalendar(
+            locale: 'es_ES',
+            firstDay: kFirstDay,
+            lastDay: kLastDay,
+            focusedDay: _focusedDay,
+            calendarFormat: _calendarFormat,
+            rangeSelectionMode: RangeSelectionMode.toggledOn,
+            selectedDayPredicate: (day) {
+              return _selectedDateRange != null &&
+                  (isSameDay(_selectedDateRange!.start, day) || isSameDay(_selectedDateRange!.end, day));
+            },
+            rangeStartDay: _selectedDateRange?.start,
+            rangeEndDay: _selectedDateRange?.end,
+            onRangeSelected: (start, end, focusedDay) async {
+              setState(() {
+                _selectedDateRange = DateTimeRange(start: start!, end: end ?? start);
+                _focusedDay = focusedDay;
+              });
+             // print('selcct dataHora-zzzzz-start:$start');
+            //  print('selcct dataHora-zzzzz-end:$end');
+              final existingIndex = _messages.indexWhere((message) => message['key'] == 'calendar_product_user');
+                 setState(()  {
+_isTypingTime = 1;
+  if (existingIndex != -1) {
+    // Si existe, modificarlo
+    _messages[existingIndex] = {
+      'key': 'calendar_product_user',
+      'text': 'Nueva Fecha seleccionada',
+      'sender': 'user',
+
+    };
+  } else {
+      //verificar si ya existe que lo modifique
+                  _handleUserSessions('Fecha seleccionada correctamente','calendar_product_user');
+  
+  }
+});
+            },
+            onPageChanged: (focusedDay) {
+              _focusedDay = focusedDay;
+            },
+          ),
+          SizedBox(height: 20),
+          Container(
+            height: 80,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color: selectedLevel == 2
+                    ? colorBotoomSel.withOpacity(0.8)
+                    : colorBotoom.withOpacity(0.4),
+                width: 2.0,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: selectedLevel == 2
+                      ? colorBotoomSel.withOpacity(0.4)
+                      : colorBotoom.withOpacity(0.4),
+                  spreadRadius: 0,
+                  blurRadius: 10,
+                  offset: Offset(0, 0),
+                ),
+              ],
+            ),
+            child: Center(
+              child: Text(
+                _selectedDateRange != null
+                    ? 'Fecha de Compra : ${_formatDateTimeProduct(_selectedDateRange!.start)}'
+                    : 'Fecha de Compra : No seleccionada',
+              ),
+            ),
+          ),
+          SizedBox(height: 20),
+          Container(
+            height: 80,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color: selectedLevel == 2
+                    ? colorBotoomSel.withOpacity(0.8)
+                    : colorBotoom.withOpacity(0.4),
+                width: 2.0,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: selectedLevel == 2
+                      ? colorBotoomSel.withOpacity(0.4)
+                      : colorBotoom.withOpacity(0.4),
+                  spreadRadius: 0,
+                  blurRadius: 10,
+                  offset: Offset(0, 0),
+                ),
+              ],
+            ),
+            child: Center(
+              child: Text(
+                _selectedDateRange != null
+                    ? 'Fecha de Vencimiento : ${_formatDateTimeProduct(_selectedDateRange!.end)}'
+                    : 'Fecha de Vencimiento : No seleccionada',
+              ),
+            ),
+          ),
+          
+         
+        ],
+      );
+ }
+
 // ============================================ PRODUCT SECTION FIN ============================================
-
-
-
-
-
-
-
 //
 //
+//CARGAR ALGUN MODULO QUE HAGA FALTA
+
+
 }

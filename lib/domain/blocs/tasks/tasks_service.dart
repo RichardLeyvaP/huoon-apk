@@ -133,8 +133,8 @@ List<Person> convertToPersonList(List<Taskperson> taskpersons) {
         id: taskperson.id,
         name: taskperson.namePerson!, // Mapear namePerson a name
         image: taskperson.imagePerson!, // Mapear imagePerson a image
-        roleId: taskperson.rolId!,
-        roleName: taskperson.nameRole!);
+        roleId: taskperson.rolId == null ?1:taskperson.rolId!,
+        roleName: taskperson.nameRole ?? '');
   }).toList();
 }
 

@@ -126,26 +126,7 @@ selectCategory(productElementSignal.value!.categoryId!);
                   },
                 ),
                 SizedBox(height: 20),
-                CategoryWidget(
-                  categories: categoriesSignalPCS.value,
-                  titleWidget: 'Categorías',
-                  selectedCategoryId: selectedCategoryIdSignalPCS.value,
-                  selectMultiple: false,
-                  onSelectionChanged: (selectedCategories) {
-                    // setState(() {
-                      arrayCategory = selectedCategories
-                          .asMap()
-                          .entries
-                          .map((entry) => selectedCategories[entry.key].id) // Mapea los IDs de las categorías
-                          .toList();
-                    // });
-                    selectCategory(arrayCategory[0]);
-                     final productElement = ProductElement(
-      categoryId: arrayCategory[0],
-    );
-                    updateProductData(productElement);
-                  },
-                ),
+                _buildStatusCategoryProduct(),
 
                 // Estado por defecto
 
@@ -211,6 +192,29 @@ selectCategory(productElementSignal.value!.categoryId!);
         ),
       ),
     );
+  }
+
+  CategoryWidget _buildStatusCategoryProduct() {
+    return CategoryWidget(
+                categories: categoriesSignalPCS.value,
+                titleWidget: 'Categorías',
+                selectedCategoryId: selectedCategoryIdSignalPCS.value,
+                selectMultiple: false,
+                onSelectionChanged: (selectedCategories) {
+                  // setState(() {
+                    arrayCategory = selectedCategories
+                        .asMap()
+                        .entries
+                        .map((entry) => selectedCategories[entry.key].id) // Mapea los IDs de las categorías
+                        .toList();
+                  // });
+                  selectCategory(arrayCategory[0]);
+                   final productElement = ProductElement(
+    categoryId: arrayCategory[0],
+  );
+                  updateProductData(productElement);
+                },
+              );
   }
 
   void _onSubmit() {

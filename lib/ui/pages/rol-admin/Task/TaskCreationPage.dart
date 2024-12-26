@@ -43,7 +43,7 @@ class _TaskCreationState extends State<TaskCreation> {
     {'key': 'done', 'message': '¡Genial! He registrado todos los datos. ¿Quieres guardar la tarea?', 'hint': 'Confirmar tarea'}
     //ENVIANDO A INSERTAR
         // await storeTask();
-  ],title: 'Crearrrr tareaaaa',module: 'storeTask',),
+  ],title: 'Crear tarea',module: 'storeTask',),
           SecondTaskPage(pageController: _pageController, id: widget.id),
         ],
       ),

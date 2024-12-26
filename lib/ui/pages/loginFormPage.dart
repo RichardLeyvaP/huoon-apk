@@ -46,13 +46,13 @@ class _LoginFormPageState extends State<LoginFormPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Iniciando sesión...')),
       );
-    } else if (isLoggedInLG.watch(context) == false) {
+    } else if (isLoggedInLG.value == false) {
       //esta vacio
       // Muestra un mensaje de carga
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(loginMessageLG.value)), //13295---36,000.00
       );
-    } else if (isLoggedInLG.watch(context) == true) {
+    } else if (isLoggedInLG.value == true) {
       //está logueado
       // Navega a la página de inicio o realiza alguna acción
       ScaffoldMessenger.of(context).showSnackBar(

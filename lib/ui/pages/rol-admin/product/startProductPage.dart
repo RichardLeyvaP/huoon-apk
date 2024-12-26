@@ -222,7 +222,7 @@ elementId = productElementSignal.value!.id!;
           productName: _titleController.text, //si emptyTextField = true es que esta vacio
           additionalNotes:
               emptyTextField(_descriptionController.text) ? 'No hay comentario' : _descriptionController.text,
-          statusId: selectedStatus,
+          statusId: selectedStatusIdSignalPCS.value,
           purchasePlace: _directionController.text,
           image: 'image/default.jpg'
           // image: 'products/1.jpg',

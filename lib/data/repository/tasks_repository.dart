@@ -50,7 +50,10 @@ class TasksRepository {
 
   Future<dynamic> getTasksRepository(date) async {
     final endpoint = '${Env.apiEndpoint}/task-date-apk';
-    final body = {'start_date': date};
+    final body = {
+      'start_date': date ,
+      'home_id': 1
+      };
 
     try {
       // Llama al servicio y obtiene la respuesta procesada
@@ -110,6 +113,7 @@ class TasksRepository {
     List<Map<String, dynamic>> peopleSelected = getTaskFamiliesFromSelectedPersons(selecteFamilyCSP.value!);
     final body = {
       //'task': task,
+      'home_id': 1,
       'title': task.title,
       'description': task.description,
       'start_date': task.startDate,

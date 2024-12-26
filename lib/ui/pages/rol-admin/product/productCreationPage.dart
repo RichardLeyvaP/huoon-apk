@@ -18,16 +18,29 @@ class _ProductCreationState extends State<ProductCreation> {
       body: PageView(
         controller: _pageController,
         physics: BouncingScrollPhysics(),
-        children: const [
-          TaskChatPage(conversationSteps: [
+        children:  [
+        const  TaskChatPage(conversationSteps: [
     
   {'key': 'title_product', 'message': 'Empecemos, ¿me puedes dar el título del Producto? ', 'hint': 'Título del Producto'},
   {'key': 'description_product', 'message': 'Perfecto. Ahora, ¿puedes darme una breve descripción? ', 'hint': 'Descripción del Producto'},
-  {'key': 'price_product', 'message': '¿Qué precio tiene?', 'hint': ''},
-  {'key': 'status_product', 'message': '¿Que seccion le darias?', 'hint': ''},
-  {'key': 'location_product', 'message': 'Direccion', 'hint': ''},
+  {'key': 'location_product', 'message': 'Direccion', 'hint': 'Lugar de compra'},
+  {'key': 'status_product', 'message': '¿Que estado le darias al producto?', 'hint': ''},
+  
+  // {'key': 'image_product', 'message': 'Direccion', 'hint': ''},
 
+  {'key': 'brand_product', 'message': 'Ahora... Me puedes decir la Marca', 'hint': ''},
+  {'key': 'category_product', 'message': '¿De que categoria seria este producto?', 'hint': ''},
+  {'key': 'price_product', 'message': '¿Qué precio tiene?', 'hint': ''},
   {'key': 'quantity_product', 'message': '¿Me puedes decir la cantidad?', 'hint': ''},
+
+
+  {'key': 'date_product', 'message': 'Esoja la fecha por favor...', 'hint': ''},
+
+
+  
+  
+
+  
 
     
 
@@ -35,16 +48,7 @@ class _ProductCreationState extends State<ProductCreation> {
     //ENVIANDO A INSERTAR
         // await storeTask();
   ],title: 'Crear Producto',module: 'storeProduct',),
-          //1 Página
-          // StartProductPage(pageController: _pageController),
-          // //2 Página
-          // CategoryPricePage(pageController: _pageController),
-          // //4 Página
-          // // StatusPage(pageController: _pageController),
-          // //7 Página
-          // //AdditionalDataPage(pageController: _pageController),
-          // //7 Página
-          // DateTimePage(pageController: _pageController),
+        
         ],
       ),
     );

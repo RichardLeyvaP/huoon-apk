@@ -213,15 +213,10 @@ class _StartStorePageState extends State<StartStorePage> {
       print('object-test-_titleController.text:${_titleController.text}');
       print(
           'object-test-_descriptionController.text:${emptyTextField(_descriptionController.text) ? 'No hay comentario' : _descriptionController.text}');
-      final storeElement = StoreElement(
-          status: selectedStatus,
-          title: _titleController.text, //si emptyTextField = true es que esta vacio
-          description: emptyTextField(_descriptionController.text) ? 'No hay comentario' : _descriptionController.text,
-          location: _placeController.text
-          // image: 'products/1.jpg',
-          );
+      
       //mandar a insertar almacen
       if (isUpdateST.value == true) {
+        
         //ES QUE ES PARA MODIFICAR
         final storeElement = StoreElement(
             warehouse_id: currentStoreElementST.value!.warehouse_id,
@@ -233,14 +228,11 @@ class _StartStorePageState extends State<StartStorePage> {
             location: _placeController.text.isEmpty ? 'No hay localización' : _placeController.text
             // image: 'products/1.jpg',
             );
-
+       updateStoreData(storeElement); 
         updateStore(storeElement, 1);
-      } else {
-        submitStore(storeElement, 1); //todo fijo mando valor del hogar
-      }
+      } 
 
-// Dispara el evento para insertar el producto
-      print('mostrando valores de almacen a insertar:${storeElement}');
+
       // Navegar a la siguiente página
       // Navegar a la siguiente página
       Future.delayed(const Duration(seconds: 2), () {

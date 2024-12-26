@@ -164,14 +164,25 @@ class _HomePrincipalState extends State<HomePrincipal> with SingleTickerProvider
               onTap: () {
                 print('inde = ${_tabController.index}');
                 if (_tabController.index == 0) {
-                  //llamar a la vista chat
+                  //llamar a la vista chat                
 
-                  print('inde =.... ${_tabController.index}');
-                  GoRouter.of(context).go(
-                    '/ChatPage',
-                  );
+                   GoRouter.of(context).push('/ChatPage');
                 }
-                if (_tabController.index == 3) {
+                
+              else  if (_tabController.index == 1) {
+                  //llamar a la vista chat                
+
+                   GoRouter.of(context).push('/ChatPageFinancePage');
+                }
+                  
+              else  if (_tabController.index == 2) {
+                  //llamar a la vista chat                
+
+                   GoRouter.of(context).push('/ChatHealthPage');
+                }
+
+
+              else  if (_tabController.index == 3) {
                   fetchCategoriesStatusPriority();
 
                   print('inde =.... ${_tabController.index}');

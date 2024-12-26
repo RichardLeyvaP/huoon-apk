@@ -55,6 +55,7 @@ async {
 
   // Función para cambiar a la vista de detalles del producto
   void _showProductDetails(StoreElement product) {
+
     setState(() {
       _selectedStore = product;
       _showProductDetail = true;
@@ -387,7 +388,7 @@ Widget buildProductContainer(ProductElement product) {
                                 print("Editar producto: ${product}");
                                  GoRouter.of(context).go(
       //mando a la vista de crear el producto
-      '/ProductCreation',
+      '/ProductUpdate',
     );
                                 setState(() {
                                   isOptionsVisible = false;
@@ -562,7 +563,7 @@ Widget buildStoreContainer(StoreElement store) {
                                   //llamar al formulario de editar
                                   GoRouter.of(context).go(
                                     //mando a la vista de crear un nuevo almacen
-                                    '/StoreCreation',
+                                    '/StoreUpdate',
                                   );
                                   //  updateStore(store, 1);
                                   setState(() {
