@@ -18,11 +18,13 @@ import 'package:huoon/domain/blocs/task_cat_state_prior.dart/task_cat_state_prio
 import 'package:huoon/domain/blocs/task_cat_state_prior.dart/task_cat_state_prior_signal.dart';
 import 'package:huoon/domain/blocs/tasks/tasks_service.dart';
 import 'package:huoon/domain/modelos/category_model.dart';
+import 'package:huoon/ui/Components/TimePickerModal.dart';
 import 'package:huoon/ui/Components/category_widget.dart';
 import 'package:huoon/ui/Components/family_widget.dart';
 import 'package:huoon/ui/Components/frequency_widget.dart';
 import 'package:huoon/ui/Components/priority_widget.dart';
 import 'package:huoon/ui/Components/state_widget.dart';
+import 'package:huoon/ui/Components/type_frequency_widget.dart';
 import 'package:huoon/ui/pages/rol-admin/Task/selectDays/utils.dart';
 import 'package:huoon/ui/pages/rol-admin/product/startProductPage.dart';
 import 'package:huoon/ui/util/utils_class_apk.dart';
@@ -31,7 +33,7 @@ import 'package:signals/signals_flutter.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class TaskChatPage extends StatefulWidget {
-  final List<Map<String, String>> conversationSteps;
+  final List<Map<String, dynamic>> conversationSteps;
   final String title;
   final String module;
   final Color colorButton;
@@ -68,7 +70,7 @@ class _TaskChatPageState extends State<TaskChatPage> {
   int _currentStep = 0;
   bool _isTyping = false;
   int _isTypingTime = 1;
-  late  List<Map<String, String>> _conversationSteps =List.empty();
+  late  List<Map<String, dynamic>> _conversationSteps =List.empty();
  //**variables del dataTimer */
 bool isActive = true; // Variable para alternar colores
 int isActive2seg = 1; // Variable para alternar colores
@@ -80,6 +82,10 @@ int isActive2seg = 1; // Variable para alternar colores
   bool _isFinalStepReached = false;
   Timer? _timer;
 
+void removeConversationStep(String key) {
+  _conversationSteps.removeWhere((step) => step['key'] == key);
+  _messages.removeWhere((step) => step['key'] == key);
+}
 
   // ============================================ TASK SECTION ============================================
    DateTime _focusedDay = DateTime.now();
@@ -188,7 +194,9 @@ static final kFirstDay = DateTime(2020, 1, 1);
 
  // ============================================ IA-TRAVEL SECTION  ============================================
 // Función para construir el prompt
-String buildPrompt(List<Map<String, String>> steps) {
+
+
+String buildPrompt(List<Map<String, dynamic>> steps) {
   if (widget.module == 'chatIaTravel') {
     String destination = steps.firstWhere(
       (step) => step['key'] == 'boot_promt1_travel',
@@ -304,7 +312,8 @@ String buildPrompt(List<Map<String, String>> steps) {
 }
 
 String buildPromptInput(String input) {
-  return 'Sigue el hilo de la conversación y responde basado en lo siguiente: $input y  la respuesta dala en no mas de 400 caracteres';
+  String information = buildPrompt(_conversationSteps);
+  return '$information, Siguiendo el hilo de la conversación y responde basado en lo siguiente: $input ';
    }
 
 
@@ -325,7 +334,7 @@ void updateResponse(String key, String response) {
 
 //DECLARAR LAS VARIABLES QUE SE NECESITAN PARA EL MODULO
   
-void _addConversationStep(Map<String, String> newStep) {
+void _addConversationStep(Map<String, dynamic> newStep) {
    // setState(() {
       _conversationSteps.add(newStep); // Agrega un nuevo paso.
       // _messages.add(newStep);
@@ -340,7 +349,7 @@ void _addConversationStep(Map<String, String> newStep) {
       //AQUI PONER EL PRIMER MENSAJE QUE QUIERAS DEPENDIENDO DEL MODULO
      if(module == 'storeTask')
      {
-      _messages.add({'key': 'init','text': '👋 Hola! ${currentUserLG.value!.userName}. Te ayudaremos a crear una nueva tarea.', 'sender': 'bot'});
+      _messages.add({'key': 'init','text': '👋 Hola! ${currentUserLG.value!.userName}', 'sender': 'bot'});
      }
      //
      //
@@ -367,10 +376,12 @@ void _addConversationStep(Map<String, String> newStep) {
     await Future.delayed(Duration(milliseconds: 800));
     _simulateResponse();
   }
-
+int  cant_boot_promt_extra = 0;
   @override
   void initState() {
     super.initState();
+    _selectedDay = DateTime.now();
+      cant_boot_promt_extra = 1;
     _textController = TextEditingController();
     _messages = [];
     _taskData = {};
@@ -677,6 +688,8 @@ if(module == 'storeTask')
   if((currentStepKey != 'category' && currentStepKey != 'status' &&
                     currentStepKey != 'priority' && 
                    currentStepKey != 'frequencie'  &&
+                   currentStepKey != 'typeTask'  &&
+                   currentStepKey != 'help_bot'  &&
 
                   currentStepKey != 'family') || _editingMessageKey == null )//si no es ninguno de estos que selecciona si puede modificar e insertar
       {
@@ -706,6 +719,7 @@ if(module == 'storeTask')
     {
       updateTaskDescription(input); //updateTaskDescription
     }
+   
       if (currentStepKey != 'done') {
         _taskData[currentStepKey!] = input;
       }
@@ -938,11 +952,13 @@ if(module == 'storeTask')
        
          _addConversationStep({
     'key': 'boot_promt_extra',
+    'answer': getCantAnswer(),
     'message': responseIA,
-    'hint': '',
+    'hint': 'Quedaste con dudas? Puedes preguntarme...',
   });
      _isTyping = false;
         });
+        updateAddCantAnswer();
  
     }
    
@@ -1042,6 +1058,29 @@ if(module == 'storeTask')
     });
   }
 
+  void _simulateResponseF(String inMsj,String inKey) async {
+    if (!mounted) return; // Verifica antes de iniciar cualquier acción
+    setState(() {
+
+      _isTyping = true;
+      _isTypingTime = 1;
+
+    });
+
+    await Future.delayed(Duration(milliseconds: 800));
+
+    setState(() {
+      _isTyping = false; 
+
+        _messages.insert(0, {
+          'key': inKey,
+          'text': inMsj,
+          'sender': 'bot',
+          'buttons': true
+        });
+     
+    });
+  }
   void _showEditOption(int index) {
     showDialog(
       context: context,
@@ -1056,7 +1095,135 @@ if(module == 'storeTask')
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
-              _startEditing(index);
+               if(_messages[index]['key'] != 'typeTask_user')
+               {
+                print('object-ffffffffffffff-1-${_messages[index]['key']}');
+                _startEditing(index);
+
+               }
+               else  {
+      //cargar el reloj de nuevo para seleccionar la fecha
+      print('object-ffffffffffffff-2-${_messages[index]['key']}');
+      print('object-ffffffffffffff-2-${_messages[index]['text']}');
+
+          showModalBottomSheet(
+  context: context,
+  isDismissible: false, // No permite cerrar tocando fuera
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+  ),
+  builder: (context) => TimePickerModal(
+    onSelect: (startTime, endTime) {
+      //verificar si va 1 hora o van las 2 dependiendo si es evento o tarea
+      String msj = '  Inicio: $startTime';
+if (taskTypeSelectCSP.value == 'Evento')
+{
+  
+  msj = '  Inicio: $startTime - Fin: $endTime';
+  if(_startDate != null && _endDate != null) {
+     final existingIndex = _messages.indexWhere((message) => message['key'] == 'calendar_user');
+      final existingIndex2 = _messages.indexWhere((message) => message['key'] == 'calendar_product_user');
+    
+                 setState(()  {
+_isTypingTime = 1;
+  if (existingIndex != -1) {
+    // Si existe, modificarlo
+    _messages[existingIndex] = {
+      'key': 'calendar_user',
+      'text': 'Fecha seleccionada ${_formatDateTimeProduct(_startDate!)} - ${_formatDateTimeProduct(_endDate!)}',
+      'sender': 'user',
+
+    };
+  } 
+   else if (existingIndex2 != -1) 
+  {
+    _messages[existingIndex2] = {
+      'key': 'calendar_product_user',
+      'text': 'Fecha seleccionada ${_formatDateTimeProduct(_startDate!)} - ${_formatDateTimeProduct(_endDate!)}',//calendar_product_user
+      'sender': 'user',
+
+    };
+
+  }
+  else {
+      //verificar si ya existe que lo modifique
+                  _handleUserSessions('Fecha seleccionada ${_formatDateTimeProduct(_startDate!)} - ${_formatDateTimeProduct(_endDate!)}','calendar_user');
+  
+  }
+});
+    
+  }
+}
+else
+{
+ 
+  if(_startDate != null ) {
+{
+     final existingIndex = _messages.indexWhere((message) => message['key'] == 'calendar_user');
+     final existingIndex2 = _messages.indexWhere((message) => message['key'] == 'calendar_product_user');
+                 setState(()  {
+_isTypingTime = 1;
+  if (existingIndex != -1) {
+    // Si existe, modificarlo
+    _messages[existingIndex] = {
+      'key': 'calendar_user',
+      'text': 'Fecha seleccionada ${_formatDateTimeProduct(_startDate!)}',//calendar_product_user
+      'sender': 'user',
+
+    };
+  }
+  else if (existingIndex2 != -1) 
+  {
+    _messages[existingIndex2] = {
+      'key': 'calendar_product_user',
+      'text': 'Fecha seleccionada ${_formatDateTimeProduct(_startDate!)}',//calendar_product_user
+      'sender': 'user',
+
+    };
+
+  }
+
+  
+   else {
+      //verificar si ya existe que lo modifique
+                  _handleUserSessions('Fecha seleccionada ${_formatDateTimeProduct(_startDate!)}','calendar_user');
+  
+  }
+});
+    
+  }
+
+
+
+}
+}
+      final existingIndex = _messages.indexWhere((message) => message['key'] == 'typeTask_user');
+                 setState(()  {
+_isTypingTime = 1;
+  if (existingIndex != -1) {
+    // Si existe, modificarlo
+    _messages[existingIndex] = {
+      'key': 'typeTask_user',
+      'text': msj,
+      'sender': 'user',
+
+    };
+  } else {
+     
+                  _handleUserSessions(msj,'typeTask_user');
+  
+  }
+});
+      print('Hora inicial: $startTime');
+      print('Hora final: $endTime');
+      // Aquí puedes realizar cualquier acción adicional
+    },
+  ),
+);
+         
+
+    }
+              
             },
             child: Text('Sí'),
           ),
@@ -1096,12 +1263,14 @@ if(module == 'storeTask')
     setState(() {
       _editingMessageIndex = index;
       _textController.text = _messages[index]['text'];
-      _editingMessageKey = _messages[index]['key'];
+      _editingMessageKey = _messages[index]['key']; 
+    
       _showInputField = true; // Mostrar el campo de texto al editar
       //_isTypingTime = 1;
     });
   }
 
+  
   void _handleConfirmation(bool isSave) async {
     if(!isSave)
     {
@@ -1115,17 +1284,23 @@ if(module == 'storeTask')
         // ============================================ TASK SECTION  ============================================
         if(widget.module == 'storeTask')
         {
-          eventDate();
+         // eventDate();
    // await Future.delayed(Duration(seconds: 3));
     //ENVIAR DATOS A LA API    
-    await storeTask();
+    verificDate();//verifica que se cumpla que startDate < endDate
+    await storeTask();//insertar tarea
+    //limpiando variables
+    selecteFamilyCSP.value = null;
+    selectedCategoryIdCSP.value = null;
+    selecteFamilyCSP.value = null;
+    selectedPriorityIdCSP.value = null;
+    selectStateTaskCSP.value = null;
+    //
+    taskTypeSelectCSP.value = null;
+    frequencyTaskCSP.value = '';
+
     GoRouter.of(context).go(
-      '/HomePrincipal',
-      extra: {
-        'name': '',
-        'email': '',
-        'avatarUrl': '',
-      },
+      '/HomePrincipal'
     );
 
         }       
@@ -1142,12 +1317,7 @@ if(module == 'storeTask')
       print('datos del almacen enviados a la api: ${currentStoreElementST.value}');
     await  submitStore(currentStoreElementST.value!, 1); //todo fijo mando valor del hogar
     GoRouter.of(context).go(
-      '/HomePrincipal',
-      extra: {
-        'name': '',
-        'email': '',
-        'avatarUrl': '',
-      },
+      '/HomePrincipal'
     );
 
     }
@@ -1196,23 +1366,81 @@ if(module == 'storeTask')
     );
 
     GoRouter.of(context).go(
-      '/HomePrincipal',
-      extra: {
-        'name': '',
-        'email': '',
-        'avatarUrl': '',
-      },
+      '/HomePrincipal'
     );
     
     
         } 
          // ============================================ PRODUCT SECTION FIN ============================================
 
+
+ else if(widget.module == 'chatIaHealth')
+ {
+  //tener a la mano el promt
+  // tener la respuesta correspondiente de la ia
+  //mandar modulo,promt y la respuesta d ela ia para un enpoint a guardar
+  //
+  // 
+  ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Guardando la informacion...'),
+        duration: Duration(seconds: 4),
+      ),
+    );
+    GoRouter.of(context).go(
+      '/HomePrincipal'
+    );
+
+ }
          //YA EL FINAL PARA MANDAR LOS DATOS A LA API
 
 
     }
    
+  }
+   
+
+  void _handleConfirmationIA(String answerIA) async {   
+      
+         // ============================================ CHAT-IA SECTION  ============================================
+ 
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Guardando la informacion del modulo-${widget.module}...'),
+        duration: Duration(seconds: 4),
+      ),
+      );
+    // submitChatIa(String module,String answerIa)
+     await submitChatIa(widget.module,answerIA,buildPrompt(_conversationSteps));
+    //verificar si ya existe que lo modifique
+//  setState(() {
+
+//       //_isTyping = true;
+//       _isTypingTime = 1;
+//       _messages.insert(0, {'key':'msj_ia','text': 'Muy bien! ${currentUserLG.value!.userName} ya guardamos la informacion, si tienes alguna otra duda puedes preguntarme.', 'sender': 'bot'});
+
+
+//     });                 
+_simulateResponseF('Muy bien! ${currentUserLG.value!.userName} ya guardamos la informacion, si tienes alguna otra duda puedes preguntarme o finalizar','msj_ia');
+// ============================================ CHAT-IA SECTION FIN ============================================
+         //YA EL FINAL PARA MANDAR LOS DATOS A LA API
+  }
+  void _close() async {   
+      
+         // ============================================ CHAT-IA SECTION  ============================================
+ 
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Cerrando...'),
+        duration: Duration(seconds: 4),
+      ),
+      );
+    
+     GoRouter.of(context).go(
+      '/HomePrincipal'
+     ); 
+// ============================================ CHAT-IA SECTION FIN ============================================
+         //YA EL FINAL PARA MANDAR LOS DATOS A LA API
   }
    
   
@@ -1301,7 +1529,27 @@ if(module == 'storeTask')
 
         ],
       );//
-         }
+         }//help_bot
+    //         else if( keyMessage =='help_bot')
+    // {
+    //   showWidgetOption = Column(
+    //     children: [
+    //       Text(message['text'] ?? ''),
+         
+
+    //     ],
+    //   );//
+    //      }//help_bot
+            else if( keyMessage =='typeTask')
+    {
+      showWidgetOption = Column(
+        children: [
+          Text(message['text'] ?? ''),
+         _buildTaskTypeSection(),
+
+        ],
+      );//
+         }//_buildTaskTypeSection
          
     else {
       showWidgetOption = Text(message['text'] ?? '');
@@ -1403,7 +1651,50 @@ else if(widget.module == 'storeProduct')
 //  si llego al final y estoy ne el modulo de la ia, ahi la ia e sla que le sigue
   
  if(widget.module == 'chatIaTravel' || widget.module == 'chatIaFinance' || widget.module == 'chatIaHealth'  ){
- showWidgetOption = Text(message['text'] ?? '');
+  
+  if(keyMessage !='boot_promt_extra' || cant_boot_promt_extra <= 1)
+  {
+
+      cant_boot_promt_extra++;
+ 
+      
+    showWidgetOption = Text(message['text'] ?? '');    
+  }
+  else
+  {
+    
+    showWidgetOption = Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(message['text'] ?? ''),
+                                SizedBox(height: 10,),
+                                Text('Si no quedó satisfecho o tiene más preguntas, puede consultarme nuevamente o guardar esta información para usarla cuando la necesite.'),
+                                SizedBox(height: 8),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        print('answer-answer-answer:${message['text']}');
+                                        _close();
+                                      },
+                                      child: Text('Salir'),
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        print('answer-answer-answer:${message['text']}');
+                                        updateSendAnswerApi(message['text']);
+                                        _handleConfirmationIA(message['text']);
+                                      },
+                                      child: Text('Guardar'),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            );
+
+  }
+ 
                      
    }
    else
@@ -1455,7 +1746,7 @@ else if(widget.module == 'storeProduct')
   Widget _buildCategorySection() {
     return Builder(
       builder: (context) {
-        if (categoriesCSP.watch(context) != null) {
+        if (categoriesCSP.value != null) {
           bool selectMultiple = false;
          
 
@@ -1504,26 +1795,6 @@ updateTaskCategoryId(arrayCategory.first);
     );
   }
 
-  void eventDate() {
-    //mandar la fecha
-    if (_selectedDateRange == null) //si el rango es null que coja la fecha actual
-    {
-      // Si _selectedDateRange es null, asignamos la fecha actual como inicio y fin.
-      final DateTime startDate = _selectedDateRange?.start ?? DateTime.now();
-      final DateTime endDate = _selectedDateRange?.end ?? DateTime.now();
-
-      // Si _startTime es null, asignamos las 7:00 AM como hora predeterminada.
-      final TimeOfDay startTime = _startTime ?? TimeOfDay(hour: 7, minute: 0);
-
-// Si _endTime es null, asignamos las 6:00 PM como hora predeterminada.
-      final TimeOfDay endTime = _endTime ?? TimeOfDay(hour: 18, minute: 0);
-
-      updateTaskDateTime(_formatDateTime(startDate, startTime), _formatDateTime(endDate, endTime));
-    } else {
-      updateTaskDateTime(
-          _formatDateTime(_selectedDateRange!.start, _startTime), _formatDateTime(_selectedDateRange!.end, _endTime));
-    }
-  }
  
 
   Widget _buildStatusSection() {
@@ -1655,143 +1926,151 @@ _buildFamilySection() {
       },
     );
   }
+  late DateTime _selectedDay;
+  
+  DateTime? _startDate;
+  DateTime? _endDate;
 
-  _buildCalendarSection() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            TableCalendar(
-              headerStyle: const HeaderStyle(
-                // titleTextFormatter: (date, locale) => '', // Oculta el título
-                formatButtonVisible: false, // Oculta el botón de formato
-                // titleCentered: true,
-                // leftChevronVisible: false, // Oculta el botón de navegación izquierda
-                // rightChevronVisible: false, // Oculta el botón de navegación derecha
-              ),
-              locale: 'es_ES',
-              firstDay: kFirstDay,
-              lastDay: kLastDay,
-              focusedDay: _focusedDay,
-              calendarFormat: _calendarFormat,
-              rangeSelectionMode: RangeSelectionMode.toggledOn, // Activar selección de rango
-              selectedDayPredicate: (day) {
-                //FocusScope.of(context).unfocus();
-                return _selectedDateRange != null &&
-                    (isSameDay(_selectedDateRange!.start, day) || isSameDay(_selectedDateRange!.end, day));
-              },
-              rangeStartDay: _selectedDateRange?.start,
-              rangeEndDay: _selectedDateRange?.end,
-              onRangeSelected: (start, end, focusedDay) async {
-                // Resetear horas cuando cambia el rango
-                FocusScope.of(context).unfocus();
-                setState(() {
-                  _selectedDateRange = DateTimeRange(start: start!, end: end ?? start);
-                  _focusedDay = focusedDay;
-                  _startTime = null;
-                  _endTime = null;
-                });
-                print('selcct dataHora-zzzzz-start:$start');
-                print('selcct dataHora-zzzzz-end:$end');
+  // Actualiza el rango de fechas seleccionadas
+  void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
+    setState(() {
+      _focusedDay = focusedDay;
 
-                // Selecciona la hora de inicio
-                if (start != null) {
-                  await _selectTime(context, true); // Seleccionar hora para la fecha de fin
-                  
-                }
-                // Selecciona la hora de fin solo si hay una fecha final seleccionada
-                if (end != null) {
-                  await _selectTime(context, false); // Seleccionar hora para la fecha de fin
-                }
-              //  if (_selectedDateRange != null && _startTime != null && _endTime != null)
-               // {
-                 
-                   final existingIndex = _messages.indexWhere((message) => message['key'] == 'calendar_user');
+      if (taskTypeSelectCSP.value == 'Evento') {
+        if (_startDate == null || _endDate != null) {
+          // Si no hay fecha de inicio o ya se seleccionó un rango completo
+          _startDate = selectedDay;
+          _endDate = null;
+        } else {
+          // Si ya se seleccionó la fecha de inicio, seleccionamos la fecha final
+          if (selectedDay.isBefore(_startDate!)) {
+            _startDate = selectedDay;
+            _endDate = null;
+          } else if (selectedDay.isAfter(_startDate!)) {
+            _endDate = selectedDay;
+          }
+        }
+
+
+  if (_startDate != null && _endDate != null) {
+      final existingIndex = _messages.indexWhere((message) => message['key'] == 'calendar_user');
                  setState(()  {
 _isTypingTime = 1;
   if (existingIndex != -1) {
     // Si existe, modificarlo
     _messages[existingIndex] = {
       'key': 'calendar_user',
-      'text': 'Nueva Fecha seleccionada',
+      'text': 'Nueva Fecha seleccionada ${_formatDateTimeProduct(_startDate!)} - ${_formatDateTimeProduct(_endDate!)}',
       'sender': 'user',
 
     };
   } else {
       //verificar si ya existe que lo modifique
-                  _handleUserSessions('Fecha seleccionada correctamente','calendar_user');
+                  _handleUserSessions('Fecha seleccionada ${_formatDateTimeProduct(_startDate!)} - ${_formatDateTimeProduct(_endDate!)}','calendar_user');
   
   }
 });
 
-                //}
-              },
-              onPageChanged: (focusedDay) {
-                _focusedDay = focusedDay;
-              },
-            ),
-            if (_selectedDateRange != null && _startTime != null && _endTime != null) ...[
-           
-              Container(
-                height: 50,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white, // Color de fondo del contenedor
-                  borderRadius: BorderRadius.circular(10), // Esquinas redondeadas
-                  border: Border.all(
-                    color: selectedLevel == 2
-                        ? colorBotoomSel.withOpacity(0.8)
-                        : colorBotoom.withOpacity(0.4), // Color del borde
-                    width: 2.0, // Grosor del borde
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: selectedLevel == 2
-                          ? colorBotoomSel.withOpacity(0.4)
-                          : colorBotoom.withOpacity(0.4), // Sombra roja
-                      spreadRadius: 0, // Asegura que la sombra esté en el borde
-                      blurRadius: 10, // Difumina la sombra
-                      offset: Offset(0, 0), // Posiciona la sombra en las 4 partes
-                    ),
-                  ],
-                ),
-                child: Center(child: Text('Inicial:${_formatDateTime(_selectedDateRange!.start, _startTime)}')),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Container(
-                height: 50,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white, // Color de fondo del contenedor
-                  borderRadius: BorderRadius.circular(10), // Esquinas redondeadas
-                  border: Border.all(
-                    color: selectedLevel == 2
-                        ? colorBotoomSel.withOpacity(0.8)
-                        : colorBotoom.withOpacity(0.4), // Color del borde
-                    width: 2.0, // Grosor del borde
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: selectedLevel == 2
-                          ? colorBotoomSel.withOpacity(0.4)
-                          : colorBotoom.withOpacity(0.4), // Sombra roja
-                      spreadRadius: 0, // Asegura que la sombra esté en el borde
-                      blurRadius: 10, // Difumina la sombra
-                      offset: Offset(0, 0), // Posiciona la sombra en las 4 partes
-                    ),
-                  ],
-                ),
-                child: Center(child: Text('Final:${_formatDateTime(_selectedDateRange!.end, _endTime)}')),
-              ),
-            ],
-          ],
-        ),
+  }
+
+//verificDate();
+  updateTaskDateTime(
+  _formatDateTimeProduct(_startDate ?? DateTime.now()),
+  _formatDateTimeProduct(
+    _endDate ?? (_startDate != null ? _startDate!.add(Duration(days: 1)) : DateTime.now()),
+  ),
+);
+
+                         
+      }
+       else if (taskTypeSelectCSP.value == 'Tarea') {
+        // Si es 'Tarea', solo selecciona un día
+        _startDate = selectedDay;
+        _endDate = null;
+          final existingIndex = _messages.indexWhere((message) => message['key'] == 'calendar_user');
+                 setState(()  {
+_isTypingTime = 1;
+  if (existingIndex != -1) {
+    // Si existe, modificarlo
+    _messages[existingIndex] = {
+      'key': 'calendar_user',
+      'text': 'Nueva Fecha seleccionada ${_formatDateTimeProduct(_startDate!)}',
+      'sender': 'user',
+
+    };
+  } else {
+      //verificar si ya existe que lo modifique
+                  _handleUserSessions('Fecha seleccionada ${_formatDateTimeProduct(_startDate!)}','calendar_user');
+  
+  }
+});
+updateTaskDateTime(
+  _formatDateTimeProduct(_startDate ?? DateTime.now()),
+  _formatDateTimeProduct(_endDate ?? DateTime.now()),
+);
+      }
+    });
+
+
+
+  }
+
+  verificDate()
+  {
+    if (_endDate != null && _startDate != null && _endDate!.isBefore(_startDate!)) {
+  _endDate = _startDate!.add(Duration(days: 1));
+} else if (_endDate == null && _startDate != null) {
+  _endDate = _startDate!.add(Duration(days: 1));
+} else if (_endDate == null && _startDate == null) {
+  _endDate = DateTime.now().add(Duration(days: 1));
+}
+
+updateTaskDateTime(
+  _formatDateTimeProduct(_startDate ?? DateTime.now()),
+  _formatDateTimeProduct(_endDate ?? DateTime.now().add(Duration(days: 1))),
+);
+
+  }
+   // Método que retorna el componente del calendario
+  Widget _buildCalendarSection() {
+    return TableCalendar(
+      focusedDay: _focusedDay,
+      firstDay: DateTime.utc(2020, 01, 01),
+      lastDay: DateTime.utc(2030, 12, 31),
+      selectedDayPredicate: (day) {
+        // Resalta el día seleccionado
+        return isSameDay(_startDate, day);
+      },
+      onDaySelected: _onDaySelected,
+      calendarStyle: CalendarStyle(
+  todayDecoration: BoxDecoration(
+    color: StyleGlobalApk.colorPrimary.withOpacity(0.5),
+    shape: BoxShape.circle,
+  ),
+  selectedDecoration: BoxDecoration(
+    color: StyleGlobalApk.colorPrimary,
+    shape: BoxShape.circle,
+  ),
+  rangeHighlightColor: StyleGlobalApk.colorPrimary.withOpacity(0.5),
+  rangeStartDecoration: BoxDecoration(
+    color: StyleGlobalApk.colorPrimary,
+    shape: BoxShape.circle,
+  ),
+  rangeEndDecoration: BoxDecoration(
+    color: StyleGlobalApk.colorPrimary,
+    shape: BoxShape.circle,
+  ),
+),
+
+      rangeStartDay: _startDate, // Día de inicio del rango
+      rangeEndDay: _endDate, // Día de fin del rango
+      headerStyle: HeaderStyle(
+        formatButtonVisible: false,
+        titleCentered: true,
       ),
     );
   }
+  
 
   _buildRecurrenceSection() {
     return Builder(
@@ -1801,30 +2080,32 @@ _isTypingTime = 1;
           final frequenciesData = frequencyCSP.value; // Cambia según tu fuente de datos
           int frecuencyId = 1;
 
-          List<Frequency> frequencies = frequenciesData!.map((item) {
-            final title = item; // Asegúrate de que item sea un String
-            if (title == frequencyTaskCSP.value) {
-              frecuencyId = frequenciesData.indexOf(item) + 1;
-            }
-            return Frequency(
-              id: frequenciesData.indexOf(item) +
-                  1, // Asigna un id basado en el índice, puedes cambiar esto si tienes otra lógica
-              title: title,
-              description: '', // Si no tienes descripción, puedes dejarlo vacío o manejarlo de otra manera
-            );
-          }).toList();
+          
 
           return FrequencyWidget(
-            frequencies: frequencies,
+            frequencies: frequenciesData!,
             titleWidget: '',
             selectMultiple: false, // Permite seleccionar solo una frecuencia
-            selectedFrequencyId: frecuencyId, // Frecuencia preseleccionada (Opcional)
+            selectedFrequencyId: frequencyTaskCSP.value, // Frecuencia preseleccionada (Opcional)
             onSelectionChanged: (List<Frequency> selectedFrequencies) {
               FocusScope.of(context).unfocus();
               // Aquí manejas las frecuencias seleccionadas
               print('Estados seleccionados-Frecuencias seleccionadas: ${selectedFrequencies.map((e) => e.title)}');
               if (selectedFrequencies.isNotEmpty) {
                 print('Primera pagina de tareas-Frecuencia-${selectedFrequencies.first.title}'); 
+                if(selectedFrequencies.first.id == 'No se repite')
+              {
+                //mostrar el reloj para seleccionar la hora
+                
+                 print('aqui en fecuencia- NO-mostrar componente reloj');
+              }
+              else
+              {
+               
+
+               print('aqui en fecuencia- mostrar componente reloj');
+
+              }
               
                 final existingIndex = _messages.indexWhere((message) => message['key'] == 'frequencie_user');
                  setState(()  {
@@ -1844,9 +2125,186 @@ _isTypingTime = 1;
   }
 });
   onFrequencyChanged(selectedFrequencies.first.title);
+  updateTaskRecurrence(selectedFrequencies.first.title);
               }
             },
           );
+        } else if (errorMessageCSP.watch(context) != null) {
+          return Center(child: Text('Error: ${errorMessageCSP.value}'));
+        }
+        return Container();
+      },
+    );
+  }
+// ============================================ TASK SECTION FIN ============================================
+//
+  _buildTaskTypeSection() {
+    return Builder(
+      builder: (context) {
+        if (taskTypeCSP.watch(context) != null) {
+          // Supongamos que 'frequencies' es una lista de nombres de frecuencias.[Diaria, Semanal, Mensual, Anual]
+          final taskTypeData = taskTypeCSP.value; // Cambia según tu fuente de datos         
+
+          
+
+          return TaskTypeWidget(
+  taskTypes: taskTypeData!, // Lista de TaskType
+  titleWidget: '',
+  selectMultiple: false,
+  onSelectionChanged: (selectedTaskTypes) {
+    // Maneja las tareas seleccionadas
+    
+
+      FocusScope.of(context).unfocus();
+       showModalBottomSheet(
+  context: context,
+  isDismissible: false, // No permite cerrar tocando fuera
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+  ),
+  builder: (context) => TimePickerModal(
+    onSelect: (startTime, endTime) {
+      //verificar si va 1 hora o van las 2 dependiendo si es evento o tarea
+      String msj = '${selectedTaskTypes.first.name}  Inicio: $startTime';
+if (taskTypeSelectCSP.value == 'Evento')
+{
+  setState(() {
+      _isTyping = false; 
+
+        _messages.insert(0, {
+          'key': 'help_bot',
+          'text': 'Muy bien! te ayudaremos a crear un Evento',
+          'sender': 'bot',
+        });
+     
+    });
+  msj = '${selectedTaskTypes.first.name}  Inicio: $startTime - Fin: $endTime';
+  if(_startDate != null && _endDate != null) {
+     final existingIndex = _messages.indexWhere((message) => message['key'] == 'calendar_user');
+      final existingIndex2 = _messages.indexWhere((message) => message['key'] == 'calendar_product_user');
+     // _simulateResponseF('Muy bien! ${currentUserLG.value!.userName} te ayudaremos a crear un Evento','help_bot');
+    //  _messages.add({'key': 'help_bot','text': 'Muy bien! ${currentUserLG.value!.userName} te ayudaremos a crear un Evento', 'sender': 'bot'});
+      
+                 setState(()  {
+_isTypingTime = 1;
+  if (existingIndex != -1) {
+    // Si existe, modificarlo
+    _messages[existingIndex] = {
+      'key': 'calendar_user',
+      'text': 'Fecha seleccionada ${_formatDateTimeProduct(_startDate!)} - ${_formatDateTimeProduct(_endDate!)}',
+      'sender': 'user',
+
+    };
+  } 
+   else if (existingIndex2 != -1) 
+  {
+    _messages[existingIndex2] = {
+      'key': 'calendar_product_user',
+      'text': 'Fecha seleccionada ${_formatDateTimeProduct(_startDate!)} - ${_formatDateTimeProduct(_endDate!)}',//calendar_product_user
+      'sender': 'user',
+
+    };
+
+  }
+  else {
+      //verificar si ya existe que lo modifique
+                  _handleUserSessions('Fecha seleccionada ${_formatDateTimeProduct(_startDate!)} - ${_formatDateTimeProduct(_endDate!)}','calendar_user');
+  
+  }
+});
+    
+  }
+}
+else
+{
+  //  _simulateResponseF('Muy bien! ${currentUserLG.value!.userName} te ayudaremos a crear una Tarea','help_bot');
+  // _messages.add({'key': 'help_bot','text': 'Muy bien! ${currentUserLG.value!.userName} te ayudaremos a crear una Tarea', 'sender': 'bot'});
+   setState(() {
+      _isTyping = false; 
+
+        _messages.insert(0, {
+          'key': 'help_bot',
+          'text': 'Muy bien! te ayudaremos a crear una Tarea',
+          'sender': 'bot',
+        });
+     
+    });
+  if(_startDate != null ) {
+{
+     final existingIndex = _messages.indexWhere((message) => message['key'] == 'calendar_user');
+     final existingIndex2 = _messages.indexWhere((message) => message['key'] == 'calendar_product_user');
+                 setState(()  {
+_isTypingTime = 1;
+  if (existingIndex != -1) {
+    // Si existe, modificarlo
+    _messages[existingIndex] = {
+      'key': 'calendar_user',
+      'text': 'Fecha seleccionada ${_formatDateTimeProduct(_startDate!)}',//calendar_product_user
+      'sender': 'user',
+
+    };
+  }
+  else if (existingIndex2 != -1) 
+  {
+    _messages[existingIndex2] = {
+      'key': 'calendar_product_user',
+      'text': 'Fecha seleccionada ${_formatDateTimeProduct(_startDate!)}',//calendar_product_user
+      'sender': 'user',
+
+    };
+
+  }
+
+  
+   else {
+      //verificar si ya existe que lo modifique
+                  _handleUserSessions('Fecha seleccionada ${_formatDateTimeProduct(_startDate!)}','calendar_user');
+  
+  }
+});
+    
+  }
+
+
+
+}
+}
+      final existingIndex = _messages.indexWhere((message) => message['key'] == 'typeTask_user');
+                 setState(()  {
+_isTypingTime = 1;
+  if (existingIndex != -1) {
+    // Si existe, modificarlo
+    _messages[existingIndex] = {
+      'key': 'typeTask_user',
+      'text': msj,
+      'sender': 'user',
+
+    };
+  } else {
+     
+                  _handleUserSessions(msj,'typeTask_user');
+  
+  }
+});
+      print('Hora inicial: $startTime');
+      print('Hora final: $endTime');
+      // Aquí puedes realizar cualquier acción adicional
+    },
+  ),
+);
+         
+
+  onTaskTypeChanged(selectedTaskTypes.first.id);
+  updateTaskType(selectedTaskTypes.first.id);
+
+  removeConversationStep('typeTask');
+
+
+  },
+  selectedTaskTypeId: taskTypeSelectCSP.value , // Opcional, ID de la tarea pre-seleccionada
+)
+;
+
         } else if (errorMessageCSP.watch(context) != null) {
           return Center(child: Text('Error: ${errorMessageCSP.value}'));
         }

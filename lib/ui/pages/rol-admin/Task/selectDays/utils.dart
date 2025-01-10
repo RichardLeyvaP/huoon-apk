@@ -251,3 +251,38 @@ String multiplyAndConvert(int intValue, String stringValue) {
     return "0.0";
   }
 }
+
+
+void showOverlayMessage(BuildContext context, String message) {
+  final overlay = Overlay.of(context);
+  final overlayEntry = OverlayEntry(
+    builder: (context) => Positioned(
+      top: MediaQuery.of(context).padding.top + 10, // Ajusta la posición
+      left: 20,
+      right: 20,
+      child: Material(
+        color: Colors.transparent,
+        child: Container(
+          padding: EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.red,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Text(
+            message,
+            style: TextStyle(color: Colors.white, fontSize: 16),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ),
+    ),
+  );
+
+  // Añadir el OverlayEntry al Overlay
+  overlay?.insert(overlayEntry);
+
+  // Quitar el OverlayEntry después de 2 segundos
+  Future.delayed(Duration(seconds: 3), () {
+    overlayEntry.remove();
+  });
+}

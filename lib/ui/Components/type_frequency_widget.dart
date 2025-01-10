@@ -1,51 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:huoon/domain/modelos/category_model.dart';
 
-class FrequencyWidget extends StatefulWidget {
-  final List<Frequency> frequencies;
-  final String titleWidget;
-  final bool selectMultiple;
-  final Function(List<Frequency>) onSelectionChanged; // Callback para devolver las frecuencias seleccionadas
-  final String? selectedFrequencyId; // ID de la frecuencia seleccionada
+class TaskTypeWidget extends StatefulWidget {
+  final List<TaskType> taskTypes; // Lista de TaskType
+  final String titleWidget; // Título del widget
+  final bool selectMultiple; // Si se pueden seleccionar múltiples
+  final Function(List<TaskType>) onSelectionChanged; // Callback para devolver las tareas seleccionadas
+  final String? selectedTaskTypeId; // ID de la tarea seleccionada
 
-  const FrequencyWidget({
+  const TaskTypeWidget({
     Key? key,
-    required this.frequencies,
+    required this.taskTypes,
     required this.titleWidget,
     this.selectMultiple = true,
     required this.onSelectionChanged,
-    this.selectedFrequencyId, // ID de la frecuencia seleccionada
+    this.selectedTaskTypeId, // ID de la tarea seleccionada
   }) : super(key: key);
 
   @override
-  _FrequencyWidgetState createState() => _FrequencyWidgetState();
+  _TaskTypeWidgetState createState() => _TaskTypeWidgetState();
 }
 
-class _FrequencyWidgetState extends State<FrequencyWidget> {
-  List<bool> selectedFrequencies = [];
+class _TaskTypeWidgetState extends State<TaskTypeWidget> {
+  List<bool> selectedTaskTypes = [];
 
   @override
   void initState() {
     super.initState();
-    selectedFrequencies = List<bool>.filled(widget.frequencies.length, false);
+    selectedTaskTypes = List<bool>.filled(widget.taskTypes.length, false);
 
-    // Establecer el estado inicial con el ID de la frecuencia seleccionada
-    if (widget.selectedFrequencyId != null) {
-      int selectedIndex = widget.frequencies.indexWhere((frequency) => frequency.id == widget.selectedFrequencyId);
+    // Establecer el estado inicial con el ID de la tarea seleccionada
+    if (widget.selectedTaskTypeId != null) {
+      int selectedIndex = widget.taskTypes.indexWhere((taskType) => taskType.id == widget.selectedTaskTypeId);
       if (selectedIndex != -1) {
-        selectedFrequencies[selectedIndex] = true; // Marcar la frecuencia como seleccionada
+        selectedTaskTypes[selectedIndex] = true; // Marcar la tarea como seleccionada
       }
     }
   }
 
   void _notifySelection() {
-    List<Frequency> selected = [];
-    for (int i = 0; i < selectedFrequencies.length; i++) {
-      if (selectedFrequencies[i]) {
-        selected.add(widget.frequencies[i]);
+    List<TaskType> selected = [];
+    for (int i = 0; i < selectedTaskTypes.length; i++) {
+      if (selectedTaskTypes[i]) {
+        selected.add(widget.taskTypes[i]);
       }
     }
-    widget.onSelectionChanged(selected); // Llamar al callback con las frecuencias seleccionadas
+    widget.onSelectionChanged(selected); // Llamar al callback con las tareas seleccionadas
   }
 
   @override
@@ -61,18 +61,17 @@ class _FrequencyWidgetState extends State<FrequencyWidget> {
               Text(
                 widget.titleWidget,
                 style: Theme.of(context).textTheme.bodyLarge,
-                
               ),
             ],
           ),
         ),
         SizedBox(
-          height: 70, // Ajustar según sea necesario
+          height: 60, // Ajustar según sea necesario
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            itemCount: widget.frequencies.length,
+            itemCount: widget.taskTypes.length,
             itemBuilder: (context, index) {
-              return _buildFrequencyContainer(index);
+              return _buildTaskTypeContainer(index);
             },
           ),
         ),
@@ -80,17 +79,17 @@ class _FrequencyWidgetState extends State<FrequencyWidget> {
     );
   }
 
-  Widget _buildFrequencyContainer(int index) {
-    final frequency = widget.frequencies[index];
-    final isSelected = selectedFrequencies[index];
+  Widget _buildTaskTypeContainer(int index) {
+    final taskType = widget.taskTypes[index];
+    final isSelected = selectedTaskTypes[index];
     return GestureDetector(
       onTap: () {
         setState(() {
           if (widget.selectMultiple) {
-            selectedFrequencies[index] = !isSelected;
+            selectedTaskTypes[index] = !isSelected;
           } else {
-            selectedFrequencies = List<bool>.filled(selectedFrequencies.length, false);
-            selectedFrequencies[index] = true;
+            selectedTaskTypes = List<bool>.filled(selectedTaskTypes.length, false);
+            selectedTaskTypes[index] = true;
           }
           _notifySelection(); // Notificar cuando se cambie la selección
         });
@@ -122,7 +121,7 @@ class _FrequencyWidgetState extends State<FrequencyWidget> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    frequency.title,
+                    taskType.name, // Mostrar el nombre de la tarea
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.grey[700],
@@ -130,15 +129,6 @@ class _FrequencyWidgetState extends State<FrequencyWidget> {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  // const SizedBox(height: 8),
-                  // Text(
-                  //   frequency.description,
-                  //   style: TextStyle(
-                  //     fontSize: 12,
-                  //     color: Colors.grey[600],
-                  //   ),
-                  //   textAlign: TextAlign.center,
-                  // ),
                 ],
               ),
             ),
@@ -158,3 +148,5 @@ class _FrequencyWidgetState extends State<FrequencyWidget> {
     );
   }
 }
+
+

@@ -69,7 +69,13 @@ flutter:
     - assets/splash/huoon_splash.jpg
     - assets/images/icon-Huoon.jpg
     - assets/images/icon-Huoon-transp.jpg
-    - assets/gif/writing.gif
+    - assets/gif/writing.gif 
+    - assets/images/test/special_offer.jpg
+    - assets/images/test/pan-integral.jpeg
+    - assets/images/test/pan-queijo.jpeg
+    - assets/images/test/pizza-cubana.jpeg
+    - assets/images/test/bolo-chocolate.jpeg
+    - assets/images/test/negocio.jpg
 
   fonts:
     - family: BebasNeue

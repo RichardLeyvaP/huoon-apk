@@ -1,35 +1,77 @@
 // store_signal.dart
 import 'package:huoon/data/repository/chat_ia_repository.dart';
 import 'package:huoon/data/services/globalCallApi/apiService.dart';
-import 'package:huoon/domain/blocs/store_bloc/store_signal.dart';
+import 'package:huoon/domain/blocs/chat_ia_bloc/chat_ia_signal.dart';
 
 // Repositorio de configuración (se asume que ya está inicializado en otro lugar)
 final ChatIRepository chatIRepository = ChatIRepository(authService: ApiService());
 
 // Método para obtener tiendas
 Future<String> requestChatIa(String question,String issue) async {
-  isUpdateST.value = false; //esto solo va  atener true cuando se de para modificar
-  isStoreLoadingST.value = true;
-  storeErrorST.value = null;
-  storeEmpyST.value = null;
-  storeDataST.value = null;
+  isUpdateIA.value = false; //esto solo va  atener true cuando se de para modificar
+  isChatIaLoadingIA.value = true;
+  chatiaErrorIA.value = null;
+  chatiaEmpyIA.value = null;
   int homeId = 1;
 
   try {
-    final result = await chatIRepository.getAnswerIA( question, issue);
+    final result = await chatIRepository.getAnswerIA(question, issue);
 
-    storeEmpyST.value = result;
-    storeDataST.value = null;
+    chatiaEmpyIA.value = result;
     return result;
     } catch (error) {
-      storeErrorST.value = "Error: ${error.toString()}";
+      chatiaErrorIA.value = "Error: ${error.toString()}";
       return 'Error al conectar con la IA, vuelva a intentarlo.';
     
   } finally {
-    isStoreLoadingST.value = false;
+    isChatIaLoadingIA.value = false;
   }
 }
 
+// Método para enviar el producto a la API
+Future<void> submitChatIa(String module,String answerIa,String question) async {
+  isChatIaLoadingIA.value = true;
+  chatiaErrorIA.value = null;
+  chatiaEmpyIA.value = null;
+  isSubmittingIA.value = false;
+
+  try {
+    await chatIRepository.addChatIa(module,answerIa,question);
+     isSubmittingIA.value = true;
+   
+  } catch (error) {
+    chatiaErrorIA.value = error.toString();
+     isSubmittingIA.value = false;
+  } finally {
+    isChatIaLoadingIA.value = false;
+  }
+}
+
+updateAddCantAnswer()
+{
+cantAnswer.value ++;
+}
+int getCantAnswer()
+{
+return cantAnswer.value;
+}
+
+updateClearCantAnswer()
+{
+cantAnswer.value = 0;
+}
+
+
+//variable que guarda la respuesta de la ia y manda  la db a guardarla
+updateSendAnswerApi(String sendAnswer)
+{
+sendAnswerApi.value = sendAnswer;
+}
+
+String? getSendAnswer()
+{
+return sendAnswerApi.value;
+}
 
 
 

@@ -32,6 +32,9 @@ class TaskElement with _$TaskElement {
     String? comments,
     String? attachments,
     String? geoLocation,
+    String? type,
+    String? startTime,
+    String? endTime,
     int? parentId, // Puede ser nulo si es la tarea principal
     List<TaskElement>? children, // Aquí es donde ocurre la recursividad
     List<Person>? people, // Aquí es donde ocurre la recursividad

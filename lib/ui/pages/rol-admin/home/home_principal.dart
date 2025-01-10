@@ -5,6 +5,7 @@ import 'package:huoon/data/models/configuration/configuration_model.dart';
 import 'package:huoon/domain/blocs/configuration_bloc/configuration_service.dart';
 import 'package:huoon/domain/blocs/configuration_bloc/configuration_signal.dart';
 import 'package:huoon/domain/blocs/login_bloc/login_service.dart';
+import 'package:huoon/domain/blocs/login_bloc/login_signal.dart';
 import 'package:huoon/domain/blocs/task_cat_state_prior.dart/task_cat_state_prior_service.dart';
 import 'package:huoon/domain/blocs/user_activity_bloc/user_activity_service.dart';
 import 'package:huoon/ui/Components/showDialogComp.dart';
@@ -22,10 +23,7 @@ import '../../pageMenu/task/tasksPage.dart';
 // color gris de fondo ... Colors.white
 
 class HomePrincipal extends StatefulWidget {
-  final String name;
-  final String email;
-  final String avatarUrl;
-  const HomePrincipal({super.key, required this.name, required this.email, required this.avatarUrl});
+
 
   @override
   State<HomePrincipal> createState() => _HomePrincipalState();
@@ -108,9 +106,8 @@ class _HomePrincipalState extends State<HomePrincipal> with SingleTickerProvider
 
   @override
   Widget build(BuildContext context) {
-    print('llegando a Pagina-Principal:${widget.name}');
-    print('llegando a Pagina-Principal:${widget.avatarUrl}');
-    print('llegando a Pagina-Principal:${widget.email}');
+    print('llegando a Pagina-Principal:${currentUserLG.value!.userName}');
+    print('llegando a Pagina-Principal:${currentUserLG.value!.email}');
     double screenHeight = MediaQuery.of(context).size.height;
     print('alto de mi telefono por si me hiciera falta es :$screenHeight');
 
@@ -126,7 +123,7 @@ class _HomePrincipalState extends State<HomePrincipal> with SingleTickerProvider
                 child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
                   // Text(usernameCubit.state),
                   appBarWidget(
-                      context, MdiIcons.bellOutline, MdiIcons.messageOutline, widget.avatarUrl, widget.name, 'huoon'),
+                      context, MdiIcons.bellOutline, MdiIcons.messageOutline, 'currentUserLG.value!.avatarUrl', currentUserLG.value!.userName, 'huoon'),
                   Padding(
                     padding: const EdgeInsets.only(top: 6),
                     child: searchWidget(setState),
@@ -201,6 +198,14 @@ class _HomePrincipalState extends State<HomePrincipal> with SingleTickerProvider
                     // '/ProductCreation',
                     '/StoreCreation',
                   );
+                }else if (_tabController.index == 5) {
+                  
+
+                  // GoRouter.of(context).go(
+                  //   //mando a la vista de crear el producto
+                  //   // '/ProductCreation',
+                  //   '/HomePageBusines',
+                  // );
                 }
                 //  dialogComponet(context, _tabTexts[_tabController.index]);
               },

@@ -237,12 +237,7 @@ class _StartStorePageState extends State<StartStorePage> {
       // Navegar a la siguiente página
       Future.delayed(const Duration(seconds: 2), () {
         GoRouter.of(context).go(
-          '/HomePrincipal',
-          extra: {
-            'name': '',
-            'email': '',
-            'avatarUrl': '',
-          },
+          '/HomePrincipal'
         );
       });
     }

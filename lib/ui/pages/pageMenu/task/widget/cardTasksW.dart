@@ -5,6 +5,7 @@ import 'package:huoon/domain/blocs/task_cat_state_prior.dart/task_cat_state_prio
 import 'package:huoon/domain/blocs/tasks/tasks_service.dart';
 import 'package:huoon/domain/blocs/user_activity_bloc/user_activity_service.dart';
 import 'package:huoon/ui/Components/avatarMultiples.dart';
+import 'package:huoon/ui/Components/dialog_utils.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class CardTasks extends StatefulWidget {
@@ -61,7 +62,7 @@ class _CardTasksState extends State<CardTasks> {
     // Una vez que las tareas asíncronas han terminado, verifica si el widget sigue montado.
     if (mounted) {
       context.goNamed(
-        'taskCreation',
+        'taskUpdate',
         pathParameters: {'id': '${widget.idTask}'},
       );
       setState(() {
@@ -258,12 +259,9 @@ class _CardTasksState extends State<CardTasks> {
                       label: "Eliminar",
                       color: Colors.red,
                       onPressed: () async {
-                        await deleteTasks(widget.idTask);
-                        // Obtén la fecha seleccionada inicial desde getSelectedDate
-                        String initialDateString = getSelectedDate();
-                        // carga las tareas
-                       await fetchTasks(initialDateString);
-                        updateTaskScreen('screen_Home_Tasks', initialDateString); //screen_Home_Tasks
+_showDeleteConfirmation( context);
+                        
+                        
                         // setState(() {
                         //   // task-destroy por post
                         //   isOptionsVisible = false;
@@ -291,6 +289,27 @@ class _CardTasksState extends State<CardTasks> {
       ),
     );
   }
+void _showDeleteConfirmation(BuildContext context) async {
+  final result = await DialogUtils.showConfirmationDialog(
+    context: context,
+    title: 'Alerta',
+    body: '¿Deseas eliminar la tarea?',
+  );
+
+  if (result == true) {
+    // Lógica para eliminar la tarea
+    print('Tarea eliminada');
+    await deleteTasks(widget.idTask);
+                        // Obtén la fecha seleccionada inicial desde getSelectedDate
+                        String initialDateString = getSelectedDate();
+                        // carga las tareas
+                       await fetchTasks(initialDateString);
+                        updateTaskScreen('screen_Home_Tasks', initialDateString); //screen_Home_Tasks
+  } else {
+    // Lógica para cancelar
+    print('Acción cancelada');
+  }
+}
 
   Widget _buildCardContent() {
     return Column(

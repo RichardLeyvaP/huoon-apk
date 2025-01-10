@@ -21,12 +21,7 @@ checkingIfLogget(setState, context) async {
       _userData = userData;
       //  goToHomeFb(userData, context);
       GoRouter.of(context).go(
-        '/HomePrincipal',
-        extra: {
-          'name': userData['name'],
-          'email': userData['email'],
-          'avatarUrl': userData['picture']['data']['url'],
-        },
+        '/HomePrincipal'
       );
     });
   } else {
@@ -44,12 +39,7 @@ Future loginFb(setState, context) async {
     _userData = userData;
     // goToHomeFb(userData, context);
     GoRouter.of(context).go(
-      '/HomePrincipal',
-      extra: {
-        'name': userData['name'],
-        'email': userData['email'],
-        'avatarUrl': userData['picture']['data']['url'],
-      },
+      '/HomePrincipal'
     );
   } else {
     print('result.status: ${result.status}');

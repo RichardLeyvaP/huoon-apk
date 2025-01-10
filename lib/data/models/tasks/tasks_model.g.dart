@@ -36,6 +36,9 @@ _$TaskElementImpl _$$TaskElementImplFromJson(Map<String, dynamic> json) =>
       comments: json['comments'] as String?,
       attachments: json['attachments'] as String?,
       geoLocation: json['geoLocation'] as String?,
+      type: json['type'] as String?,
+      startTime: json['startTime'] as String?,
+      endTime: json['endTime'] as String?,
       parentId: (json['parentId'] as num?)?.toInt(),
       children: (json['children'] as List<dynamic>?)
           ?.map((e) => TaskElement.fromJson(e as Map<String, dynamic>))
@@ -64,6 +67,9 @@ Map<String, dynamic> _$$TaskElementImplToJson(_$TaskElementImpl instance) =>
       'comments': instance.comments,
       'attachments': instance.attachments,
       'geoLocation': instance.geoLocation,
+      'type': instance.type,
+      'startTime': instance.startTime,
+      'endTime': instance.endTime,
       'parentId': instance.parentId,
       'children': instance.children,
       'people': instance.people,

@@ -1,6 +1,7 @@
 import 'package:huoon/data/models/tasks/tasks_model.dart';
 import 'package:huoon/data/services/globalCallApi/apiService.dart';
 import 'package:huoon/domain/blocs/task_cat_state_prior.dart/task_cat_state_prior_signal.dart';
+import 'package:huoon/domain/blocs/tasks/tasks_signal.dart';
 import 'package:huoon/ui/pages/env.dart';
 
 class TasksRepository {
@@ -99,8 +100,9 @@ class TasksRepository {
     return selectedTaskpersons.map((p) {
       print('eeee-personas:${p.id}');
       return {
+        "role_id": p.rolId??1, // Valor fijo por ahora
         "person_id": p.id, // Aquí p.id es el ID de la persona
-        "role_id": 1, // Valor fijo por ahora
+        
         "home_id": 1 // Valor fijo por ahora
       };
     }).toList();
@@ -127,7 +129,12 @@ class TasksRepository {
       'comments': 'comentario de prueba', //todo fijo por duda
       'attachments': 'image/test.png', //todo fijo por duda
       'geo_location': task.geoLocation == "" ? null : task.geoLocation,
-      'people': peopleSelected
+      'people': peopleSelected,
+      //datos nuevos
+      'type': task.type,
+      'start_time': task.startTime,
+      'end_time': task.endTime,
+
     };
     // print('si estoy devolviendo esto:1-BODY-${body}');
     // Llama al servicio que maneja la API de autenticación para login
@@ -162,8 +169,13 @@ class TasksRepository {
       'comments': 'comentario de prueba', //todo fijo por duda
       'attachments': 'image/test.png', //todo fijo por duda
       'geo_location': task.geoLocation == "" ? null : task.geoLocation,
-      'people': peopleSelected
+      'people': personRolesTA.value,
+      //datos nuevos
+      'type': task.type,
+      'start_time': task.startTime,
+      'end_time': task.endTime,
     };
+    
     print('si estoy devolviendo esto:1-BODY-New:${body}');
     // Llama al servicio que maneja la API de autenticación para login
     final response = await authService.post(endpoint, body: body);

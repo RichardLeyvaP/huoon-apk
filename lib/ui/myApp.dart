@@ -5,6 +5,7 @@ import 'package:huoon/domain/blocs/configuration_bloc/configuration_signal.dart'
 import 'package:huoon/ui/Routes/pages_routes.dart';
 import 'package:huoon/ui/pages/loginFb.dart';
 import 'package:huoon/ui/pages/rol-admin/Task/TaskCreationPage.dart';
+import 'package:huoon/ui/pages/rol-admin/Task/TaskUpdatePage.dart';
 import 'package:huoon/ui/pages/rol-admin/chat/ChatHealthPage.dart';
 import 'package:huoon/ui/pages/rol-admin/chat/audio_recorder.screen.dart';
 import 'package:huoon/ui/pages/rol-admin/chat/ChatPageFinancePage.dart';
@@ -16,6 +17,12 @@ import 'package:huoon/ui/pages/rol-admin/product/productUpdatePage.dart';
 import 'package:huoon/ui/pages/rol-admin/store/storeCreationPage.dart';
 import 'package:huoon/ui/pages/rol-admin/store/storeUpdatePage.dart';
 import 'package:huoon/ui/pages/splash/splash_screen.dart';
+import 'package:huoon/ui/pastaTestPage/EstoquePage.dart';
+import 'package:huoon/ui/pastaTestPage/FuncionariosPage.dart';
+import 'package:huoon/ui/pastaTestPage/GastosPage.dart';
+import 'package:huoon/ui/pastaTestPage/HomePageBusines.dart';
+import 'package:huoon/ui/pastaTestPage/ReceitasPage.dart';
+import 'package:huoon/ui/pastaTestPage/registerPage.dart';
 import 'package:huoon/ui/util/util_class.dart';
 import 'package:huoon/ui/util/utils_class_apk.dart';
 import 'package:signals/signals_flutter.dart';
@@ -30,6 +37,7 @@ class MyApp extends StatelessWidget {
       GoRoute(
         path: '/',
         redirect: (context, state) => '/SplashScreen',
+        // redirect: (context, state) => '/SignUpPage',
       ),
       GoRoute(
         path: '/SplashScreen',
@@ -43,16 +51,9 @@ class MyApp extends StatelessWidget {
         path: '/LoginFormPage',
         builder: (context, state) => const LoginFormPage(),
       ),
-      GoRoute(
+       GoRoute(
         path: '/HomePrincipal',
-        builder: (context, state) {
-          final Map<String, dynamic> extra = state.extra as Map<String, dynamic>? ?? {};
-          return HomePrincipal(
-            name: extra['name'] ?? '',
-            email: extra['email'] ?? '',
-            avatarUrl: extra['avatarUrl'] ?? '',
-          );
-        },
+        builder: (context, state) => HomePrincipal(),
       ),
       GoRoute(
         path: '/LoadingPage',
@@ -75,6 +76,17 @@ class MyApp extends StatelessWidget {
           final int? id = idParam != null ? int.tryParse(idParam) : null;
 
           return TaskCreation(id: id);
+        },
+      ),
+      GoRoute(
+        name: 'taskUpdate',
+        path: '/taskUpdate/:id', // :id indica que es un parámetro en la URL
+        builder: (context, state) {
+          // Obtiene el id desde los parámetros de la ruta
+          final String? idParam = state.pathParameters['id'];
+          final int? id = idParam != null ? int.tryParse(idParam) : null;
+
+          return TaskUpdate(id: id);
         },
       ),
 
@@ -123,6 +135,42 @@ class MyApp extends StatelessWidget {
         path: '/RemindersPage',
         builder: (context, state) => RemindersPage(),
       ),
+      //rutas de prueba
+      //
+      //
+      //
+      //
+      
+      GoRoute(
+        path: '/SignUpPage',
+        builder: (context, state) => SignUpPage(),
+      ),
+      GoRoute(
+        path: '/HomePageBusines',
+        builder: (context, state) => HomePageBusines(),
+      ),
+      GoRoute(
+        path: '/FuncionariosPage',
+        builder: (context, state) => FuncionariosPage(),
+      ),
+      GoRoute(
+        path: '/GastosPage',
+        builder: (context, state) => GastosPage(),
+      ),
+      GoRoute(
+        path: '/ReceitasPage',
+        builder: (context, state) => ReceitasPage(),
+      ),
+      GoRoute(
+        path: '/EstoquePage',
+        builder: (context, state) => EstoquePage(),
+      ),
+      
+       //rutas de prueba
+      //
+      //
+      //
+      //
       // Agrega más rutas según sea necesario
     ],
   );

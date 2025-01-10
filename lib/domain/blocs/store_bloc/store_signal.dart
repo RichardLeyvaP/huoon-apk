@@ -13,6 +13,9 @@ final Signal<Store?> storeDataST = Signal<Store?>(null);
 final Signal<bool> isSubmittingST = Signal<bool>(false);
 final Signal<bool> submitSuccessST = Signal<bool>(false);
 final Signal<String?> submitErrorST = Signal<String?>(null);
+final Signal<int> cantAnswer = Signal<int>(0);
+final Signal<String?> sendAnswerApi = Signal<String?>(null);
+
 //nuevas
 final Signal<bool> isUpdateST = Signal<bool>(false);
 final Signal<List<Status>?> statusStoreCSP = Signal<List<Status>?>(

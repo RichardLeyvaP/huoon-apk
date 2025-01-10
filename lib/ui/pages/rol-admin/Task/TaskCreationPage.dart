@@ -26,21 +26,19 @@ class _TaskCreationState extends State<TaskCreation> {
           // Pasar el ID a las páginas
          // StartTaskPage(pageController: _pageController, id: widget.id),
          TaskChatPage(conversationSteps: [
-    
-  {'key': 'title', 'message': 'Empecemos, ¿me puedes dar el título de la tarea? ✍️', 'hint': 'Título de la tarea'},
-  {'key': 'description', 'message': 'Perfecto. Ahora, ¿puedes darme una breve descripción? 📝', 'hint': 'Descripción de la tarea'},
-  {'key': 'category', 'message': '¿A qué categoría pertenece esta tarea? 📂', 'hint': ''},
-  {'key': 'status', 'message': '¿Qué estado tendría? ✅', 'hint': ''},
-  {'key': 'priority', 'message': '¡Muy bien! ¿Ahora qué prioridad le das a esta tarea? 🔥⬆️', 'hint': ''},
-  {'key': 'frequencie', 'message': 'Escoge la Frecuencia que deseas darle 📝', 'hint': ''},
+     {'key': 'typeTask', 'message': '¡Que deseas crear?', 'hint': ''},
+     
+     {'key': 'frequencie', 'message': '¡Solo falta escoger la Frecuencia que deseas darle!', 'hint': ''},
 
-  {'key': 'family', 'message': '¡Ya estamos terminando! ¿Qué familiar va a participar en la tarea? 👨‍👩‍👧‍👦', 'hint': ''},
-  {'key': 'calendar', 'message': '¡Solo falta la fecha de Inicio y Final! 👏👏', 'hint': ''},
-
-
-    
-
-    {'key': 'done', 'message': '¡Genial! He registrado todos los datos. ¿Quieres guardar la tarea?', 'hint': 'Confirmar tarea'}
+  {'key': 'title', 'message': '¿Me puedes decir qué titulo quieres ponerle?', 'hint': 'Escriba el Título'},
+  {'key': 'description', 'message': 'Perfecto. Ahora  dame una breve descripción ', 'hint': 'Escriba la descripción '},
+  {'key': 'calendar', 'message': 'Que fecha de Inicio y Final tendría?', 'hint': ''},
+  {'key': 'frequencie', 'message': 'La Frecuencia que deseas darle', 'hint': ''},
+  {'key': 'category', 'message': '¿A qué categoría pertenece? ', 'hint': ''},
+  {'key': 'status', 'message': '¿Qué estado tendría? ', 'hint': ''},
+  {'key': 'priority', 'message': '¡Muy bien! ¿Ahora qué prioridad le das?', 'hint': ''},
+  {'key': 'family', 'message': '¡Ya estamos terminando! ¿Qué familiar va a participar?', 'hint': ''}, 
+    {'key': 'done', 'message': '¡Genial! He registrado todos los datos. ¿Quieres guardarlo', 'hint': 'Confirmar'}
     //ENVIANDO A INSERTAR
         // await storeTask();
   ],title: 'Crear tarea',module: 'storeTask',),

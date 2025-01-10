@@ -60,12 +60,7 @@ class _LoginFormPageState extends State<LoginFormPage> {
       );
       onScreenChange('screen_Home_Tasks');
       GoRouter.of(context).go(
-        '/HomePrincipal',
-        extra: {
-          'name': currentUserLG.value!.userName,
-          'email': currentUserLG.value!.email,
-          'avatarUrl': '',
-        },
+        '/HomePrincipal'
       );
       // String date = '2024-09-09'; // La fecha puede ser dinámica
       DateTime selectedDay = DateTime.now();

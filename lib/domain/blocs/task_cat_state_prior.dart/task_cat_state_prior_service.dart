@@ -52,26 +52,58 @@ Future<void> fetchCategoriesStatusPriority() async {
       return Taskperson(
         id: personJson['id'],
         imagePerson: personJson['imagePerson'],
-        rolId: personJson['rolId'],
+        rolId: personJson['roleId'],
         namePerson: personJson['namePerson'],
-        nameRole: personJson['nameRole'],
+        nameRole: personJson['roleName'],
       );
     }).toList();
 
-    List<int> taskPersonIds = taskpersonList.map((person) => person.id).toList();
-    String taskRecurrence = jsonResponse['taskrecurrences'][0]; // Ejemplo
-    print('aqui submitTask :${jsonResponse['taskrecurrences']}');
-    List<dynamic> dynamicList = jsonResponse['taskrecurrences'];
-    List<String> stringList = List<String>.from(dynamicList);
+    List<Frequency> taskfrequencynList = (jsonResponse['taskrecurrences'] as List<dynamic>).map((taskrecurrencesJson) {
+      return Frequency(
+        id: taskrecurrencesJson['id'],
+        title: taskrecurrencesJson['name'],
+         description: '',
+      );
+    }).toList();
+
+    
+    List<TaskType> taskTypeList = (jsonResponse['tasktype'] as List<dynamic>).map((taskrecurrencesJson) {
+      return TaskType(
+        id: taskrecurrencesJson['id'],
+        name: taskrecurrencesJson['name'],
+      );
+    }).toList();
+
+    // Mantén la implementación actual
+List<int> taskPersonIds = taskpersonList.map((person) => person.id).toList();
+selectedPersonIdsCSP.value = taskPersonIds;
+
+// Crea el mapa adicional para asociar los IDs con los roles
+Map<int, String?> taskPersonRoles = {
+  for (var person in taskpersonList) person.id: person.nameRole
+};
+selectedPersonRolesCSP.value = taskPersonRoles;
+
+
+
+    String taskRecurrenceSelect = taskfrequencynList.first.title; // Ejemplo
+   // print('aqui submitTask :${jsonResponse['taskrecurrences']}');
+    //List<dynamic> dynamicList = jsonResponse['taskrecurrences'];
+    //List<String> stringList = List<String>.from(dynamicList);
     // Actualizamos las señales con los datos obtenidos
+    taskTypeCSP.value = taskTypeList;
+    //taskTypeSelectCSP.value = taskTypeList.first.id;
+
+
+
     categoriesCSP.value = categoriesList;
     statusCSP.value = statusList;
     prioritiesCSP.value = prioritiesList;
     rolesCSP.value = rolesList; //este es nuevo
     taskPersonsCSP.value = taskpersonList;
-    selectedPersonIdsCSP.value = taskPersonIds;
-    frequencyTaskCSP.value = taskRecurrence; //id
-    frequencyCSP.value = stringList;
+    
+    //frequencyTaskCSP.value = taskRecurrenceSelect; //id
+    frequencyCSP.value = taskfrequencynList;
     loadDataCSP.value = true;
     print('aqui submitTask :${rolesCSP}');
   } catch (error) {
@@ -129,6 +161,19 @@ void onFamilySelected(List<Taskperson> person) {
 void onFrequencyChanged(String newFrequency) {
   frequencyTaskCSP.value = newFrequency;
 }
+void onTaskTypeChanged(String newFrequency) {
+  taskTypeSelectCSP.value = newFrequency;
+}
+
+
+void onHourIniChanged(String hourIni) {
+  hourIniSelectCSP.value = hourIni;
+}
+void onHourEndChanged(String hourEnd) {
+  hourEndSelectCSP.value = hourEnd;
+}
+// hourIniSelectCSP
+// hourEndSelectCSP
 
 void onTittleChanged(String tittle) {
   tittleTaskCSP.value = tittle;
@@ -163,4 +208,5 @@ void clearCategoryStatusPrioritySignals() {
   selecteFamilyCSP.value = null;
   selectedTaskUpdateCSP.value = null;
   selectedIdCSP.value = null;
+  taskTypeSelectCSP.value = null;
 }

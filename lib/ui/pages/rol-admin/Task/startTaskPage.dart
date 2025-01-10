@@ -4,9 +4,12 @@ import 'package:huoon/domain/blocs/task_cat_state_prior.dart/task_cat_state_prio
 import 'package:huoon/domain/blocs/task_cat_state_prior.dart/task_cat_state_prior_signal.dart';
 import 'package:huoon/domain/blocs/tasks/tasks_service.dart';
 import 'package:huoon/domain/modelos/category_model.dart';
+import 'package:huoon/ui/Components/NoEditTextFormField.dart';
+import 'package:huoon/ui/Components/TimePickerModal.dart';
 import 'package:huoon/ui/Components/category_widget.dart';
 import 'package:huoon/ui/Components/priority_widget.dart';
 import 'package:huoon/ui/Components/state_widget.dart';
+import 'package:huoon/ui/Components/type_frequency_widget.dart';
 import 'package:huoon/ui/util/util_class.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:signals/signals_flutter.dart';
@@ -113,14 +116,63 @@ class _StartTaskPageState extends State<StartTaskPage> {
                                 if (descriptionTaskCSP.watch(context) != null) {
                                   _descriptionController.text = descriptionTaskCSP.value ?? '';
                                 }
+                                 if (descriptionTaskCSP.watch(context) != null) {
+                                  _descriptionController.text = descriptionTaskCSP.value ?? '';
+                                }
 
                                 // Puedes realizar otras acciones como llamadas a APIs, actualizaciones de estado, etc.
                               });
+                              // Observa las señales
+    final hourIni = hourIniSelectCSP.watch(context);
+    final hourEnd = hourEndSelectCSP.watch(context);
+
+    // Crea y actualiza el controlador dinámicamente
+    final TextEditingController _hourController = TextEditingController();
+    if(taskTypeSelectCSP.watch(context) == 'Evento')
+    {
+      _hourController.text = '$hourIni - $hourEnd';
+    }
+    else
+    {
+      _hourController.text = '$hourIni';
+    }
+    
+    
+                             
 
                               return Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  SizedBox(height: 10),
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        SizedBox(height: 10),
+        _buildTaskTypeSection(),
+        SizedBox(height: 10),
+        NonEditableTextField(
+  controller: _hourController,
+  labelText: 'Hora',
+  onTap: () {
+     showModalBottomSheet(
+  context: context,
+  isDismissible: false, // No permite cerrar tocando fuera
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+  ),
+  builder: (context) => TimePickerModal(
+    onSelect: (startTime, endTime) {
+      //verificar si va 1 hora o van las 2 dependiendo si es evento o tarea
+
+      print('Hora inicial: $startTime');
+      print('Hora final: $endTime');
+       onHourIniChanged(startTime);
+ onHourEndChanged(endTime);
+      // Aquí puedes realizar cualquier acción adicional
+    },
+  ),
+);
+    // Aquí puedes mostrar un selector de tiempo, navegar a otra pantalla, etc.
+  },
+)
+,
+           SizedBox(height: 20),
                                   _buildTextFormField(
                                     controller: _titleController,
                                     labelText: TranslationManager.translate('tittleLabel'),
@@ -316,6 +368,90 @@ class _StartTaskPageState extends State<StartTaskPage> {
       },
     );
   }
+//
+  _buildTaskTypeSection() {
+    return Builder(
+      builder: (context) {
+        if (taskTypeCSP.watch(context) != null) {
+          // Supongamos que 'frequencies' es una lista de nombres de frecuencias.[Diaria, Semanal, Mensual, Anual]
+          final taskTypeData = taskTypeCSP.value; // Cambia según tu fuente de datos         
+
+          
+
+          return TaskTypeWidget(
+  taskTypes: taskTypeData!, // Lista de TaskType
+  titleWidget: '',
+  selectMultiple: false,
+  onSelectionChanged: (selectedTaskTypes) {
+    // Maneja las tareas seleccionadas
+    
+
+      FocusScope.of(context).unfocus();
+       showModalBottomSheet(
+  context: context,
+  isDismissible: false, // No permite cerrar tocando fuera
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+  ),
+  builder: (context) => TimePickerModal(
+    onSelect: (startTime, endTime) {
+      //verificar si va 1 hora o van las 2 dependiendo si es evento o tarea
+
+      print('Hora inicial: $startTime');
+      print('Hora final: $endTime');
+       onHourIniChanged(startTime);
+ onHourEndChanged(endTime);
+      // Aquí puedes realizar cualquier acción adicional
+    },
+  ),
+);
+         
+
+  onTaskTypeChanged(selectedTaskTypes.first.id);
+  updateTaskType(selectedTaskTypes.first.id);
+  },
+  selectedTaskTypeId: taskTypeSelectCSP.value , // Opcional, ID de la tarea pre-seleccionada
+)
+;
+        } else if (errorMessageCSP.watch(context) != null) {
+          return Center(child: Text('Error: ${errorMessageCSP.value}'));
+        }
+        return Container();
+      },
+    );
+  }
+
+
+//   _buildTaskTypeSection() {
+//     return Builder(
+//       builder: (context) {
+//         if (taskTypeCSP.watch(context) != null) {
+//           // Supongamos que 'frequencies' es una lista de nombres de frecuencias.[Diaria, Semanal, Mensual, Anual]
+//           final taskTypeData = taskTypeCSP.value; // Cambia según tu fuente de datos         
+
+          
+
+//           return TaskTypeWidget(
+//   taskTypes: taskTypeData!, // Lista de TaskType
+//   titleWidget: 'Tipo',
+//   selectMultiple: false,
+//   onSelectionChanged: (selectedTaskTypes) {
+//     // Maneja las tareas seleccionadas
+//       FocusScope.of(context).unfocus();
+
+//   onTaskTypeChanged(selectedTaskTypes.first.id);
+//   updateTaskType(selectedTaskTypes.first.id);
+//   },
+//   selectedTaskTypeId: taskTypeSelectCSP.value , // Opcional, ID de la tarea pre-seleccionada
+// )
+// ;
+//         } else if (errorMessageCSP.watch(context) != null) {
+//           return Center(child: Text('Error: ${errorMessageCSP.value}'));
+//         }
+//         return Container();
+//       },
+//     );
+//   }
 
   void _onSubmit() {
     if (_formKey.currentState!.validate()) {

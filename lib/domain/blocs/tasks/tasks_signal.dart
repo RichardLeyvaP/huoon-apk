@@ -11,3 +11,5 @@ final Signal<bool> taskElementUpdateTA = Signal<bool>(false);
 final Signal<bool> taskDeleteTA = Signal<bool>(false);
 final Signal<Task?> taskDataTA = Signal<Task?>(null); // Almacena los datos de la tarea
 final Signal<String> successMessageTA = Signal<String>("");
+final Signal <List<Map<String, dynamic>>> personRolesTA = Signal<List<Map<String, dynamic>>>([]);
+

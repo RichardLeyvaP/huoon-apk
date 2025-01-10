@@ -35,12 +35,7 @@ Future<void> loginWithGoogle(context) async {
         };
 
         GoRouter.of(context).go(
-          '/HomePrincipal',
-          extra: {
-            'name': userData['name'],
-            'email': userData['email'],
-            'avatarUrl': userData['pictureUrl'],
-          },
+          '/HomePrincipal'
         );
         _googleSignIn.signOut();
       } else {

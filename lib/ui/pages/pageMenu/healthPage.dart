@@ -71,7 +71,8 @@ class HealthPage extends StatelessWidget {
                     color: StyleGlobalApk.getColorOpaqueBlue(),
                     onTap: () {
                       // Navegar a la funcionalidad
-                      GoRouter.of(context).push('/ChatPage');
+                      // GoRouter.of(context).push('/ChatPage');
+                      GoRouter.of(context).push('/ChatHealthPage');
                     },
                   ),
                   _buildFeatureCard(

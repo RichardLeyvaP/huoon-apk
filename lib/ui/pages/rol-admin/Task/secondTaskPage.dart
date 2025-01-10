@@ -9,6 +9,7 @@ import 'package:huoon/domain/modelos/category_model.dart';
 import 'package:huoon/ui/Components/family_widget.dart';
 import 'package:huoon/ui/Components/frequency_widget.dart';
 import 'package:huoon/ui/pages/rol-admin/Task/selectDays/utils.dart';
+import 'package:huoon/ui/util/utils_class_apk.dart';
 import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:signals/signals_flutter.dart';
@@ -48,16 +49,21 @@ TimeOfDay? _endTime;
   void initState() {
     super.initState();
     // Fechas predeterminadas
-
-     if (widget.id != 0) {
+if (widget.id != 0) {
   DateTime initialStartDate = taskElementTA.value.startDate != null
-    ? DateTime.parse(taskElementTA.value.startDate!)
-    : DateTime.now();
+      ? DateTime.parse(taskElementTA.value.startDate!)
+      : DateTime.now();
 
-DateTime initialEndDate = taskElementTA.value.endDate != null
-    ? DateTime.parse(taskElementTA.value.endDate!)
-    : DateTime.now().add(Duration(days: 1)); // Un día más adelante
+  DateTime initialEndDate = taskElementTA.value.endDate != null
+      ? DateTime.parse(taskElementTA.value.endDate!)
+      : DateTime.now().add(Duration(days: 1)); // Un día más adelante
 
+  // Verifica y corrige si el rango es inválido
+  if (initialStartDate.isAfter(initialEndDate)) {
+    DateTime temp = initialStartDate;
+    initialStartDate = initialEndDate;
+    initialEndDate = temp;
+  }
 
   // Inicializa el rango seleccionado
   _selectedDateRange = DateTimeRange(start: initialStartDate, end: initialEndDate);
@@ -74,6 +80,7 @@ DateTime initialEndDate = taskElementTA.value.endDate != null
   print('Hora de fin: $_endTime');
 }
 
+
     
   }
 
@@ -85,17 +92,13 @@ DateTime initialEndDate = taskElementTA.value.endDate != null
 
   void _onSelectionChanged(List<Taskperson> selected, List<String>? roles) {
     FocusScope.of(context).unfocus();
-    List<Person> persons = convertToPersonList(selectedTaskpersons);
+    List<Person> persons = convertToPersonList(selected);
     // aqui se agregan los familiares
     updateTaskFamily(persons);
     onFamilySelected(selected);
     print('Primera pagina de tareas-seleccionando nuevas personas-$persons');
-    print('Primera pagina de tareas-seleccionando nuevas personas-2$selectedTaskpersons');
 
-    // Aquí puedes hacer algo con los datos seleccionados
-    // print("Estados seleccionados-Personas seleccionadas: ${selectedTaskpersons.length}");
-    print("Estados seleccionados-Personas seleccionadas: ${selectedTaskpersons.map((p) => p.id)}");
-    // print("Estados seleccionados-Roles seleccionados: $selectedRoles");
+   
   }
 
   final _formKey = GlobalKey<FormState>();
@@ -283,7 +286,7 @@ DateTime initialEndDate = taskElementTA.value.endDate != null
   _buildFamilySection() {
     return Builder(
       builder: (context) {
-        if (taskPersonsCSP.watch(context) != null) {
+        if (taskPersonsCSP.value != null) {
           bool selectMultiple = true;
           List<Taskperson>? taskpersonsList;
 
@@ -308,7 +311,7 @@ DateTime initialEndDate = taskElementTA.value.endDate != null
             titleWidget: 'Selecciona un Familiar',
             selectMultiple: selectMultiple, // Permitir selección múltiple
             enableRoleSelection: true, // Habilitar selección de rol
-            selectedPersonId: selectedPersonIdsCSP.value.first,
+            selectedPersonId: null,
             rolesList: rolesCSP.value,
             onSelectionChanged: _onSelectionChanged, // Manejar cambios de selección
           );
@@ -356,118 +359,214 @@ DateTime initialEndDate = taskElementTA.value.endDate != null
     );
   }
 
-  _buildCalendarSection(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            TableCalendar(
-              headerStyle: const HeaderStyle(
-                // titleTextFormatter: (date, locale) => '', // Oculta el título
-                formatButtonVisible: false, // Oculta el botón de formato
-                // titleCentered: true,
-                // leftChevronVisible: false, // Oculta el botón de navegación izquierda
-                // rightChevronVisible: false, // Oculta el botón de navegación derecha
-              ),
-              locale: 'es_ES',
-              firstDay: kFirstDay,
-              lastDay: kLastDay,
-              focusedDay: _focusedDay,
-              calendarFormat: _calendarFormat,
-              rangeSelectionMode: RangeSelectionMode.toggledOn, // Activar selección de rango
-              selectedDayPredicate: (day) {
-                //FocusScope.of(context).unfocus();
-                return _selectedDateRange != null &&
-                    (isSameDay(_selectedDateRange!.start, day) || isSameDay(_selectedDateRange!.end, day));
-              },
-              rangeStartDay: _selectedDateRange?.start,
-              rangeEndDay: _selectedDateRange?.end,
-              onRangeSelected: (start, end, focusedDay) async {
-                // Resetear horas cuando cambia el rango
-                FocusScope.of(context).unfocus();
+  DateTime? _startDate;
+  DateTime? _endDate;
+
+  // Actualiza el rango de fechas seleccionadas
+  void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
+    setState(() {
+      _focusedDay = focusedDay;
+
+      if (taskTypeSelectCSP.value == 'Evento') {
+        if (_startDate == null || _endDate != null) {
+          // Si no hay fecha de inicio o ya se seleccionó un rango completo
+          _startDate = selectedDay;
+          _endDate = null;
+        } else {
+          // Si ya se seleccionó la fecha de inicio, seleccionamos la fecha final
+          if (selectedDay.isBefore(_startDate!)) {
+            _startDate = selectedDay;
+            _endDate = null;
+          } else if (selectedDay.isAfter(_startDate!)) {
+            _endDate = selectedDay;
+          }
+        }
+
+
+  if (_startDate != null && _endDate != null) {
+     
+
+  }
+  updateTaskDateTime(
+  _formatDateTimeProduct(_startDate ?? DateTime.now()),
+  _formatDateTimeProduct(
+    _endDate ?? (_startDate != null ? _startDate!.add(Duration(days: 1)) : DateTime.now()),
+  ),
+);
+                         
+      }
+       else if (taskTypeSelectCSP.value == 'Tarea') {
+        // Si es 'Tarea', solo selecciona un día
+        _startDate = selectedDay;
+        _endDate = null;
+        
+updateTaskDateTime(
+  _formatDateTimeProduct(_startDate ?? DateTime.now()),
+  _formatDateTimeProduct(_endDate ?? DateTime.now()),
+);
+      }
+    });
+  }
+
+     // Formato completo con fecha y hora, imprime por separado
+  String _formatDateTimeProduct(DateTime date) {
+    String formattedDate = DateFormat('yyyy-MM-dd').format(date);
+   // print('Fecha seleccionada: $formattedDate'); // Imprimir solo la fecha
+    return formattedDate;
+  }
+  
+ 
+_buildCalendarSection(BuildContext context) {
+  return Padding(
+    padding: const EdgeInsets.all(8.0),
+    child: SingleChildScrollView(
+      child: Column(
+        children: [
+          TableCalendar(
+            headerStyle: const HeaderStyle(
+              formatButtonVisible: false, // Oculta el botón de formato
+            ),
+            locale: 'es_ES',
+            firstDay: kFirstDay,
+            lastDay: kLastDay,
+            onDaySelected: (selectedDay, focusedDay) async {
+              FocusScope.of(context).unfocus();
+
+              if (taskTypeSelectCSP.value == 'Evento') {
+                // Si es evento, selecciona la primera fecha y activa el rango
+                if (_selectedDateRange == null) {
+                  setState(() {
+                    _selectedDateRange = DateTimeRange(start: selectedDay, end: selectedDay);
+                    _focusedDay = focusedDay;
+                    _startTime = null;
+                    _endTime = null;
+                  });
+
+                  // Seleccionar hora para la primera fecha
+              //    await _selectTime(context, true);
+                } else {
+                  setState(() {
+                    _selectedDateRange = DateTimeRange(
+                      start: _selectedDateRange!.start,
+                      end: selectedDay,
+                    );
+                    _focusedDay = focusedDay;
+                  });
+
+                  // Seleccionar hora para la segunda fecha
+                  //await _selectTime(context, false);
+                }
+              } else {
+                // Si no es evento, permite seleccionar solo una fecha
                 setState(() {
-                  _selectedDateRange = DateTimeRange(start: start!, end: end ?? start);
+                  _selectedDateRange = DateTimeRange(start: selectedDay, end: selectedDay);
                   _focusedDay = focusedDay;
                   _startTime = null;
                   _endTime = null;
                 });
-                print('selcct dataHora-zzzzz-start:$start');
-                print('selcct dataHora-zzzzz-end:$end');
 
-                // Selecciona la hora de inicio
-                if (start != null) {
-                  await _selectTime(context, true); // Seleccionar hora para la fecha de fin
-                }
-                // Selecciona la hora de fin solo si hay una fecha final seleccionada
-                if (end != null) {
-                  await _selectTime(context, false); // Seleccionar hora para la fecha de fin
-                }
-              },
-              onPageChanged: (focusedDay) {
-                _focusedDay = focusedDay;
-              },
+                // Seleccionar hora para la única fecha seleccionada
+               // await _selectTime(context, true);
+              }
+            },
+            onRangeSelected: taskTypeSelectCSP.value == 'Evento'
+                ? (start, end, focusedDay) async {
+                    FocusScope.of(context).unfocus();
+                    setState(() {
+                      _selectedDateRange = DateTimeRange(start: start!, end: end ?? start);
+                      _focusedDay = focusedDay;
+                      _startTime = null;
+                      _endTime = null;
+                    });
+
+                  }
+                : null, // No habilita rango en otros casos
+            rangeSelectionMode: taskTypeSelectCSP.value == 'Evento'
+                ? RangeSelectionMode.toggledOn
+                : RangeSelectionMode.disabled,
+            selectedDayPredicate: (day) {
+              return taskTypeSelectCSP.value == 'Evento'
+                  ? _selectedDateRange != null &&
+                      (isSameDay(_selectedDateRange!.start, day) ||
+                          isSameDay(_selectedDateRange!.end, day))
+                  : _selectedDateRange != null &&
+                      isSameDay(_selectedDateRange!.start, day);
+            },
+            rangeStartDay: taskTypeSelectCSP.value == 'Evento' ? _selectedDateRange?.start : null,
+            rangeEndDay: taskTypeSelectCSP.value == 'Evento' ? _selectedDateRange?.end : null,
+            focusedDay: _focusedDay,
+            calendarFormat: _calendarFormat,
+            onPageChanged: (focusedDay) {
+              _focusedDay = focusedDay;
+            },
+          ),
+          if (_selectedDateRange != null) ...[
+            Container(
+              height: 50,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: selectedLevel == 2
+                      ? colorBotoomSel.withOpacity(0.8)
+                      : colorBotoom.withOpacity(0.4),
+                  width: 2.0,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: selectedLevel == 2
+                        ? colorBotoomSel.withOpacity(0.4)
+                        : colorBotoom.withOpacity(0.4),
+                    spreadRadius: 0,
+                    blurRadius: 10,
+                    offset: Offset(0, 0),
+                  ),
+                ],
+              ),
+              child: Center(
+                child: Text('Inicial:${_formatDateTime(_selectedDateRange!.start, null)}'),
+              ),
             ),
-            if (_selectedDateRange != null && _startTime != null && _endTime != null) ...[
-              Container(
-                height: 50,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white, // Color de fondo del contenedor
-                  borderRadius: BorderRadius.circular(10), // Esquinas redondeadas
-                  border: Border.all(
-                    color: selectedLevel == 2
-                        ? colorBotoomSel.withOpacity(0.8)
-                        : colorBotoom.withOpacity(0.4), // Color del borde
-                    width: 2.0, // Grosor del borde
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: selectedLevel == 2
-                          ? colorBotoomSel.withOpacity(0.4)
-                          : colorBotoom.withOpacity(0.4), // Sombra roja
-                      spreadRadius: 0, // Asegura que la sombra esté en el borde
-                      blurRadius: 10, // Difumina la sombra
-                      offset: Offset(0, 0), // Posiciona la sombra en las 4 partes
-                    ),
-                  ],
-                ),
-                child: Center(child: Text('Inicial:${_formatDateTime(_selectedDateRange!.start, _startTime)}')),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Container(
-                height: 50,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white, // Color de fondo del contenedor
-                  borderRadius: BorderRadius.circular(10), // Esquinas redondeadas
-                  border: Border.all(
-                    color: selectedLevel == 2
-                        ? colorBotoomSel.withOpacity(0.8)
-                        : colorBotoom.withOpacity(0.4), // Color del borde
-                    width: 2.0, // Grosor del borde
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: selectedLevel == 2
-                          ? colorBotoomSel.withOpacity(0.4)
-                          : colorBotoom.withOpacity(0.4), // Sombra roja
-                      spreadRadius: 0, // Asegura que la sombra esté en el borde
-                      blurRadius: 10, // Difumina la sombra
-                      offset: Offset(0, 0), // Posiciona la sombra en las 4 partes
-                    ),
-                  ],
-                ),
-                child: Center(child: Text('Final:${_formatDateTime(_selectedDateRange!.end, _endTime)}')),
-              ),
-            ],
           ],
-        ),
+          if (taskTypeSelectCSP.value == 'Evento' &&
+              _selectedDateRange != null ) ...[
+            SizedBox(
+              height: 10,
+            ),
+            Container(
+              height: 50,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: selectedLevel == 2
+                      ? colorBotoomSel.withOpacity(0.8)
+                      : colorBotoom.withOpacity(0.4),
+                  width: 2.0,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: selectedLevel == 2
+                        ? colorBotoomSel.withOpacity(0.4)
+                        : colorBotoom.withOpacity(0.4),
+                    spreadRadius: 0,
+                    blurRadius: 10,
+                    offset: Offset(0, 0),
+                  ),
+                ],
+              ),
+              child: Center(
+                child: Text('Final:${_formatDateTime(_selectedDateRange!.end, null)}'),
+              ),
+            ),
+          ],
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   _buildRecurrenceSection() {
     return Builder(
@@ -477,32 +576,21 @@ DateTime initialEndDate = taskElementTA.value.endDate != null
           final frequenciesData = frequencyCSP.value; // Cambia según tu fuente de datos
           int frecuencyId = 1;
 
-          List<Frequency> frequencies = frequenciesData!.map((item) {
-            final title = item; // Asegúrate de que item sea un String
-            if (title == frequencyTaskCSP.value) {
-              frecuencyId = frequenciesData.indexOf(item) + 1;
-            }
-            return Frequency(
-              id: frequenciesData.indexOf(item) +
-                  1, // Asigna un id basado en el índice, puedes cambiar esto si tienes otra lógica
-              title: title,
-              description: '', // Si no tienes descripción, puedes dejarlo vacío o manejarlo de otra manera
-            );
-          }).toList();
+          
 
           return FrequencyWidget(
-            frequencies: frequencies,
+            frequencies: frequenciesData!,
             titleWidget: 'Frecuencia',
             selectMultiple: false, // Permite seleccionar solo una frecuencia
-            selectedFrequencyId: frecuencyId, // Frecuencia preseleccionada (Opcional)
+            selectedFrequencyId: frequencyTaskCSP.value, // Frecuencia preseleccionada (Opcional)
             onSelectionChanged: (List<Frequency> selectedFrequencies) {
               FocusScope.of(context).unfocus();
               // Aquí manejas las frecuencias seleccionadas
-              print('Estados seleccionados-Frecuencias seleccionadas: ${selectedFrequencies.map((e) => e.title)}');
+             // print('Estados seleccionados-Frecuencias seleccionadas: ${selectedFrequencies.map((e) => e.title)}');
               if (selectedFrequencies.isNotEmpty) {
                 print('Primera pagina de tareas-Frecuencia-${selectedFrequencies.first.title}'); 
-                onFrequencyChanged(selectedFrequencies.first.title);
-                updateTaskRecurrence(selectedFrequencies.first.title);
+                onFrequencyChanged(selectedFrequencies.first.id);
+                updateTaskRecurrence(selectedFrequencies.first.id);
               }
             },
           );
@@ -540,23 +628,23 @@ DateTime initialEndDate = taskElementTA.value.endDate != null
       
      
 
-      if (tittle == 'Modificar Tarea') {
-        await updateTasks();
-      } else {
-        //ENVIANDO A INSERTAR
-        await storeTask();
-      }
+      
+        await updateTasks();  
+        selecteFamilyCSP.value = null;
+    selectedCategoryIdCSP.value = null;
+    selecteFamilyCSP.value = null;
+    selectedPriorityIdCSP.value = null;
+    selectStateTaskCSP.value = null;
+    //
+    taskTypeSelectCSP.value = null;
+    frequencyTaskCSP.value = '';    
       clearCategoryStatusPrioritySignals();
+      clearPersonRoles();
 
       // Navegar a la siguiente página
-      Future.delayed(const Duration(seconds: 2), () {
+      Future.delayed(const Duration(seconds: 1), () {
         GoRouter.of(context).go(
-          '/HomePrincipal',
-          extra: {
-            'name': '',
-            'email': '',
-            'avatarUrl': '',
-          },
+          '/HomePrincipal'
         );
       });
     }
@@ -605,10 +693,10 @@ DateTime initialEndDate = taskElementTA.value.endDate != null
 // Si _endTime es null, asignamos las 6:00 PM como hora predeterminada.
       final TimeOfDay endTime = _endTime ?? TimeOfDay(hour: 18, minute: 0);
 
-      updateTaskDateTime(_formatDateTime(startDate, startTime), _formatDateTime(endDate, endTime));
+      updateTaskDateTime(_formatDateTime(startDate, null), _formatDateTime(endDate, null));
     } else {
       updateTaskDateTime(
-          _formatDateTime(_selectedDateRange!.start, _startTime), _formatDateTime(_selectedDateRange!.end, _endTime));
+          _formatDateTime(_selectedDateRange!.start, null), _formatDateTime(_selectedDateRange!.end, null));
     }
   }
 }

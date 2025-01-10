@@ -246,12 +246,7 @@ class _DateTimePageState extends State<DateTimePage> {
     );
 
     GoRouter.of(context).go(
-      '/HomePrincipal',
-      extra: {
-        'name': '',
-        'email': '',
-        'avatarUrl': '',
-      },
+      '/HomePrincipal'
     );
   }
 }

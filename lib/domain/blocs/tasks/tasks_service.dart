@@ -34,6 +34,7 @@ Future<void> storeTask() async {
   try {
     await tasksRepository.addTasks(taskElementTA.value);
     successMessageTA.value = "Task submitted successfully!";
+    
   } catch (error) {
     successMessageTA.value = "Error submitting task: ${error.toString()}";
   } finally {
@@ -66,6 +67,74 @@ Future<void> deleteTasks(int id) async {
     isLoadingTA.value = false;
   }
 }
+
+
+void togglePersonRole(int roleId, int personId, int homeId) {
+  
+  // Verificar si la persona ya está en la lista
+  if (!personRolesTA.value.any((element) => element['person_id'] == personId)) {
+    personRolesTA.value.add({
+      "role_id": roleId,
+      "person_id": personId,
+      "home_id": 1, // Valor fijo
+    });
+  }
+
+ 
+ 
+  print('Estados seleccionados--Mostrando los resultados del array a mandar:${personRolesTA.value}');
+}
+
+ void clearPersonRoles() {
+  personRolesTA.value.clear();
+}
+ 
+
+void filterPersonRolesByIds(List<int> personIds, List<int> rolIds, int homeId) {
+  // Filtrar la lista para mantener solo los elementos cuyo person_id esté en personIds
+  personRolesTA.value = personRolesTA.value
+      .where((element) => personIds.contains(element['person_id']))
+      .toList();
+
+  // Agregar elementos que no estén en personIds
+  for (var i = 0; i < personIds.length; i++) {
+    var id = personIds[i];
+    if (!personRolesTA.value.any((element) => element['person_id'] == id)) {
+      // Agregar el nuevo elemento con el rolId correspondiente
+      personRolesTA.value.add({
+        'person_id': id,
+        "role_id": rolIds[i],  // Usamos el rolId correspondiente
+        "home_id": homeId,
+        // Puedes agregar más campos si es necesario
+      });
+    }
+  }
+
+  print('Estados seleccionados--Mostrando los resultados del array a mandar-FILTRADO:${personRolesTA.value}');
+}
+
+
+
+
+void updateOrAddPersonRole(int roleId, int personId, int homeId) {
+  // Verificar si el mapa ya existe en la lista
+  final existingIndex = personRolesTA.value.indexWhere((element) =>
+      element['person_id'] == personId && element['home_id'] == homeId);
+
+  if (existingIndex != -1) {
+    // Si ya existe, actualizar el role_id
+    personRolesTA.value[existingIndex]['role_id'] = roleId;
+  } else {
+    // Si no existe, agregarlo
+    personRolesTA.value.add({
+      "role_id": roleId,
+      "person_id": personId,
+      "home_id": homeId,
+    });
+  }
+  print('Estados seleccionados--Mostrando los resultados del array a mandar-MODIFICADO:${personRolesTA.value}');
+}
+
 
 // Actualizar título y descripción de la tarea
 void updateTaskTitleDescription(String title, String description) {
@@ -120,6 +189,18 @@ void updateTaskGeoLocation(String geoLocation) {
   taskElementTA.value = taskElementTA.value.copyWith(geoLocation: geoLocation);
   taskElementUpdateTA.value = true;
 }
+void updateTaskType(String type) {
+  taskElementTA.value = taskElementTA.value.copyWith(type: type);
+  taskElementUpdateTA.value = true;
+}
+void updateTaskStartTime(String startTime) {
+  taskElementTA.value = taskElementTA.value.copyWith(startTime: startTime);
+  taskElementUpdateTA.value = true;
+}
+void updateTaskEndTime(String endTime) {
+  taskElementTA.value = taskElementTA.value.copyWith(endTime: endTime);
+  taskElementUpdateTA.value = true;
+}
 
 // Actualizar familiares asignados a la tarea
 void updateTaskFamily(List<Person> familyMembers) {
@@ -146,11 +227,21 @@ void dataEditTask(TaskElement taskElem) {
   onPrioritySelected(taskElem.priorityId!);
   onCategorySelected(taskElem.categoryId!);
   onTaskStateSelected(taskElem.statusId!);
+  if(taskElem.type == null)
+  {
+    onTaskTypeChanged('Tarea');
+  }
+  else
+  {
+onTaskTypeChanged(taskElem.type!);
+  }
+  
 //onPersonSelected();
   // aqui se agregan los familiares
   updateTaskFamily(taskElem.people!);
   // onFamilySelected(taskElem.people!);
   onFrequencyChanged(taskElem.recurrence ?? '');
+  updateTaskDateTime(taskElem.startDate!, taskElem.endDate!);
   onGeoLocationChanged(taskElem.geoLocation ?? '');
 }
 

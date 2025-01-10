@@ -8,6 +8,7 @@ import 'package:huoon/domain/blocs/products_bloc/products_signal.dart';
 import 'package:huoon/domain/blocs/store_bloc/store_service.dart';
 import 'package:huoon/domain/blocs/store_bloc/store_signal.dart';
 import 'package:huoon/domain/blocs/user_activity_bloc/user_activity_service.dart';
+import 'package:huoon/ui/Components/dialog_utils.dart';
 import 'package:huoon/ui/util/utils_class_apk.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:signals/signals_flutter.dart';
@@ -400,9 +401,10 @@ Widget buildProductContainer(ProductElement product) {
                               label: "Eliminar",
                               color: Colors.red,
                               onPressed: () async {
-                               await deleteProduct(product.id!);
-                              await loadProduct(1, product.warehouseId!);
-                                print("Eliminar producto: ${product}");
+
+                             
+                                _showDeleteConfirmation(context,product.id!,product.warehouseId!);
+                              
                                
                               },
                             ),
@@ -429,6 +431,46 @@ Widget buildProductContainer(ProductElement product) {
     },
   );
 }
+
+void _showDeleteConfirmation(BuildContext context,prodId,warehouseId) async {
+  final result = await DialogUtils.showConfirmationDialog(
+    context: context,
+    title: 'Alerta',
+    body: '¿Deseas eliminar el producto?',
+  );
+
+  if (result == true) {
+    // Lógica para eliminar la tarea
+     await deleteProduct(prodId);
+                              await loadProduct(1, warehouseId);
+                                print("Eliminar producto: ${prodId}");
+    print('almacen eliminada');
+    
+  } else {
+    // Lógica para cancelar
+    print('Acción cancelada');
+  }
+}
+
+void _showDeleteConfirmationStore(BuildContext context,storeId) async {
+  final result = await DialogUtils.showConfirmationDialog(
+    context: context,
+    title: 'Alerta',
+    body: '¿Deseas eliminar el Almacen?',
+  );
+
+  if (result == true) {
+    // Lógica para eliminar la tarea
+     await deleteStore(storeId);
+      await requestStore();
+    print('almacen eliminada');
+    
+  } else {
+    // Lógica para cancelar
+    print('Acción cancelada');
+  }
+}
+
 
 Widget buildStoreContainer(StoreElement store) {
   bool isOptionsVisible = false; // Controla la visibilidad de las opciones
@@ -580,8 +622,8 @@ Widget buildStoreContainer(StoreElement store) {
                                 label: "Eliminar",
                                 color: Colors.red,
                                 onPressed: () async {
-                                  await deleteStore(store.id!);
-                                 await requestStore();
+                                  _showDeleteConfirmationStore(context,store.id!);
+                                 
                                 },
                               ),
                             ),

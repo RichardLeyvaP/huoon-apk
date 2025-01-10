@@ -28,7 +28,7 @@ class Priority {
 class Frequency {
   final String title;
   final String description;
-  final int id;
+  final String id;
 
   Frequency({required this.title, required this.description, required this.id});
 }
@@ -39,6 +39,12 @@ class Roles {
   final String descriptionRol;
 
   Roles({required this.id, required this.nameRol, required this.descriptionRol});
+}
+class TaskType {
+  final String id;
+  final String name;
+
+  TaskType({required this.id, required this.name,});
 }
 
 class Taskperson {

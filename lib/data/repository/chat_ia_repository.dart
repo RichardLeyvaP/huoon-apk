@@ -53,6 +53,35 @@ class ChatIRepository {
     }
   }
 
+  // Método para obtener las tiendas
+  Future<String> addChatIa(String module,String answerIa,String question) async {
+    print('Obteniendo tiendas desde la API');
+    final endpoint = '${Env.apiEndpoint}/ask-ai-module';
+   
+    final body = { 
+      'module': module,
+      'question': question,// es lo que le pasas para decirle lo que es
+      'answer': answerIa,// es lo que le pasas para decirle lo que es
+      };
+    try {
+      // Llama al servicio y obtiene la respuesta procesada
+      final response = await authService.post(endpoint, body: body);
+
+      print('asi esta devolviendo los almacenes:${response}');
+      // Verificamos si response es un JSON válido
+      if (response is String) {
+        print('Respuesta en formato String: $response');
+        return response;
+      } else {
+        print('Respuesta inesperada del servidor: $response');
+        throw Exception('Respuesta inesperada del servidor. Revise su conexión');
+      }
+    } catch (e) {
+      print('Error obteniendo tiendas: $e');
+      throw Exception('getStore(): $e');
+    }
+  }
+
  
 
 

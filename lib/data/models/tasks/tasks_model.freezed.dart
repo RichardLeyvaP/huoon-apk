@@ -187,6 +187,9 @@ mixin _$TaskElement {
   String? get comments => throw _privateConstructorUsedError;
   String? get attachments => throw _privateConstructorUsedError;
   String? get geoLocation => throw _privateConstructorUsedError;
+  String? get type => throw _privateConstructorUsedError;
+  String? get startTime => throw _privateConstructorUsedError;
+  String? get endTime => throw _privateConstructorUsedError;
   int? get parentId =>
       throw _privateConstructorUsedError; // Puede ser nulo si es la tarea principal
   List<TaskElement>? get children =>
@@ -227,6 +230,9 @@ abstract class $TaskElementCopyWith<$Res> {
       String? comments,
       String? attachments,
       String? geoLocation,
+      String? type,
+      String? startTime,
+      String? endTime,
       int? parentId,
       List<TaskElement>? children,
       List<Person>? people});
@@ -264,6 +270,9 @@ class _$TaskElementCopyWithImpl<$Res, $Val extends TaskElement>
     Object? comments = freezed,
     Object? attachments = freezed,
     Object? geoLocation = freezed,
+    Object? type = freezed,
+    Object? startTime = freezed,
+    Object? endTime = freezed,
     Object? parentId = freezed,
     Object? children = freezed,
     Object? people = freezed,
@@ -337,6 +346,18 @@ class _$TaskElementCopyWithImpl<$Res, $Val extends TaskElement>
           ? _value.geoLocation
           : geoLocation // ignore: cast_nullable_to_non_nullable
               as String?,
+      type: freezed == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as String?,
+      startTime: freezed == startTime
+          ? _value.startTime
+          : startTime // ignore: cast_nullable_to_non_nullable
+              as String?,
+      endTime: freezed == endTime
+          ? _value.endTime
+          : endTime // ignore: cast_nullable_to_non_nullable
+              as String?,
       parentId: freezed == parentId
           ? _value.parentId
           : parentId // ignore: cast_nullable_to_non_nullable
@@ -379,6 +400,9 @@ abstract class _$$TaskElementImplCopyWith<$Res>
       String? comments,
       String? attachments,
       String? geoLocation,
+      String? type,
+      String? startTime,
+      String? endTime,
       int? parentId,
       List<TaskElement>? children,
       List<Person>? people});
@@ -414,6 +438,9 @@ class __$$TaskElementImplCopyWithImpl<$Res>
     Object? comments = freezed,
     Object? attachments = freezed,
     Object? geoLocation = freezed,
+    Object? type = freezed,
+    Object? startTime = freezed,
+    Object? endTime = freezed,
     Object? parentId = freezed,
     Object? children = freezed,
     Object? people = freezed,
@@ -487,6 +514,18 @@ class __$$TaskElementImplCopyWithImpl<$Res>
           ? _value.geoLocation
           : geoLocation // ignore: cast_nullable_to_non_nullable
               as String?,
+      type: freezed == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as String?,
+      startTime: freezed == startTime
+          ? _value.startTime
+          : startTime // ignore: cast_nullable_to_non_nullable
+              as String?,
+      endTime: freezed == endTime
+          ? _value.endTime
+          : endTime // ignore: cast_nullable_to_non_nullable
+              as String?,
       parentId: freezed == parentId
           ? _value.parentId
           : parentId // ignore: cast_nullable_to_non_nullable
@@ -524,6 +563,9 @@ class _$TaskElementImpl implements _TaskElement {
       this.comments,
       this.attachments,
       this.geoLocation,
+      this.type,
+      this.startTime,
+      this.endTime,
       this.parentId,
       final List<TaskElement>? children,
       final List<Person>? people})
@@ -568,6 +610,12 @@ class _$TaskElementImpl implements _TaskElement {
   @override
   final String? geoLocation;
   @override
+  final String? type;
+  @override
+  final String? startTime;
+  @override
+  final String? endTime;
+  @override
   final int? parentId;
 // Puede ser nulo si es la tarea principal
   final List<TaskElement>? _children;
@@ -595,7 +643,7 @@ class _$TaskElementImpl implements _TaskElement {
 
   @override
   String toString() {
-    return 'TaskElement(id: $id, title: $title, description: $description, startDate: $startDate, endDate: $endDate, priorityId: $priorityId, statusId: $statusId, categoryId: $categoryId, recurrence: $recurrence, colorPriority: $colorPriority, colorCategory: $colorCategory, iconCategory: $iconCategory, namePriority: $namePriority, estimatedTime: $estimatedTime, comments: $comments, attachments: $attachments, geoLocation: $geoLocation, parentId: $parentId, children: $children, people: $people)';
+    return 'TaskElement(id: $id, title: $title, description: $description, startDate: $startDate, endDate: $endDate, priorityId: $priorityId, statusId: $statusId, categoryId: $categoryId, recurrence: $recurrence, colorPriority: $colorPriority, colorCategory: $colorCategory, iconCategory: $iconCategory, namePriority: $namePriority, estimatedTime: $estimatedTime, comments: $comments, attachments: $attachments, geoLocation: $geoLocation, type: $type, startTime: $startTime, endTime: $endTime, parentId: $parentId, children: $children, people: $people)';
   }
 
   @override
@@ -634,6 +682,10 @@ class _$TaskElementImpl implements _TaskElement {
                 other.attachments == attachments) &&
             (identical(other.geoLocation, geoLocation) ||
                 other.geoLocation == geoLocation) &&
+            (identical(other.type, type) || other.type == type) &&
+            (identical(other.startTime, startTime) ||
+                other.startTime == startTime) &&
+            (identical(other.endTime, endTime) || other.endTime == endTime) &&
             (identical(other.parentId, parentId) ||
                 other.parentId == parentId) &&
             const DeepCollectionEquality().equals(other._children, _children) &&
@@ -661,6 +713,9 @@ class _$TaskElementImpl implements _TaskElement {
         comments,
         attachments,
         geoLocation,
+        type,
+        startTime,
+        endTime,
         parentId,
         const DeepCollectionEquality().hash(_children),
         const DeepCollectionEquality().hash(_people)
@@ -701,6 +756,9 @@ abstract class _TaskElement implements TaskElement {
       final String? comments,
       final String? attachments,
       final String? geoLocation,
+      final String? type,
+      final String? startTime,
+      final String? endTime,
       final int? parentId,
       final List<TaskElement>? children,
       final List<Person>? people}) = _$TaskElementImpl;
@@ -742,6 +800,12 @@ abstract class _TaskElement implements TaskElement {
   String? get attachments;
   @override
   String? get geoLocation;
+  @override
+  String? get type;
+  @override
+  String? get startTime;
+  @override
+  String? get endTime;
   @override
   int? get parentId; // Puede ser nulo si es la tarea principal
   @override
