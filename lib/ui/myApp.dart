@@ -12,6 +12,7 @@ import 'package:huoon/ui/pages/rol-admin/chat/ChatPageFinancePage.dart';
 import 'package:huoon/ui/pages/rol-admin/health/dataAnalysisPage.dart';
 import 'package:huoon/ui/pages/rol-admin/health/myHealthPage.dart';
 import 'package:huoon/ui/pages/rol-admin/health/remindersPage.dart';
+import 'package:huoon/ui/pages/rol-admin/incomeExpenses/incomeExpensesPage.dart';
 import 'package:huoon/ui/pages/rol-admin/product/productCreationPage.dart';
 import 'package:huoon/ui/pages/rol-admin/product/productUpdatePage.dart';
 import 'package:huoon/ui/pages/rol-admin/store/storeCreationPage.dart';
@@ -94,7 +95,10 @@ class MyApp extends StatelessWidget {
         path: '/ProductCreation',
         builder: (context, state) => ProductCreation(),
       ),
-      
+      GoRoute(
+        path: '/IncomeExpensesCreation',
+        builder: (context, state) => IncomeExpensesCreation(),
+      ),      
       GoRoute(
         path: '/ProductUpdate',
         builder: (context, state) => ProductUpdatePage(),

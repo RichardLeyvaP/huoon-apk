@@ -7,6 +7,7 @@ class CustomButton extends StatelessWidget {
   final Color? textColor; // Color del texto opcional
   final double? width; // Ancho opcional
   final double? height; // Altura opcional
+  final IconData? icon; 
 
   const CustomButton({
     Key? key,
@@ -15,7 +16,8 @@ class CustomButton extends StatelessWidget {
     this.backgroundColor = Colors.white, // Valor predeterminado
     this.textColor = const Color.fromARGB(255, 43, 44, 49), // Valor predeterminado
     this.width, // Valor opcional
-    this.height = 60, // Valor predeterminado
+    this.height = 60,
+     this.icon, // Valor predeterminado
   }) : super(key: key);
 
   @override
@@ -34,13 +36,27 @@ class CustomButton extends StatelessWidget {
             ),
           ),
         ),
-        child: Text(
+        child: icon == null ? Text(
           text,
           style: const TextStyle(
-            fontSize: 17,
+           // fontSize: 17,
             letterSpacing: -.5,
           ),
-        ),
+        ):
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Icon(icon),
+            Text(
+              text,
+              style: const TextStyle(
+               // fontSize: 17,
+                letterSpacing: -.5,
+              ),
+            ),
+          ],
+        )
       ),
     );
   }

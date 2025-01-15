@@ -61,6 +61,7 @@ class ApiService {
   // Método POST
   Future<dynamic> post(String endpoint, {required Map<String, dynamic> body}) async {
     try {
+      print('si estoy addIncomeExpenses esto:1-post');
       final response = await http.post(
         Uri.parse(endpoint),
         headers: await _headers(),

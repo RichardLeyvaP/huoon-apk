@@ -6,6 +6,8 @@ import 'package:go_router/go_router.dart';
 import 'package:huoon/data/models/products/product_model.dart';
 import 'package:huoon/data/models/store/store_model.dart';
 import 'package:huoon/data/models/tasks/tasks_model.dart';
+import 'package:huoon/domain/blocs/IncomeExpenses_bloc/login_service.dart';
+import 'package:huoon/domain/blocs/IncomeExpenses_bloc/login_signal.dart';
 import 'package:huoon/domain/blocs/chat_ia_bloc/chat_ia_service.dart';
 import 'package:huoon/domain/blocs/login_bloc/login_signal.dart';
 import 'package:huoon/domain/blocs/product_cat_state/bloc/product_cat_state_service.dart';
@@ -349,26 +351,32 @@ void _addConversationStep(Map<String, dynamic> newStep) {
       //AQUI PONER EL PRIMER MENSAJE QUE QUIERAS DEPENDIENDO DEL MODULO
      if(module == 'storeTask')
      {
-      _messages.add({'key': 'init','text': '👋 Hola! ${currentUserLG.value!.userName}', 'sender': 'bot'});
+      _messages.add({'key': 'init','text': 'Hola! ${currentUserLG.value!.userName}', 'sender': 'bot'});
      }
      //
      //
      if(module == 'storeStore')
      {
-      _messages.add({'key': 'init','text': '👋 Hola! ${currentUserLG.value!.userName}. Te ayudaremos a crear un Almacen.', 'sender': 'bot'});
+      _messages.add({'key': 'init','text': 'Hola! ${currentUserLG.value!.userName}. Te ayudaremos a crear un Almacen.', 'sender': 'bot'});
      }
      //
      //
      
      if(module == 'storeProduct')
      {
-      _messages.add({'key': 'init','text': '👋 Hola! ${currentUserLG.value!.userName}. Te ayudaremos a crear un Producto.', 'sender': 'bot'});
+      _messages.add({'key': 'init','text': 'Hola! ${currentUserLG.value!.userName}. Te ayudaremos a crear un Producto.', 'sender': 'bot'});
      }
      //
      //
      if(module == 'chatIaTravel')
      {
-      _messages.add({'key': 'init','text': '👋 Hola! ${currentUserLG.value!.userName}. Soy Huoon estoy aqui para ayudarte.', 'sender': 'bot'});
+      _messages.add({'key': 'init','text': 'Hola! ${currentUserLG.value!.userName}. Soy Huoon estoy aqui para ayudarte.', 'sender': 'bot'});
+     }
+     //
+     //
+     if(module == 'IncomeExpensesCreation')
+     {
+      _messages.add({'key': 'init','text': 'Hola! ${currentUserLG.value!.userName}. Te ayudaremos a registrar tus finanzas', 'sender': 'bot'});
      }
      //
      //
@@ -380,6 +388,8 @@ int  cant_boot_promt_extra = 0;
   @override
   void initState() {
     super.initState();
+
+    
     _selectedDay = DateTime.now();
       cant_boot_promt_extra = 1;
     _textController = TextEditingController();
@@ -393,11 +403,11 @@ int  cant_boot_promt_extra = 0;
       if (mounted) { // Verifica si el widget sigue montado
     //verifico si ya pasaron 10segundos le mando un mensaje
     
-    if(_isTypingTime == 35)//si e sfalse mando un mensaje
+    if(_isTypingTime == 50)//si e sfalse mando un mensaje
     {
      ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('👋 Hola! ${currentUserLG.value!.userName} 😊 Estamos esperando una respuesta para continuar...'),
+        content: Text('Hola! ${currentUserLG.value!.userName} 😊 Estamos esperando una respuesta para continuar...'),
 
         duration: Duration(seconds: 3), // Duración del SnackBar
        
@@ -682,6 +692,62 @@ SizedBox(
       print('imprimir aqui que es lo que va a guardar---$currentStepKey');
 
 //PONER AQUI TODOS LOS KEY DE SELECT
+  // ============================================ TASK SECTION ============================================
+if(module == 'IncomeExpensesCreation')
+{
+  if((currentStepKey != 'income_expenses' && currentStepKey != 'income_expense_type' &&
+                    currentStepKey != 'date_income_expense'  ) || _editingMessageKey == null )//si no es ninguno de estos que selecciona si puede modificar e insertar
+      {
+         if (_editingMessageIndex != null) {
+      // Editar mensaje existente
+      setState(() {
+         _editingMessageKey = 'vacio';
+        _isTypingTime = 1;        
+        _messages[_editingMessageIndex!] = {'text': input, 'sender': 'user'};
+        _editingMessageIndex = null;
+        _showInputField = !_isFinalStepReached; // Ocultar solo si se alcanzó el paso final
+      });
+    } else {
+      // Nuevo mensaje
+      setState(() {
+        _isTypingTime = 1;
+        _messages.insert(0, {'text': input, 'sender': 'user'}); // Insertar al inicio
+      });
+      //PONER AQUI TODOS LOS KEY QUE NO SON SELCT PARA GUARDAR EL ESTADO
+
+        if(currentStepKey == 'money_amount')
+    {
+     money_amountIE.value = input;
+    }
+
+    else if(currentStepKey == 'description_income_expense')
+    {
+      description_income_expenseIE.value = input;
+    }
+   
+      if (currentStepKey != 'done') {
+        _taskData[currentStepKey!] = input;
+      }
+
+      _textController.clear();
+      _currentStep++;
+
+      if (_currentStep < _conversationSteps.length) {
+        _simulateResponse();
+      } else {
+        print('Datos de los ingresos y gastos: $_taskData');
+        _isFinalStepReached = true;
+        _showInputField = false; // Ocultar el campo de texto al finalizar
+      }
+    }
+    
+
+      }
+
+}
+  // ============================================ TASK SECTION FIN ============================================
+  //
+  ////PONER AQUI TODOS LOS KEY DE SELECT
   // ============================================ TASK SECTION ============================================
 if(module == 'storeTask')
 {
@@ -1038,7 +1104,7 @@ if(module == 'storeTask')
     });
 
     await Future.delayed(Duration(milliseconds: 800));
-
+ if (mounted) {
     setState(() {
       _isTyping = false;
       final message = _conversationSteps[_currentStep]['message'];
@@ -1056,6 +1122,7 @@ if(module == 'storeTask')
         _messages.insert(0, {'key': key!,'text': message!, 'sender': 'bot'});
       }
     });
+  }
   }
 
   void _simulateResponseF(String inMsj,String inKey) async {
@@ -1371,6 +1438,60 @@ _isTypingTime = 1;
     
     
         } 
+          else if(widget.module == 'IncomeExpensesCreation')
+        {
+          
+    //ENVIAR DATOS A LA API    
+     FocusScope.of(context).unfocus();
+      int homeId = 1;
+    double spent = 0;//gasto
+    double income = 0;//ingreso
+    DateTime date =  date_income_expenseIE.value;
+    String description = description_income_expenseIE.value;
+    String type = '' ;
+    String method = '';
+    String image = '';
+    // Convierte el string en un double
+double value = double.parse(money_amountIE.value);
+
+// Redondea a dos lugares decimales
+double roundedValue = double.parse(value.toStringAsFixed(2));
+
+   
+if(incomeExpensesSelectIE.value == 1)//saber si es un gasto o un ingreso
+{//ingreso
+ income = roundedValue;
+}
+else{//gasto
+spent = roundedValue ;
+}   
+if(personalHomeSelectIE.value == 1)//saber si es Personal o del hogar
+{//Personal 
+ type = 'Personal';
+}
+else{//Hogar
+type = 'Hogar';
+}
+   
+
+
+      await submitIncomeExpenses(homeId,spent,income,date,description,type,method,image);
+    
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Guardando correctamente los datos de finanzas'),
+        duration: Duration(seconds: 2),
+        action: SnackBarAction(label: 'Aceptar', onPressed: () {}),
+      ),
+    );
+
+    GoRouter.of(context).go(
+      '/HomePrincipal'
+    );
+    
+    
+        } 
          // ============================================ PRODUCT SECTION FIN ============================================
 
 
@@ -1466,7 +1587,48 @@ _simulateResponseF('Muy bien! ${currentUserLG.value!.userName} ya guardamos la i
 
     //AQUI PONER LOS COMPONENTES DE SELECT QUE HAY QUE CARGAR
     // ============================================ TASK SECTION  ============================================    
-    if(widget.module == 'storeTask')
+    if(widget.module == 'IncomeExpensesCreation')
+    {
+       if( keyMessage =='income_expenses')
+    {
+      showWidgetOption = Column(
+        children: [
+          Text(message['text'] ?? ''),
+          _buildIncomeExpensesSection(),
+
+        ],
+      );
+
+    }
+    else if( keyMessage =='income_expense_type')
+    {
+      showWidgetOption = Column(
+        children: [
+          Text(message['text'] ?? ''),
+         _buildIncomeExpenseTypeSection(),
+
+        ],
+      );//priority
+         }
+         
+          else if( keyMessage =='date_income_expense')
+    {
+      showWidgetOption = Column(
+        children: [
+          Text(message['text'] ?? ''),
+         _buildCalendarIncomeExpensesSection(),
+
+        ],
+      );//_buildRecurrenceSection
+         }
+         
+    else {
+      showWidgetOption = Text(message['text'] ?? '');
+    }
+
+    } //AQUI PONER LOS COMPONENTES DE SELECT QUE HAY QUE CARGAR
+    // ============================================ TASK SECTION  ============================================    
+   else if(widget.module == 'storeTask')
     {
        if( keyMessage =='category')
     {
@@ -1795,7 +1957,126 @@ updateTaskCategoryId(arrayCategory.first);
     );
   }
 
+   Widget _buildIncomeExpensesSection() {
+    return Builder(
+      builder: (context) {
+       
+          bool selectMultiple = false;
+         final List<Status> status = [
+  Status(
+    title: 'Ingreso',
+    icon: Icons.arrow_downward, // Ícono para "Ingreso"
+    id: 1,
+  ),
+  Status(
+    title: 'Gasto',
+    icon: Icons.arrow_upward, // Ícono para "Gasto"
+    id: 2,
+    )];
+
+          return StatusWidget(
+            status: status,
+            fitTextContainer: false,
+            eventDetails: true,
+            titleWidget: '',
+            selectMultiple: selectMultiple, // Permite seleccionar solo un estado
+            selectedStatusId: incomeExpensesSelectIE.value, // Estado preseleccionado
+            onSelectionChanged: (List<Status> selectedStatuses) {
+              FocusScope.of(context).unfocus();
+              // Aquí manejas los estados seleccionados
+              print('Estados seleccionados: ${selectedStatuses.map((e) => e.id).join(', ')}');
+              selectedStatus = selectedStatuses.isNotEmpty ? selectedStatuses.first.id : 0;
+              print('Estados seleccionados: $selectedStatus');
+
+              
+              // Verificar si ya existe un mensaje con 'key': 'category_user'
+  final existingIndex = _messages.indexWhere((message) => message['key'] == 'income_expenses_user');
+                 setState(()  {
+_isTypingTime = 1;
+  if (existingIndex != -1) {
+    // Si existe, modificarlo
+    _messages[existingIndex] = {
+      'key': 'income_expenses_user',
+      'text': selectedStatuses.first.title,
+      'sender': 'user',
+
+    };
+  } else {
+      _handleUserSessions(selectedStatuses.first.title,'income_expenses_user');
+  
+  }
+});
+incomeExpensesSelectIE.value = selectedStatuses.first.id;
+            },
+          );
+        
+      },
+    );
+  }
+
  
+
+  Widget _buildIncomeExpenseTypeSection() {
+    return Builder(
+      builder: (context) {        
+          bool selectMultiple = false;         
+          
+
+final List<Status> status = [
+  Status(
+    title: 'Personal',
+    icon: Icons.person, // Ícono para "Ingreso"
+    id: 1,
+  ),
+  Status(
+    title: 'Hogar',
+    icon: Icons.home, // Ícono para "Gasto"
+    id: 2,
+  ),
+];
+
+          
+          return StatusWidget(
+            status: status,
+            fitTextContainer: false,
+            eventDetails: true,
+            titleWidget: '',
+            selectMultiple: selectMultiple, // Permite seleccionar solo un estado
+            selectedStatusId: personalHomeSelectIE.value, // Estado preseleccionado
+            onSelectionChanged: (List<Status> selectedStatuses) {
+              FocusScope.of(context).unfocus();
+              // Aquí manejas los estados seleccionados
+              print('Estados seleccionados: ${selectedStatuses.map((e) => e.id).join(', ')}');
+              selectedStatus = selectedStatuses.isNotEmpty ? selectedStatuses.first.id : 0;
+              print('Estados seleccionados: $selectedStatus');
+
+              
+              final existingIndex = _messages.indexWhere((message) => message['key'] == 'personalHome_user');
+setState(()  {
+  _isTypingTime = 1;
+  if (existingIndex != -1) {
+    // Si existe, modificarlo
+    _messages[existingIndex] = {
+      'key': 'personalHome_user',
+      'text': selectedStatuses.first.title,
+      'sender': 'user',
+
+    };
+  } else {
+      _handleUserSessions(selectedStatuses.first.title,'personalHome_user');
+  
+  }
+  });
+
+//seleccionando el estado
+personalHomeSelectIE.value = selectedStatuses.first.id;
+            },
+          );
+       
+      },
+    );
+  }
+
 
   Widget _buildStatusSection() {
     return Builder(
@@ -1849,6 +2130,7 @@ setState(()  {
       },
     );
   }
+
 
   Widget _buildPrioritySection() {
     return Builder(
@@ -2013,6 +2295,39 @@ updateTaskDateTime(
 
 
 
+  } // Actualiza el rango de fechas seleccionadas
+  void _onDaySelectedIE(DateTime selectedDay, DateTime focusedDay) {
+    setState(() {
+      _focusedDay = focusedDay;
+
+   
+      
+        _startDate = selectedDay;
+        _endDate = null;
+          final existingIndex = _messages.indexWhere((message) => message['key'] == 'date_income_expense_user');
+                 setState(()  {
+_isTypingTime = 1;
+  if (existingIndex != -1) {
+    // Si existe, modificarlo
+    _messages[existingIndex] = {
+      'key': 'date_income_expense_user',
+      'text': 'Nueva Fecha seleccionada ${_formatDateTimeProduct(_startDate!)}',
+      'sender': 'user',
+
+    };
+  } else {
+      //verificar si ya existe que lo modifique
+                  _handleUserSessions('Fecha seleccionada ${_formatDateTimeProduct(_startDate!)}','date_income_expense_user');
+  
+  }
+});
+date_income_expenseIE.value = _startDate ?? DateTime.now() ;
+
+      
+    });
+
+
+
   }
 
   verificDate()
@@ -2031,6 +2346,46 @@ updateTaskDateTime(
 );
 
   }
+   // Método que retorna el componente del calendario
+  Widget _buildCalendarIncomeExpensesSection() {
+    return TableCalendar(
+      focusedDay: _focusedDay,
+      firstDay: DateTime.utc(2020, 01, 01),
+      lastDay: DateTime.utc(2030, 12, 31),
+      selectedDayPredicate: (day) {
+        // Resalta el día seleccionado
+        return isSameDay(_startDate, day);
+      },
+      onDaySelected: _onDaySelectedIE,
+      calendarStyle: CalendarStyle(
+  todayDecoration: BoxDecoration(
+    color: StyleGlobalApk.colorPrimary.withOpacity(0.5),
+    shape: BoxShape.circle,
+  ),
+  selectedDecoration: BoxDecoration(
+    color: StyleGlobalApk.colorPrimary,
+    shape: BoxShape.circle,
+  ),
+  rangeHighlightColor: StyleGlobalApk.colorPrimary.withOpacity(0.5),
+  rangeStartDecoration: BoxDecoration(
+    color: StyleGlobalApk.colorPrimary,
+    shape: BoxShape.circle,
+  ),
+  rangeEndDecoration: BoxDecoration(
+    color: StyleGlobalApk.colorPrimary,
+    shape: BoxShape.circle,
+  ),
+),
+
+      rangeStartDay: _startDate, // Día de inicio del rango
+      rangeEndDay: _endDate, // Día de fin del rango
+      headerStyle: HeaderStyle(
+        formatButtonVisible: false,
+        titleCentered: true,
+      ),
+    );
+  }
+  
    // Método que retorna el componente del calendario
   Widget _buildCalendarSection() {
     return TableCalendar(
@@ -2321,7 +2676,6 @@ _isTypingTime = 1;
       builder: (context) {
         if (statusStoreCSP.value != null) {
           bool selectMultiple = false;
-          int permisSelect = 0;
           // if (isUpdateST.value == true) //SI ES TRUE ES PARA MODIFICAR
           // {
           //   permisSelect = currentStoreElementST.value!.status!;
@@ -2335,7 +2689,7 @@ _isTypingTime = 1;
             eventDetails: true,
             titleWidget: '',
             selectMultiple: selectMultiple, // Permite seleccionar solo un estado
-            selectedStatusId: permisSelect, // Estado preseleccionado
+            selectedStatusId: selectStatusStoreCSP.value, // Estado preseleccionado
             onSelectionChanged: (List<Status> selectedStatuses) {
               FocusScope.of(context).unfocus();
               // Aquí manejas los estados seleccionados
@@ -2363,7 +2717,7 @@ _isTypingTime = 1;
 });
 
 
-
+selectStatusStoreCSP.value = selectedStatuses.first.id;
               final storeElement = StoreElement(
           status: selectedStatus,
 

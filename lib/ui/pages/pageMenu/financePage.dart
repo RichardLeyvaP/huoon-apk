@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:huoon/domain/blocs/IncomeExpenses_bloc/login_service.dart';
+import 'package:huoon/ui/Components/button_custom.dart';
 import 'package:huoon/ui/util/util_class.dart';
+import 'package:huoon/ui/util/utils_class_apk.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class FinancePage extends StatelessWidget {
@@ -16,9 +20,23 @@ class FinancePage extends StatelessWidget {
             children: [
               // Presupuesto actual
              Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               SizedBox(height: 10,),
+            CustomButton(
+  onPressed: () {
+    clearIncomeExpensesSignals(); 
+    GoRouter.of(context).push('/IncomeExpensesCreation');
+  },
+  text: 'Registrar',
+  icon: Icons.attach_money, // Usa un ícono representativo
+  backgroundColor: StyleGlobalApk.colorPrimary,
+  textColor: Colors.white,
+  width: 130,
+  height: 35,
+),
+
               _buildBudgetCardGeneral('Presupuesto Actual', '\$1,500,000'),
               SizedBox(height: 16),
               Row(

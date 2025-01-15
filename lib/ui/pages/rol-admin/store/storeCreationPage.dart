@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:huoon/ui/pages/rol-admin/Task/bootStoreTask.dart';
-import 'package:huoon/ui/pages/rol-admin/store/startStorePage.dart';
 
 class StoreCreation extends StatefulWidget {
   const StoreCreation({super.key});
@@ -22,9 +21,9 @@ class _StoreCreationState extends State<StoreCreation> {
           //1 Página
           TaskChatPage(conversationSteps: [
     
-  {'key': 'title_store', 'message': 'Empecemos, ¿me puedes dar el título del Almacén? ✍️', 'hint': 'Título del almacén'},
-  {'key': 'description_store', 'message': 'Perfecto. Ahora, ¿puedes darme una breve descripción? 📝', 'hint': 'Descripción del Almacén'},
-  {'key': 'place_store', 'message': '¿Qué lugar tendría? 📂', 'hint': ''},
+  {'key': 'title_store', 'message': 'Empecemos, ¿me puedes dar el título del Almacén? ', 'hint': 'Título del almacén'},
+  {'key': 'description_store', 'message': 'Perfecto. Ahora, ¿puedes darme una breve descripción? ', 'hint': 'Descripción del Almacén'},
+  {'key': 'place_store', 'message': '¿Qué lugar tendría? ', 'hint': ''},
   {'key': 'status_store', 'message': '¿Qué permiso vas asignar a este almacén? ', 'hint': ''},    
 
     {'key': 'done', 'message': '¡Genial! He registrado todos los datos. ¿Quieres guardar el nuevo Almacén?', 'hint': 'Confirmar Almacén'}
