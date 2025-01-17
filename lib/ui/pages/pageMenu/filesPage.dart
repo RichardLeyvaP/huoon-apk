@@ -53,7 +53,7 @@ class _FilesPageState extends State<FilesPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildBudgetCardGeneral('Archivos de Salud', 'Ir a mis Archivos'),
+            _buildBudgetCardGeneral('Archivos', 'Ir a mis Archivos'),
             SizedBox(height: 20,),
             Expanded(
               child: ListView.builder(

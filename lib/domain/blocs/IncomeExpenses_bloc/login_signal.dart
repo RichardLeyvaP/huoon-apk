@@ -1,3 +1,4 @@
+import 'package:huoon/data/models/finances/finances_model.dart';
 import 'package:signals/signals.dart';
 
 // Definimos las señales

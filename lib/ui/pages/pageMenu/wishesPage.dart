@@ -1,6 +1,9 @@
-import 'package:flutter/material.dart';
+
+
+
+  import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:huoon/ui/util/utils_class_apk.dart';
+import 'package:huoon/domain/blocs/user_activity_bloc/user_activity_service.dart';
 
 class WishesPage extends StatefulWidget {
   @override
@@ -8,152 +11,180 @@ class WishesPage extends StatefulWidget {
 }
 
 class _WishesPageState extends State<WishesPage> {
-  final List<Map<String, dynamic>> _wishes = [
-    {'title': 'Viajar a Japón', 'description': 'Explorar Tokyo y Kyoto.', 'completed': false},
-    {'title': 'Aprender un nuevo idioma', 'description': 'Iniciar con francés.', 'completed': false},
-    {'title': 'Correr una maratón', 'description': 'Entrenar para un 5K.', 'completed': true},
-    {'title': 'Leer 20 libros este año', 'description': 'Ampliar conocimientos y relajarse.', 'completed': false},
-    {'title': 'Hacer un curso de cocina', 'description': 'Especializarse en platos italianos.', 'completed': false},
-    {'title': 'Ahorrar para una casa', 'description': 'Guardar el 10% del ingreso mensual.', 'completed': true},
-    {'title': 'Aprender a tocar guitarra', 'description': 'Practicar 30 minutos diarios.', 'completed': false},
-    {'title': 'Participar en voluntariado', 'description': 'Ayudar en un refugio animal.', 'completed': true},
-    {'title': 'Tener un jardín en casa', 'description': 'Cultivar flores y hierbas.', 'completed': false},
-    {'title': 'Subir a una montaña', 'description': 'Hacer senderismo en un parque nacional.', 'completed': false},
-    {'title': 'Pintar un cuadro', 'description': 'Explorar la creatividad artística.', 'completed': false},
-    {'title': 'Organizar las fotos familiares', 'description': 'Crear un álbum de recuerdos.', 'completed': true},
+
+
+   final List<Map<String, dynamic>> _files = [
+    {'name': 'Viajar a Japón', 'description': 'Punta Arenas', 'completed': false,'frequency' :'Media'},
+    {'name': 'Aprender un nuevo idioma', 'description': 'Osorno', 'completed': false,'frequency' :'Alta'},
+    {'name': 'Correr una maratón', 'description': 'En casa', 'completed': true,'frequency' :'Media'},
+    {'name': 'Leer 20 libros este año', 'description': 'Lorial', 'completed': false,'frequency' :'Media'},
+    {'name': 'Hacer un curso de cocina', 'description': 'Osorno', 'completed': false,'frequency' :'Baja'},
+    {'name': 'Ahorrar para una casa', 'description': 'En casa', 'completed': true,'frequency' :'Media'},
+    {'name': 'Aprender a tocar guitarra', 'description': 'Punta Arenas', 'completed': false,'frequency' :'Media'},
+    {'name': 'Participar en voluntariado', 'description': 'En casa', 'completed': true,'frequency' :'Media'},
+    {'name': 'Tener un jardín en casa', 'description': 'Osorno', 'completed': false,'frequency' :'Media'},
+    {'name': 'Subir a una montaña', 'description': 'En casa', 'completed': false,'frequency' :'Media'},
+    {'name': 'Pintar un cuadro', 'description': 'Punta Arenas', 'completed': false,'frequency' :'Media'},
+    {'name': 'Organizar las fotos familiares', 'description': 'Osorno', 'completed': true,'frequency' :'Media'},
   ];
 
-  void _addWish(String title, String description) {
+  void _addFile(String name, String type) {
     setState(() {
-      _wishes.insert(0, {'title': title, 'description': description, 'completed': false});
+      _files.insert(0, {'name': name, 'type': type});
     });
   }
 
-  void _removeWish(int index) {
+  void _deleteFile(int index) {
     setState(() {
-      _wishes.removeAt(index);
+      _files.removeAt(index);
     });
   }
+
+  IconData _getIcon(String type) {
+    switch (type) {
+      case 'image':
+        return Icons.image;
+      case 'video':
+        return Icons.video_library;
+      case 'document':
+      default:
+        return Icons.insert_drive_file;
+    }
+  }
+
+  
+ @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // user_activity Actualizando estado
+      onScreenChange('screen_Home_Wishes');
+    });
+
+    super.initState();
+  } 
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 50,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: const Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Mis Deseos', style: TextStyle(fontSize: 18, color: Colors.black)),
-            Text('Organiza y cumple tus metas', style: TextStyle(fontSize: 10, color: Color.fromARGB(150, 0, 0, 0))),
-          ],
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 15.0),
-            child: Stack(
-              children: [
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Icon(Icons.favorite_border, color: Colors.black),
-                ),
-                if (_wishes.any((wish) => !wish['completed']))
-                  Positioned(
-                    right: 0,
-                    top: 0,
-                    child: CircleAvatar(
-                      radius: 8,
-                      backgroundColor: StyleGlobalApk.getColorRedOpaque(),
-                      child: Text(
-                        '${_wishes.where((wish) => !wish['completed']).length}',
-                        style: const TextStyle(fontSize: 10, color: Colors.white),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        ],
-        bottom: const PreferredSize(
-          preferredSize: Size.fromHeight(1.0),
-          child: Divider(height: 1.0, thickness: 2.0, color: Color.fromARGB(50, 158, 158, 158)),
-        ),
-      ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: ListView.builder(
-          itemCount: _wishes.length,
-          itemBuilder: (context, index) {
-            final wish = _wishes[index];
-            return FadeIn(
-              child: Card(
-                margin: const EdgeInsets.symmetric(vertical: 8.0),
-                child: ListTile(
-                  leading: Icon(
-                    wish['completed'] ? Icons.check_circle : Icons.radio_button_unchecked,
-                    color: wish['completed'] ? Colors.green : Colors.grey,
-                  ),
-                  title: Text(wish['title']),
-                  subtitle: Text(wish['description']),
-                  trailing: IconButton(
-                    icon: Icon(Icons.delete, color: StyleGlobalApk.getColorRedOpaque()),
-                    onPressed: () => _removeWish(index),
-                  ),
-                  onTap: () {
-                    setState(() {
-                      wish['completed'] = !wish['completed'];
-                    });
-                  },
-                ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+           
+            SizedBox(height: 20,),
+            Expanded(
+              child: ListView.builder(
+                itemCount: _files.length,
+                itemBuilder: (context, index) {
+                  final file = _files[index];
+                  return FadeIn(
+                    child: _buildBudgetCardFiles(const Color.fromARGB(255, 205, 92, 188),file['name']!,file['description']!,file['frequency']!),
+                  );
+                },
               ),
-            );
-          },
+            ),
+          ],
         ),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     showDialog(
-      //       context: context,
-      //       builder: (context) {
-      //         String title = '';
-      //         String description = '';
-      //         return AlertDialog(
-      //           title: const Text('Agregar Deseo'),
-      //           content: Column(
-      //             mainAxisSize: MainAxisSize.min,
-      //             children: [
-      //               TextField(
-      //                 onChanged: (value) => title = value,
-      //                 decoration: const InputDecoration(labelText: 'Título'),
-      //               ),
-      //               TextField(
-      //                 onChanged: (value) => description = value,
-      //                 decoration: const InputDecoration(labelText: 'Descripción'),
-      //               ),
-      //             ],
-      //           ),
-      //           actions: [
-      //             TextButton(
-      //               onPressed: () => Navigator.of(context).pop(),
-      //               child: const Text('Cancelar'),
-      //             ),
-      //             ElevatedButton(
-      //               onPressed: () {
-      //                 if (title.isNotEmpty && description.isNotEmpty) {
-      //                   _addWish(title, description);
-      //                   Navigator.of(context).pop();
-      //                 }
-      //               },
-      //               child: const Text('Agregar'),
-      //             ),
-      //           ],
-      //         );
-      //       },
-      //     );
-      //   },
-      //   child: const Icon(Icons.add),
-      // ),
     );
   }
+    // Widget para mostrar los bloques de presupuesto
+  Widget _buildBudgetCardGeneral(String title, String amount) {
+    return Card(
+      elevation: 1,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          children: [
+            ContainerIcon(const Color.fromARGB(255, 92, 205, 195),Icons.business_center,20),
+            SizedBox(width: 20),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                ),
+                Text(
+              amount,
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+              ],
+            ),
+            
+          ],
+        ),
+      ),
+    );
+  }
+
+    // Widget para mostrar los bloques de presupuesto
+  Widget _buildBudgetCardFiles(Color color, String title,String direction,  String frequency) {
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ContainerIcon(color,Icons.attach_money,20),
+                SizedBox(width: 15),
+                Padding(
+                  padding: const EdgeInsets.only(top:  10.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '  $title',
+                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                      ),
+                     SizedBox(height: 10,),
+                      Row(
+                        children: [
+                          Icon(Icons.location_on,color:  Colors.blue,),Text(
+                                        direction,
+                                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold ,color:  Colors.blue),
+                                      ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                
+              ],
+            ),
+         Padding(
+           padding: const EdgeInsets.only(top: 10, right:  8.0),
+           child: Text(frequency,style: TextStyle(fontSize: 10, color: Colors.red),),
+         )
+          ],
+        ),
+      ),
+    );
+  }
+
+
+  Container ContainerIcon(Color colorContainerIcon,IconData icon, double paddingIcon) {
+    return Container(
+        decoration: BoxDecoration(
+          color:colorContainerIcon.withOpacity(0.3), // Color verde con transparencia
+          borderRadius: BorderRadius.circular(20), // Bordes redondeados
+        ),
+        padding: EdgeInsets.all(paddingIcon),
+        child: Icon(
+         icon ,
+          size: 30, // Tamaño del icono
+          color:colorContainerIcon , // Color del icono
+        ),
+      );
+  }
+// Widget para mostrar los bloques de presupuesto
+
 }

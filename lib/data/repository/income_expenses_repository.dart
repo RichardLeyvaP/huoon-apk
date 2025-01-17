@@ -26,13 +26,15 @@ class IncomeExpensesRepository {
     try {
        final response = await authService.post(endpoint, body: body);
 
+ 
+ //aqui response no est allegando statusCode, revisar eso
     print('si estoy addIncomeExpenses esto:1-${response}');
       if (response.statusCode == 200) {
           final responseData = json.decode(response.body);
           // Maneja la respuesta de la API, como los datos del usuario o token
           print('resp- Login exitoso: $responseData');
-        } else {
-          print('resp- Error al intentar guardar los datos: ${response.statusCode}');
+        } else if (response.statusCode == 201) {
+          final responseData = json.decode(response.body);
         }
       
     } catch (e) {

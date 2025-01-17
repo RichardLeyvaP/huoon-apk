@@ -6,8 +6,132 @@ import 'package:huoon/ui/util/util_class.dart';
 import 'package:huoon/ui/util/utils_class_apk.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-class FinancePage extends StatelessWidget {
+class FinancePage extends StatefulWidget {
   const FinancePage({super.key});
+
+  @override
+  State<FinancePage> createState() => _FinancePageState();
+}
+
+class _FinancePageState extends State<FinancePage> {
+String selectedCategory = 'Últimas transacciones';
+  @override
+  void initState() {
+    //aqui cargar las finanzas
+    
+    super.initState();
+  }
+  // Widget para los botones de categoría
+  Widget _buildCategoryButton(String category) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          selectedCategory = category;
+        });
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 5),
+        child: Container(
+          decoration: BoxDecoration(
+            color: selectedCategory == category ? StyleGlobalApk.colorPrimary : Colors.grey[200],
+            borderRadius: BorderRadius.circular(10),
+          ),
+          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+          child: Text(
+            category,
+            style: TextStyle(
+              fontSize: 14,
+              color: selectedCategory == category ? Colors.white : Colors.black,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Widget para el contenido según la categoría seleccionada
+  Widget _buildCategoryContent() {
+    if (selectedCategory == 'Últimas transacciones') {
+      return ListView.builder(
+        itemCount: transactions.length,
+        itemBuilder: (context, index) {
+          final item = transactions[index];
+          // return _buildFinanceCard(item['description'], item['date'], item['type'], item['income']);
+        return  _buildTransactionList();
+        },
+      );
+    } else if (selectedCategory == 'Gastos') {
+      return ListView.builder(
+        itemCount: finances.length,
+        itemBuilder: (context, index) {
+          final item = finances[index];
+          return _buildFinanceCard(item['description'], item['date'], item['type'], item['income']);
+        },
+      );
+    } else if (selectedCategory == 'Ingresos') {
+      return Center(child: Text('No hay ingresos aún'));
+    } else {
+      return Center(child: Text('Categoría desconocida'));
+    }
+  }
+
+  // Widget para una tarjeta de finanzas
+  Widget _buildFinanceCard(String description, String date, String type, String income) {
+    return Card(
+      margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      child: Padding(
+        padding: const EdgeInsets.all(15),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              description,
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'Fecha: $date',
+              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'Tipo: $type',
+              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'Ingreso: \$ $income',
+              style: TextStyle(fontSize: 14, color: Colors.green),
+            ),
+          ],
+        ),
+      ),
+    );
+  } 
+
+  final List<Map<String, dynamic>> transactions = [
+    {'description': 'Compra de supermercado', 'date': '2025-01-15', 'type': 'Personal', 'income': '0.00'},
+    {'description': 'Pago de luz', 'date': '2025-01-10', 'type': 'Hogar', 'income': '0.00'},
+    {'description': 'Venta de muebles', 'date': '2025-01-05', 'type': 'Personal', 'income': '500.00'},
+  ];
+
+  final List<Map<String, dynamic>> finances = [
+    {
+      "id": 1,
+      "homeId": 1,
+      "personId": 4,
+      "spent": null,
+      "income": "30000.00",
+      "date": "2025-01-17",
+      "description": "Prueba finanza personal editada",
+      "type": "Personal",
+      "method": null,
+      "image": "finances/1.jpg"
+    }
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -59,17 +183,25 @@ class FinancePage extends StatelessWidget {
             ],
           ),
           
-              SizedBox(height: 20),
-          
-              // Últimas Transacciones
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Text(
-                  'Últimas transacciones',
-                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                ),
-              ),
-              _buildTransactionList(),
+             SizedBox(height: 20),
+          // Row con scroll horizontal
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                _buildCategoryButton('Últimas transacciones'),
+                _buildCategoryButton('Gastos'),
+                _buildCategoryButton('Ingresos'),
+              ],
+            ),
+          ),
+          SizedBox(height: 10),
+          Divider(height: 1.0, thickness: 2.0, color: Color.fromARGB(50, 158, 158, 158)),
+          // Mostrar contenido según la categoría seleccionada
+          SizedBox(
+            height: 400, // Ajusta el alto según lo necesites.
+            child: _buildCategoryContent(),
+          ),
             ],
           ),
         ),
@@ -123,6 +255,7 @@ class FinancePage extends StatelessWidget {
         ),
       );
   }
+
 // Widget para mostrar los bloques de presupuesto
   Widget _buildBudgetCard(String title, String amount,Color color,IconData icon) {
     return Card(
@@ -148,6 +281,7 @@ class FinancePage extends StatelessWidget {
       ),
     );
   }
+
   // Lista de transacciones
   Widget _buildTransactionList() {
     return Card(
@@ -294,6 +428,5 @@ TableRow _buildTransactionTableRow(String ref, String name, String category, Str
     ),
   );
 }
-
-
 }
+
