@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:huoon/domain/blocs/IncomeExpenses_bloc/login_service.dart';
+import 'package:huoon/domain/blocs/IncomeExpenses_bloc/login_signal.dart';
 import 'package:huoon/ui/Components/button_custom.dart';
 import 'package:huoon/ui/util/util_class.dart';
 import 'package:huoon/ui/util/utils_class_apk.dart';
@@ -18,7 +19,7 @@ String selectedCategory = 'Últimas transacciones';
   @override
   void initState() {
     //aqui cargar las finanzas
-    
+    getIncomeExpenses(1,'Todas');
     super.initState();
   }
   // Widget para los botones de categoría
@@ -54,7 +55,7 @@ String selectedCategory = 'Últimas transacciones';
   Widget _buildCategoryContent() {
     if (selectedCategory == 'Últimas transacciones') {
       return ListView.builder(
-        itemCount: transactions.length,
+        itemCount: 3,
         itemBuilder: (context, index) {
           final item = transactions[index];
           // return _buildFinanceCard(item['description'], item['date'], item['type'], item['income']);
@@ -62,22 +63,29 @@ String selectedCategory = 'Últimas transacciones';
         },
       );
     } else if (selectedCategory == 'Gastos') {
+  return ListView.builder(
+    itemCount: financeIE.value!.where((item) => item.spent != '0.00').length, // Filtra los elementos donde 'spent' no es igual a 0.00
+    itemBuilder: (context, index) {
+      final item = financeIE.value!.where((item) => item.spent != '0.00').toList()[index]; // Aplica el filtro en el builder
+      return _buildFinanceCard(item.description!, item.date!.toString(), item.type!, item.spent!,Colors.red);
+    },
+  );
+}
+ else if (selectedCategory == 'Ingresos') {
       return ListView.builder(
-        itemCount: finances.length,
-        itemBuilder: (context, index) {
-          final item = finances[index];
-          return _buildFinanceCard(item['description'], item['date'], item['type'], item['income']);
-        },
-      );
-    } else if (selectedCategory == 'Ingresos') {
-      return Center(child: Text('No hay ingresos aún'));
+    itemCount: financeIE.value!.where((item) => item.income != '0.00').length, // Filtra los elementos donde 'spent' no es igual a 0.00
+    itemBuilder: (context, index) {
+      final item = financeIE.value!.where((item) => item.income != '0.00').toList()[index]; // Aplica el filtro en el builder
+      return _buildFinanceCard(item.description!, item.date!.toString(), item.type!, item.income!,Colors.green);
+    },
+  );
     } else {
       return Center(child: Text('Categoría desconocida'));
     }
   }
 
   // Widget para una tarjeta de finanzas
-  Widget _buildFinanceCard(String description, String date, String type, String income) {
+  Widget _buildFinanceCard(String description, String date, String type, String total,Color colorTotal) {
     return Card(
       margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       elevation: 4,
@@ -103,8 +111,8 @@ String selectedCategory = 'Últimas transacciones';
             ),
             SizedBox(height: 8),
             Text(
-              'Ingreso: \$ $income',
-              style: TextStyle(fontSize: 14, color: Colors.green),
+              'Total: \$ $total',
+              style: TextStyle(fontSize: 14, color: colorTotal),
             ),
           ],
         ),
@@ -199,7 +207,7 @@ String selectedCategory = 'Últimas transacciones';
           Divider(height: 1.0, thickness: 2.0, color: Color.fromARGB(50, 158, 158, 158)),
           // Mostrar contenido según la categoría seleccionada
           SizedBox(
-            height: 400, // Ajusta el alto según lo necesites.
+            height: 300, // Ajusta el alto según lo necesites.
             child: _buildCategoryContent(),
           ),
             ],

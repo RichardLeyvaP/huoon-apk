@@ -6,6 +6,8 @@ final Signal<bool?> isLoggedInIE = Signal<bool?>(null);
 final Signal<String> incomeexpensesMessageIE = Signal<String>(""); // Mensaje de error o éxito
 final Signal<bool> isLoadingIE = Signal<bool>(false); // Estado de carga
 final Signal<bool> isIncomeExpensesErrorIE = Signal<bool>(false); // Estado de carga
+final Signal<List<Finance>?> financeIE = Signal<List<Finance>?>(null);
+
 //
 //
 final Signal<String> description_income_expenseIE = Signal<String>(""); // descripcion

@@ -261,8 +261,8 @@ class _LoginFormPageState extends State<LoginFormPage> {
                               Buttons.google,
                               text: TranslationManager.translate('googleButton'),
                               onPressed: () {
-                                loginFuntionDeprived();
-                                //loginWithGoogle(context);
+                                //loginFuntionDeprived();
+                                loginWithGoogle(context);
                               },
                             ),
                           ),

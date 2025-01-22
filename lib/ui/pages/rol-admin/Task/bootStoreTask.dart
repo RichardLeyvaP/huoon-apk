@@ -1476,6 +1476,8 @@ type = 'Hogar';
 
 
       await submitIncomeExpenses(homeId,spent,income,date,description,type,method,image);
+      //aqui cargar las finanzas
+   await getIncomeExpenses(1,'Todas');
     
 
     ScaffoldMessenger.of(context).showSnackBar(

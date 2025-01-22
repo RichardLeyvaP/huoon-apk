@@ -18,6 +18,18 @@ Future<void> submitIncomeExpenses(homeId,spent,income,date,description,type,meth
  
   }
 }
+
+// Mostrar estadistica dato el tipo (Todas,Personal,Hogar)
+Future<void> getIncomeExpenses(homeId,type) async {
+  try {
+    await iExpensesRepository.getIncomeExpenses(homeId,type);
+
+  } catch (error) {
+   
+  } finally {
+ 
+  }
+}
 // Método para hacer incomeexpenses
 void clearIncomeExpensesSignals() {
   // Restablecer las señales a sus valores predeterminados
