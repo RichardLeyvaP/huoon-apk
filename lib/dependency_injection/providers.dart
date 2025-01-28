@@ -1,4 +1,4 @@
-import 'package:huoon/data/services/local_auth_service.dart';
+import 'package:huoon/data/services/localAuthService.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';

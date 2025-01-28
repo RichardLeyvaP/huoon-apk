@@ -2,10 +2,10 @@
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:huoon/data/repository/configuration_repository.dart';
-import 'package:huoon/data/services/globalCallApi/apiService.dart';
+import 'package:huoon/data/repository/configurationRepository.dart';
+import 'package:huoon/data/services/globalApiService.dart';
 import 'package:huoon/dependency_injection/providers.dart';
-import 'package:huoon/domain/blocs/configuration_bloc/configuration_service.dart';
+import 'package:huoon/firebaseOptions.dart';
 import 'package:huoon/ui/myApp.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
@@ -20,6 +20,10 @@ void main() async {
   //   name: "huoon-app-flutter",
   //   options: DefaultFirebaseOptions.currentPlatform,
   // );
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+);
   await initializeDateFormatting('es', null);
   //await requestConfiguration();//esto cargaba las configuraciones iniciales y ponia lenta la aplicación
 

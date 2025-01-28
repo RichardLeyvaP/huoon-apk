@@ -3,7 +3,7 @@
 
   import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:huoon/domain/blocs/user_activity_bloc/user_activity_service.dart';
+import 'package:huoon/domain/signals/user_activity_signals/user_activity_service.dart';
 
 class WishesPage extends StatefulWidget {
   @override

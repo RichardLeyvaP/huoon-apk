@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:huoon/ui/Components/button_custom.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:huoon/ui/components/buttonCustomWidget.dart';
 
 class SignUpPage extends StatefulWidget {
   @override

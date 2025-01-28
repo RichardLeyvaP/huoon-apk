@@ -1,31 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
-import 'package:huoon/domain/blocs/configuration_bloc/configuration_signal.dart';
-import 'package:huoon/ui/Routes/pages_routes.dart';
+import 'package:huoon/domain/signals/configuration_signals/configuration_signal.dart';
+import 'package:huoon/ui/pages/splash/splashScreen.dart';
+import 'package:huoon/ui/routes/pagesRoutes.dart';
 import 'package:huoon/ui/pages/loginFb.dart';
-import 'package:huoon/ui/pages/rol-admin/Task/TaskCreationPage.dart';
-import 'package:huoon/ui/pages/rol-admin/Task/TaskUpdatePage.dart';
-import 'package:huoon/ui/pages/rol-admin/chat/ChatHealthPage.dart';
-import 'package:huoon/ui/pages/rol-admin/chat/audio_recorder.screen.dart';
-import 'package:huoon/ui/pages/rol-admin/chat/ChatPageFinancePage.dart';
-import 'package:huoon/ui/pages/rol-admin/health/dataAnalysisPage.dart';
-import 'package:huoon/ui/pages/rol-admin/health/myHealthPage.dart';
-import 'package:huoon/ui/pages/rol-admin/health/remindersPage.dart';
-import 'package:huoon/ui/pages/rol-admin/incomeExpenses/incomeExpensesPage.dart';
-import 'package:huoon/ui/pages/rol-admin/product/productCreationPage.dart';
-import 'package:huoon/ui/pages/rol-admin/product/productUpdatePage.dart';
-import 'package:huoon/ui/pages/rol-admin/store/storeCreationPage.dart';
-import 'package:huoon/ui/pages/rol-admin/store/storeUpdatePage.dart';
-import 'package:huoon/ui/pages/splash/splash_screen.dart';
+import 'package:huoon/ui/pages/rol/admin/task/TaskCreationPage.dart';
+import 'package:huoon/ui/pages/rol/admin/task/TaskUpdatePage.dart';
+import 'package:huoon/ui/pages/rol/admin/chat/ChatHealthPage.dart';
+import 'package:huoon/ui/pages/rol/admin/chat/audio_recorder.screen.dart';
+import 'package:huoon/ui/pages/rol/admin/chat/ChatPageFinancePage.dart';
+import 'package:huoon/ui/pages/rol/admin/health/dataAnalysisPage.dart';
+import 'package:huoon/ui/pages/rol/admin/health/myHealthPage.dart';
+import 'package:huoon/ui/pages/rol/admin/health/remindersPage.dart';
+import 'package:huoon/ui/pages/rol/admin/incomeExpenses/incomeExpensesPage.dart';
+import 'package:huoon/ui/pages/rol/admin/product/productCreationPage.dart';
+import 'package:huoon/ui/pages/rol/admin/product/productUpdatePage.dart';
+import 'package:huoon/ui/pages/rol/admin/store/storeCreationPage.dart';
+import 'package:huoon/ui/pages/rol/admin/store/storeUpdatePage.dart';
+import 'package:huoon/ui/pastaTestPage/AjudaPage.dart';
+import 'package:huoon/ui/pastaTestPage/ConfiguracoesPage.dart';
 import 'package:huoon/ui/pastaTestPage/EstoquePage.dart';
 import 'package:huoon/ui/pastaTestPage/FuncionariosPage.dart';
 import 'package:huoon/ui/pastaTestPage/GastosPage.dart';
 import 'package:huoon/ui/pastaTestPage/HomePageBusines.dart';
+import 'package:huoon/ui/pastaTestPage/IngresosPage.dart';
+import 'package:huoon/ui/pastaTestPage/PedidosPage.dart';
+import 'package:huoon/ui/pastaTestPage/PromocoesPage.dart';
 import 'package:huoon/ui/pastaTestPage/ReceitasPage.dart';
+import 'package:huoon/ui/pastaTestPage/RelatoriosPage.dart';
 import 'package:huoon/ui/pastaTestPage/registerPage.dart';
-import 'package:huoon/ui/util/util_class.dart';
-import 'package:huoon/ui/util/utils_class_apk.dart';
+import 'package:huoon/ui/util/utilClass.dart';
+import 'package:huoon/ui/util/utilsStyleGlobalApk.dart';
 import 'package:signals/signals_flutter.dart';
 // TranslationManager.loadDefaultTranslations(languageCode);
 
@@ -56,18 +62,18 @@ class MyApp extends StatelessWidget {
         path: '/HomePrincipal',
         builder: (context, state) => HomePrincipal(),
       ),
-      GoRoute(
-        path: '/LoadingPage',
-        builder: (context, state) => LoadingPage(),
-      ),
+      // GoRoute(
+      //   path: '/LoadingPage',
+      //   builder: (context, state) => LoadingPage(),
+      // ),
       // GoRoute(
       //   path: '/QRViewExample',
       //   builder: (context, state) => const QRViewPage(),
       // ),
-      GoRoute(
-        path: '/AuthCheck',
-        builder: (context, state) => const AuthCheck(),
-      ),
+      // GoRoute(
+      //   path: '/AuthCheck',
+      //   builder: (context, state) => const AuthCheck(),
+      // ),
       GoRoute(
         name: 'taskCreation',
         path: '/taskCreation/:id', // :id indica que es un parámetro en la URL
@@ -162,6 +168,10 @@ class MyApp extends StatelessWidget {
         builder: (context, state) => GastosPage(),
       ),
       GoRoute(
+        path: '/IngresosPage',
+        builder: (context, state) => IngresosPage(),
+      ),
+      GoRoute(
         path: '/ReceitasPage',
         builder: (context, state) => ReceitasPage(),
       ),
@@ -169,6 +179,27 @@ class MyApp extends StatelessWidget {
         path: '/EstoquePage',
         builder: (context, state) => EstoquePage(),
       ),
+      GoRoute(
+        path: '/PedidosPage',
+        builder: (context, state) => PedidosPage(),
+      ),
+      GoRoute(
+        path: '/RelatoriosPage',
+        builder: (context, state) => RelatoriosPage(),
+      ),
+      GoRoute(
+        path: '/PromocoesPage',
+        builder: (context, state) => PromocoesPage(),
+      ),
+      GoRoute(
+        path: '/ConfiguracoesPage',
+        builder: (context, state) => ConfiguracoesPage(),
+      ),
+      GoRoute(
+        path: '/AjudaPage',
+        builder: (context, state) => AjudaPage(),
+      ),
+      
       
        //rutas de prueba
       //

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:huoon/ui/Components/button_custom.dart';
+import 'package:huoon/ui/components/buttonCustomWidget.dart';
 
 class HomePageBusines extends StatefulWidget {
   @override
@@ -16,7 +16,7 @@ class _HomePageBusinesState extends State<HomePageBusines> {
   @override 
   Widget build(BuildContext context) {
      // Mostrar el cuadro de diálogo solo si business es verdadero
-    if (business) {
+  /*  if (business) {
       Future.delayed(Duration.zero, () {
         showDialog(
           context: context,
@@ -75,7 +75,7 @@ class _HomePageBusinesState extends State<HomePageBusines> {
           ),
         );
       });
-    }
+    }*/
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 115, 113, 221),
@@ -145,8 +145,18 @@ class _HomePageBusinesState extends State<HomePageBusines> {
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: [
-                  _buildCategoryItem(Icons.list, "Pedidos"),
+                 
                   InkWell(
+                    onTap: () {
+                      // Verifica si el usuario está autenticado antes de navegar
+                      if (isAuthenticated(context)) {
+                        GoRouter.of(context).push('/PedidosPage');
+                      } else {
+                        showErrorMessage(context);
+                      }
+                    },
+                    child: _buildCategoryItem(Icons.group, "Pedidos")),
+                    InkWell(
                     onTap: () {
                       // Verifica si el usuario está autenticado antes de navegar
                       if (isAuthenticated(context)) {
@@ -186,7 +196,17 @@ class _HomePageBusinesState extends State<HomePageBusines> {
                       }
                     },
                     child: _buildCategoryItem(Icons.money_off, "Gastos")),
-                  _buildCategoryItem(Icons.attach_money, "Ingressos"),
+                  InkWell(
+                     onTap: () {
+                      // Verifica si el usuario está autenticado antes de navegar
+                      if (isAuthenticated(context)) {
+                        GoRouter.of(context).push('/IngresosPage');
+                      } else {
+                        showErrorMessage(context);
+                      }
+                    },
+                    child: _buildCategoryItem(Icons.attach_money, "Ingressos")),
+                  
                 ],
               ),
             ),
@@ -398,22 +418,53 @@ class _HomePageBusinesState extends State<HomePageBusines> {
           ListTile(
             leading: Icon(Icons.settings),
             title: Text("Configurações"),
-            onTap: () {},
+            onTap: () {
+              // Verifica si el usuario está autenticado antes de navegar
+                      if (isAuthenticated(context)) {
+                        GoRouter.of(context).push('/ConfiguracoesPage');
+                      } else {
+                        showErrorMessage(context);
+                      }
+            },
           ),
           ListTile(
             leading: Icon(Icons.analytics),
             title: Text("Relatórios"),
-            onTap: () {},
+            onTap: () {
+
+               // Verifica si el usuario está autenticado antes de navegar
+                      if (isAuthenticated(context)) {
+                        GoRouter.of(context).push('/RelatoriosPage');
+                      } else {
+                        showErrorMessage(context);
+                      }
+            },
           ),
           ListTile(
             leading: Icon(Icons.local_offer),
             title: Text("Promoções"),
-            onTap: () {},
+            onTap: () {
+              // Verifica si el usuario está autenticado antes de navegar
+                      if (isAuthenticated(context)) {
+                        GoRouter.of(context).push('/PromocoesPage');
+                      } else {
+                        showErrorMessage(context);
+                      }
+
+              
+            },
           ),
           ListTile(
             leading: Icon(Icons.help),
             title: Text("Ajuda"),
-            onTap: () {},
+            onTap: () {
+              // Verifica si el usuario está autenticado antes de navegar
+                      if (isAuthenticated(context)) {
+                        GoRouter.of(context).push('/AjudaPage');
+                      } else {
+                        showErrorMessage(context);
+                      }
+            },
           ),
         ],
       ),

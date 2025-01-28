@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:huoon/ui/util/utils_class_apk.dart';
+import 'package:huoon/ui/util/utilsStyleGlobalApk.dart';
 
 class HealthPage extends StatelessWidget {
   @override
