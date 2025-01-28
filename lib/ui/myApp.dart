@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:huoon/domain/signals/configuration_signals/configuration_signal.dart';
+import 'package:huoon/ui/pages/registerPage.dart';
 import 'package:huoon/ui/pages/splash/splashScreen.dart';
 import 'package:huoon/ui/routes/pagesRoutes.dart';
 import 'package:huoon/ui/pages/loginFb.dart';
@@ -144,6 +145,11 @@ class MyApp extends StatelessWidget {
       GoRoute(
         path: '/RemindersPage',
         builder: (context, state) => RemindersPage(),
+      ),
+      
+      GoRoute(
+        path: '/RegisterFormPage',
+        builder: (context, state) => RegisterFormPage(),
       ),
       //rutas de prueba
       //

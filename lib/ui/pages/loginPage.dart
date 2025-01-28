@@ -266,7 +266,11 @@ class _LoginFormPageState extends State<LoginFormPage> {
               TextButton(
                 onPressed: () {
                   // Acción de registro
-                  loginFuntionDeprived();
+                   GoRouter.of(context).go(
+        '/RegisterFormPage',       
+      );
+                  
+                 // loginFuntionDeprived();
                 },
                 child:  Text(
                   '¿No tienes cuenta? Regístrate',
