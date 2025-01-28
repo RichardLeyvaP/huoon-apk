@@ -25,7 +25,7 @@
  "acceptButton": "Aceitar",
 "cancelButton": "Cancelar",
 "loginButton": "Entrar", 
-"googleButton": "Entrar no Google",
- "facebookButton": "Entrar no Facebook",
+"googleButton": "Google",
+ "facebookButton": "Facebook",
  "rememberPassword": "Esqueci minha senha"
   }

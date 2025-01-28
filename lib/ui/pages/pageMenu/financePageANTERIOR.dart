@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:huoon/domain/blocs/IncomeExpenses_bloc/login_service.dart';
 import 'package:huoon/domain/blocs/IncomeExpenses_bloc/login_signal.dart';
 import 'package:huoon/ui/Components/button_custom.dart';
 import 'package:huoon/ui/util/util_class.dart';
 import 'package:huoon/ui/util/utils_class_apk.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class FinancePage extends StatefulWidget {
   const FinancePage({super.key});
@@ -23,7 +23,7 @@ String selectedCategory = 'Últimas transacciones';
     super.initState();
   }
   // Widget para los botones de categoría
-  Widget _buildCategoryButton(String category,int cant) {
+  Widget _buildCategoryButton(String category) {
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -39,7 +39,7 @@ String selectedCategory = 'Últimas transacciones';
           ),
           padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
           child: Text(
-            '$category ($cant)',
+            category,
             style: TextStyle(
               fontSize: 14,
               color: selectedCategory == category ? Colors.white : Colors.black,
@@ -64,18 +64,18 @@ String selectedCategory = 'Últimas transacciones';
       );
     } else if (selectedCategory == 'Gastos') {
   return ListView.builder(
-    itemCount: financeIE.value!.where((item) => item.spent != '0.00' && item.spent != null).length, // Filtra los elementos donde 'spent' no es igual a 0.00
+    itemCount: financeIE.value!.where((item) => item.spent != '0.00').length, // Filtra los elementos donde 'spent' no es igual a 0.00
     itemBuilder: (context, index) {
-      final item = financeIE.value!.where((item) => item.spent != '0.00' && item.spent != null).toList()[index]; // Aplica el filtro en el builder
-      return _buildFinanceCard(item.description!, item.date!.toString(), item.type!, item.spent?? '0.00',Colors.red);
+      final item = financeIE.value!.where((item) => item.spent != '0.00').toList()[index]; // Aplica el filtro en el builder
+      return _buildFinanceCard(item.description!, item.date!.toString(), item.type!, item.spent!,Colors.red);
     },
   );
 }
  else if (selectedCategory == 'Ingresos') {
       return ListView.builder(
-    itemCount: financeIE.value!.where((item) => item.income != '0.00' && item.income != null).length, // Filtra los elementos donde 'spent' no es igual a 0.00
+    itemCount: financeIE.value!.where((item) => item.income != '0.00').length, // Filtra los elementos donde 'spent' no es igual a 0.00
     itemBuilder: (context, index) {
-      final item = financeIE.value!.where((item) => item.income != '0.00' && item.income != null).toList()[index]; // Aplica el filtro en el builder
+      final item = financeIE.value!.where((item) => item.income != '0.00').toList()[index]; // Aplica el filtro en el builder
       return _buildFinanceCard(item.description!, item.date!.toString(), item.type!, item.income!,Colors.green);
     },
   );
@@ -197,9 +197,9 @@ String selectedCategory = 'Últimas transacciones';
             scrollDirection: Axis.horizontal,
             child: Row(
               children: [
-                _buildCategoryButton('Últimas transacciones',financeIE.value!.length),
-                _buildCategoryButton('Gastos',financeIE.value!.where((item) => item.spent != '0.00' && item.spent != null).length),
-                _buildCategoryButton('Ingresos',financeIE.value!.where((item) => item.income != '0.00' && item.income != null).length),
+                _buildCategoryButton('Últimas transacciones'),
+                _buildCategoryButton('Gastos'),
+                _buildCategoryButton('Ingresos'),
               ],
             ),
           ),

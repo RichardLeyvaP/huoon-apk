@@ -1,0 +1,106 @@
+{
+  "project_info": {
+    "project_number": "103032513467",
+    "project_id": "huoon-app-flutter",
+    "storage_bucket": "huoon-app-flutter.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:103032513467:android:ba0306749b1c12a8bdda9e",
+        "android_client_info": {
+          "package_name": "com.example.huoon"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "103032513467-74jmbu4jt0sipig81fit7avb6kekaptt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.huoon",
+            "certificate_hash": "bdc7eaf9c7e8747d723d970de393ccf1866585d2"
+          }
+        },
+        {
+          "client_id": "103032513467-s9op6c3re1deik0riqgu2mlmdjdci09c.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.huoon",
+            "certificate_hash": "06b345cb5265af4e938bf8a8256eca86055e30df"
+          }
+        },
+        {
+          "client_id": "103032513467-7j47u4c358hno2b1uptlt74dbls8qqao.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDyQfpMUMm9C6-0lTx0dfjJG3HNTJ1LJ2g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "103032513467-7j47u4c358hno2b1uptlt74dbls8qqao.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "103032513467-4k144l8spb0dngsssnbequ880f87p4sb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.huoon"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:103032513467:android:d654e89fdb3c9dbfbdda9e",
+        "android_client_info": {
+          "package_name": "com.huoon.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "103032513467-v8p1r65kf0g0np8amjvs6furar59o98p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.huoon.app",
+            "certificate_hash": "a88930b85ab8b746354bb51007610d2470ce9a71"
+          }
+        },
+        {
+          "client_id": "103032513467-7j47u4c358hno2b1uptlt74dbls8qqao.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDyQfpMUMm9C6-0lTx0dfjJG3HNTJ1LJ2g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "103032513467-7j47u4c358hno2b1uptlt74dbls8qqao.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "103032513467-4k144l8spb0dngsssnbequ880f87p4sb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.huoon"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
