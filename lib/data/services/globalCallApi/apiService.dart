@@ -32,6 +32,12 @@ class ApiService {
 
   // Método general para iniciar sesión
   Future<Map<String, dynamic>> login({
+    //datos para el login y register de google
+    String? id,
+    String? name,
+    String? email,
+    String? image,
+    //
     String? facebookToken,
     String? googleToken,
     String? username,
@@ -39,8 +45,8 @@ class ApiService {
   }) async {
     if (facebookToken != null) {
       return loginWithTokenFacebook(facebookToken);
-    } else if (googleToken != null) {
-      return loginWithTokenGoogle(googleToken);
+    } else if (googleToken != null && id != null && name != null && email != null) {
+      return loginWithTokenGoogle(id,name,email,image??'');//(String id,String name,String email, String image)
     } else if (username != null && password != null) {
       return loginWithCredentials(username, password);
     } else {
@@ -66,8 +72,10 @@ class ApiService {
         Uri.parse(endpoint),
         headers: await _headers(),
         body: jsonEncode(body),
-      );
+      );SharedPreferences prefs = await SharedPreferences.getInstance();
+       String ?token = prefs.getString('auth_token');
       print('aqui estoy entrando-al metodo-post-task-response.statusCode${response.statusCode}');
+      print('aqui estoy entrando-al metodo-post-task-response.statusCode-1${token}');
 
       return _processResponse(response);
     } on SocketException catch (e) {
@@ -167,28 +175,47 @@ class ApiService {
     }
   }
 
-// Método para iniciar sesión con un token de terceros (Google)
-  Future<Map<String, dynamic>> loginWithTokenGoogle(String thirdPartyToken) async {
-    final endpoint = '/google-callback-apk'; // Asegúrate de que este endpoint sea correcto
+  // Método para iniciar sesión con usuario y contraseña
+  Future<Map<String, dynamic>> registerGlobal(String name,String email, String password,String language,String usser) async {
+    print('aqui estoy entrando... 1');
+    //final endpoint = '${Env.apiEndpoint}/login-apk';
+    final endpoint = '${Env.apiEndpoint}/register';
     final body = {
-      'token': thirdPartyToken,
+      'user': usser,
+      'password': password,
+      'name': name,
+      'email': email,
+      'language': language,
+    };
+    print('aqui estoy entrando... 2');
+    try {
+      // Realiza la solicitud POST
+
+      // Procesa la respuesta
+      return await post(endpoint, body: body);
+    } catch (e) {
+      // Manejo de errores específico para el login
+      print('Error en el login: $e');
+      throw Exception('Error en el login:$e');
+    }
+  }
+
+// Método para iniciar sesión con un token de terceros (Google)
+  Future<Map<String, dynamic>> loginWithTokenGoogle(String id,String name,String email, String image) async {
+    final endpoint = '${Env.apiEndpoint}/google-callback-apk'; // Asegúrate de que este endpoint sea correcto
+    final body = {
+      'id': id,
+      'name': name,
+      'email': email,
+      'image': image,
     };
 
     try {
       // Realiza la solicitud POST
-      final response = await post(endpoint, body: body);
-
-      // Procesa la respuesta
-      final data = _processResponse(response);
-
-      // Asignar el token al recibir la respuesta, si es necesario
-      if (data.containsKey('token')) {
-        _token = data['token'];
-      } else {
-        throw Exception('El token no está presente en la respuesta');
-      }
-
-      return data;
+    
+    // Procesa la respuesta
+      return await post(endpoint, body: body);
+     
     } catch (e) {
       // Manejo de errores específico para el login con Google
       print('Error en el login con Google: $e');
@@ -226,15 +253,34 @@ class ApiService {
   }
 
   // Método para hacer logout
-  Future<void> logout() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+  Future<bool> logout() async {
+    try {
 
-    // Eliminar el token de SharedPreferences
-    await prefs.remove('auth_token');
+      final endpoint = '${Env.apiEndpoint}/logout'; // Asegúrate de que este endpoint sea correcto
+      final response = await get(endpoint);
+// Verifica si el mensaje es "Logout exitoso"
+      if (response['msg'] == 'Logout exitoso') {
+        // Eliminar el token de SharedPreferences
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.remove('auth_token');
 
-    // También puedes limpiar la variable local si lo deseas
-    _token = null;
+        // Limpiar la variable local si lo deseas
+        _token = null;
 
-    print('Sesión cerrada y token eliminado');
+        print('Sesión cerrada y token eliminado');
+        return true; // Devuelve true si todo está bien
+      }
+    else
+    {
+      print('ERROR al cerrar session:  no tenia response[msg]');
+      return false;
+    }
+      
+    } catch (e) {
+      print('ERROR al cerrar session:$e');
+        return false;
+      
+    }
+    
   }
 }

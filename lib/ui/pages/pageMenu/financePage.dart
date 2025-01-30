@@ -16,11 +16,16 @@ class FinancePage extends StatefulWidget {
 
 class _FinancePageState extends State<FinancePage> {
 String selectedCategory = 'Últimas transacciones';
+late Future<void> _loadData;
   @override
   void initState() {
     //aqui cargar las finanzas
-    getIncomeExpenses(1,'Todas');
+    _loadData = loadFinanceData();
     super.initState();
+  }
+    Future<void> loadFinanceData() async {
+    // Simulando una llamada a la API con un retraso
+    await getIncomeExpenses(1,'Todas');
   }
   // Widget para los botones de categoría
   Widget _buildCategoryButton(String category,int cant) {
@@ -193,16 +198,40 @@ String selectedCategory = 'Últimas transacciones';
           
              SizedBox(height: 20),
           // Row con scroll horizontal
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                _buildCategoryButton('Últimas transacciones',financeIE.value!.length),
-                _buildCategoryButton('Gastos',financeIE.value!.where((item) => item.spent != '0.00' && item.spent != null).length),
-                _buildCategoryButton('Ingresos',financeIE.value!.where((item) => item.income != '0.00' && item.income != null).length),
-              ],
-            ),
-          ),
+         FutureBuilder<void>(
+        future: _loadData,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            // Mostrar un indicador de carga mientras se esperan los datos
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            // Manejo de errores
+            return Center(child: Text("Error al cargar los datos"));
+          } else {
+            // Mostrar los datos cargados
+            return SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  _buildCategoryButton('Últimas transacciones', financeIE.value!.length),
+                  _buildCategoryButton(
+                    'Gastos',
+                    financeIE.value!
+                        .where((item) => item.spent != '0.00' && item.spent != null)
+                        .length,
+                  ),
+                  _buildCategoryButton(
+                    'Ingresos',
+                    financeIE.value!
+                        .where((item) => item.income != '0.00' && item.income != null)
+                        .length,
+                  ),
+                ],
+              ),
+            );
+          }
+        },
+      ),
           SizedBox(height: 10),
           Divider(height: 1.0, thickness: 2.0, color: Color.fromARGB(50, 158, 158, 158)),
           // Mostrar contenido según la categoría seleccionada

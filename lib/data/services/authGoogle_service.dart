@@ -1,9 +1,11 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:huoon/data/models/login/login_model.dart';
+import 'package:huoon/domain/blocs/login_bloc/login_service.dart';
 import 'package:huoon/domain/blocs/login_bloc/login_signal.dart';
 import 'package:huoon/ui/pages/env.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -76,7 +78,22 @@ print("Google Auth: ${googleAuth.idToken}");
           'email': googleUser.email,
           'pictureUrl': googleUser.photoUrl,
         };
-       // Crear un objeto Login con los datos que has obtenido
+   // Muestra un SnackBar que no se cierra automáticamente
+ScaffoldMessenger.of(context).showSnackBar(
+  SnackBar(
+    content: const Text('Iniciando sessión, espere un momento...'),
+    duration: const Duration(days: 1), // Duración muy larga para que no se cierre automáticamente   
+        // Cierra el SnackBar manualmente
+       // ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      
+  ),
+);
+        //llamando a la api para obtener un token
+    bool resultLogin =   await loginGoogle(googleUser.id,googleUser.displayName ,googleUser.email,googleUser.photoUrl);
+
+      if(resultLogin == true)   // El usuario ha iniciado sesión correctamente
+      {
+               // Crear un objeto Login con los datos que has obtenido
 final loginData = Login(
   id: googleUser.hashCode, // Reemplaza con el valor real
   userName: googleUser.displayName!, // Reemplaza con el valor real
@@ -86,12 +103,22 @@ final loginData = Login(
 
 // Asignar el objeto Login a currentUserLG
 currentUserLG.value = loginData;
-
+ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
         GoRouter.of(context).go(
           '/HomePrincipal'
         );
-        _googleSignIn.signOut();
+
+      }
+      else//no conecto con la base de datos o dio un error
+      {
+      signOutFromGoogle();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No fue posible, Intentelo nuevamente')),
+      );
+      }
+
+       // _googleSignIn.signOut();
       } else {
         print('resp1- loginWithGoogle():idToken:ERROR:idToken es null');
       }
@@ -104,7 +131,13 @@ currentUserLG.value = loginData;
 
 Future<bool> signOutFromGoogle() async {
   try {
-    await _googleSignIn.signOut();
+    if (_googleSignIn.currentUser != null) {
+  await _googleSignIn.signOut();
+  print("Sesión cerrada correctamente.");
+} else {
+  print("No hay ninguna sesión activa.");
+}
+
     return true;
   } on Exception catch (_) {
     return false;

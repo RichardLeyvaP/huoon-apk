@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TranslationManager {
@@ -150,6 +151,18 @@ class _LanguageSelectorState extends State<LanguageSelector> {
     );
   }
 }*/
+
+String getcurrenttime([bool second = true]) {
+  final now = DateTime.now();
+  var formattedTime = DateFormat('hh:mm a').format(now);
+  if(second)
+  {
+    formattedTime = DateFormat('hh:mm:ss a').format(now);
+  }   
+  
+  return formattedTime;
+}
+
 
 class Language {
   final String name;

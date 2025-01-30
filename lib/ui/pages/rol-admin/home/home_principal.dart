@@ -388,11 +388,22 @@ Widget appBarWidget(context, IconData icon1, IconData icon2, String avatar, Stri
                     tooltip: 'Cambiar Idioma',
                   ),
                   IconButton(
-                      onPressed: () {
-                        logoutAndClearSignals();
+                      onPressed: () async {
+                         ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Esta cerrando la apk, espere un momento por favor...')),
+      );
+                     bool result =  await  logoutApk();
+                      if(result == true)
+                      {
+                        
+                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                        //  logoutAndClearSignals();
                         GoRouter.of(context).go(
                           '/LoginFormPage',
                         );
+
+                      }
+                      
                       },
                       icon: Icon(MdiIcons.logout)),
                 ],

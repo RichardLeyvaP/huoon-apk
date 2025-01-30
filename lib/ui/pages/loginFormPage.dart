@@ -272,9 +272,18 @@ class _LoginFormPageState extends State<LoginFormPage> {
                   
                  // loginFuntionDeprived();
                 },
-                child:  Text(
-                  '¿No tienes cuenta? Regístrate',
-                  style: TextStyle(color: StyleGlobalApk.colorPrimary),
+                child:  Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      '¿No tienes cuenta?',
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                     Text(
+                      ' Regístrate',
+                      style: TextStyle(color: Colors.blue),
+                    ),
+                  ],
                 ),
               ),
             ],

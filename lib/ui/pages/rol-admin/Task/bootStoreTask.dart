@@ -29,6 +29,7 @@ import 'package:huoon/ui/Components/state_widget.dart';
 import 'package:huoon/ui/Components/type_frequency_widget.dart';
 import 'package:huoon/ui/pages/rol-admin/Task/selectDays/utils.dart';
 import 'package:huoon/ui/pages/rol-admin/product/startProductPage.dart';
+import 'package:huoon/ui/util/util_class.dart';
 import 'package:huoon/ui/util/utils_class_apk.dart';
 import 'package:intl/intl.dart';
 import 'package:signals/signals_flutter.dart';
@@ -139,6 +140,7 @@ TimeOfDay? _endTime;
       'key': 'family_user',
       'text': nombres,
       'sender': 'user',
+      'hr' : getcurrenttime()
 
     };
   } else {
@@ -452,7 +454,7 @@ int  cant_boot_promt_extra = 0;
   Widget build(BuildContext context) {    
     
     return Scaffold(
-      backgroundColor: const Color.fromARGB(100, 194, 191, 191),
+      backgroundColor:  Colors.white,//const Color.fromARGB(100, 194, 191, 191)
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: 
@@ -711,7 +713,7 @@ if(module == 'IncomeExpensesCreation')
       // Nuevo mensaje
       setState(() {
         _isTypingTime = 1;
-        _messages.insert(0, {'text': input, 'sender': 'user'}); // Insertar al inicio
+        _messages.insert(0, {'hr' : getcurrenttime(),'text': input, 'sender': 'user'}); // Insertar al inicio
       });
       //PONER AQUI TODOS LOS KEY QUE NO SON SELCT PARA GUARDAR EL ESTADO
 
@@ -772,7 +774,7 @@ if(module == 'storeTask')
       // Nuevo mensaje
       setState(() {
         _isTypingTime = 1;
-        _messages.insert(0, {'text': input, 'sender': 'user'}); // Insertar al inicio
+        _messages.insert(0, {'hr' : getcurrenttime(),'text': input, 'sender': 'user'}); // Insertar al inicio
       });
       //PONER AQUI TODOS LOS KEY QUE NO SON SELCT PARA GUARDAR EL ESTADO
 
@@ -827,7 +829,7 @@ if(module == 'storeTask')
       // Nuevo mensaje
       setState(() {
         _isTypingTime = 1;
-        _messages.insert(0, {'text': input, 'sender': 'user'}); // Insertar al inicio
+        _messages.insert(0, {'hr' : getcurrenttime(),'text': input, 'sender': 'user'}); // Insertar al inicio
       });
 
         if(currentStepKey == 'title_store')
@@ -897,7 +899,7 @@ if(module == 'storeTask')
       // Nuevo mensaje
       setState(() {
         _isTypingTime = 1;
-        _messages.insert(0, {'text': input, 'sender': 'user'}); // Insertar al inicio
+        _messages.insert(0, {'hr' : getcurrenttime(),'text': input, 'sender': 'user'}); // Insertar al inicio
       });
 
         if(currentStepKey == 'title_product')
@@ -988,7 +990,7 @@ if(module == 'storeTask')
         setState(()  {
         _isTyping = true; });
         _isTypingTime = 1;   
-        _messages.insert(0, {'text': input, 'sender': 'user'}); // Insertar al inicio     
+        _messages.insert(0, {'hr' : getcurrenttime(),'text': input, 'sender': 'user'}); // Insertar al inicio     
  responseIA = await  requestChatIa(buildPrompt(_conversationSteps),buildPrompt(_conversationSteps));
       }
       else if((currentStepKey == 'boot_promt_extra') && _isTyping == false)
@@ -996,14 +998,14 @@ if(module == 'storeTask')
         setState(()  {
         _isTyping = true; });
         _isTypingTime = 1;
-        _messages.insert(0, {'text': input, 'sender': 'user'}); // Insertar al inicio
+        _messages.insert(0, {'hr' : getcurrenttime(),'text': input, 'sender': 'user'}); // Insertar al inicio
  responseIA = await  requestChatIa(buildPromptInput(input),buildPrompt(_conversationSteps));
       }
       else
       {
         setState(()  {
         _isTypingTime = 1;
-        _messages.insert(0, {'text': input, 'sender': 'user'}); // Insertar al inicio
+        _messages.insert(0, {'hr' : getcurrenttime(),'text': input, 'sender': 'user'}); // Insertar al inicio
        
       });
 
@@ -1073,7 +1075,7 @@ if(module == 'storeTask')
 
       // Nuevo mensaje
       setState(() {
-        _messages.insert(0, {'key': key,'text': input, 'sender': 'user'}); // Insertar al inicio
+        _messages.insert(0, {'hr' : getcurrenttime(),'key': key,'text': input, 'sender': 'user'}); // Insertar al inicio
       });
 
       // Guardar datos
@@ -1116,10 +1118,11 @@ if(module == 'storeTask')
           'key': key!,
           'text': message!,
           'sender': 'bot',
-          'buttons': true
+          'buttons': true,
+          'hr' : getcurrenttime()
         });
       } else {
-        _messages.insert(0, {'key': key!,'text': message!, 'sender': 'bot'});
+        _messages.insert(0, {'hr' : getcurrenttime(),'key': key!,'text': message!, 'sender': 'bot'});
       }
     });
   }
@@ -1143,7 +1146,8 @@ if(module == 'storeTask')
           'key': inKey,
           'text': inMsj,
           'sender': 'bot',
-          'buttons': true
+          'buttons': true,
+          'hr' : getcurrenttime()
         });
      
     });
@@ -1199,6 +1203,7 @@ _isTypingTime = 1;
       'key': 'calendar_user',
       'text': 'Fecha seleccionada ${_formatDateTimeProduct(_startDate!)} - ${_formatDateTimeProduct(_endDate!)}',
       'sender': 'user',
+      'hr' : getcurrenttime()
 
     };
   } 
@@ -1208,6 +1213,7 @@ _isTypingTime = 1;
       'key': 'calendar_product_user',
       'text': 'Fecha seleccionada ${_formatDateTimeProduct(_startDate!)} - ${_formatDateTimeProduct(_endDate!)}',//calendar_product_user
       'sender': 'user',
+      'hr' : getcurrenttime()
 
     };
 
@@ -1236,6 +1242,7 @@ _isTypingTime = 1;
       'key': 'calendar_user',
       'text': 'Fecha seleccionada ${_formatDateTimeProduct(_startDate!)}',//calendar_product_user
       'sender': 'user',
+      'hr' : getcurrenttime()
 
     };
   }
@@ -1245,6 +1252,7 @@ _isTypingTime = 1;
       'key': 'calendar_product_user',
       'text': 'Fecha seleccionada ${_formatDateTimeProduct(_startDate!)}',//calendar_product_user
       'sender': 'user',
+      'hr' : getcurrenttime()
 
     };
 
@@ -1273,6 +1281,7 @@ _isTypingTime = 1;
       'key': 'typeTask_user',
       'text': msj,
       'sender': 'user',
+      'hr' : getcurrenttime()
 
     };
   } else {
@@ -1337,7 +1346,6 @@ _isTypingTime = 1;
     });
   }
 
-  
   void _handleConfirmation(bool isSave) async {
     if(!isSave)
     {
@@ -1522,8 +1530,7 @@ type = 'Hogar';
    
   }
    
-
-  void _handleConfirmationIA(String answerIA) async {   
+ void _handleConfirmationIA(String answerIA) async {   
       
          // ============================================ CHAT-IA SECTION  ============================================
  
@@ -1548,6 +1555,7 @@ _simulateResponseF('Muy bien! ${currentUserLG.value!.userName} ya guardamos la i
 // ============================================ CHAT-IA SECTION FIN ============================================
          //YA EL FINAL PARA MANDAR LOS DATOS A LA API
   }
+ 
   void _close() async {   
       
          // ============================================ CHAT-IA SECTION  ============================================
@@ -1566,8 +1574,7 @@ _simulateResponseF('Muy bien! ${currentUserLG.value!.userName} ya guardamos la i
          //YA EL FINAL PARA MANDAR LOS DATOS A LA API
   }
    
-  
-  //ESTE ES UN METODO QUE PERTENECE AL MODULO COMO TAL DEL BOOT, DEVUELVE EL MENSAJE DEL BOOT 
+ //ESTE ES UN METODO QUE PERTENECE AL MODULO COMO TAL DEL BOOT, DEVUELVE EL MENSAJE DEL BOOT 
  Future<Widget> showWidget(Map<String, dynamic> message, String? keyMessage, bool isUser) async {
   print('este es el Key de la tarea-$keyMessage');
  Widget showWidgetOption;
@@ -1597,6 +1604,7 @@ _simulateResponseF('Muy bien! ${currentUserLG.value!.userName} ya guardamos la i
         children: [
           Text(message['text'] ?? ''),
           _buildIncomeExpensesSection(),
+          
 
         ],
       );
@@ -1625,7 +1633,7 @@ _simulateResponseF('Muy bien! ${currentUserLG.value!.userName} ya guardamos la i
          }
          
     else {
-      showWidgetOption = Text(message['text'] ?? '');
+      showWidgetOption = Text(message['text'] ?? '',style: TextStyle(color: isUser ? Colors.white : Colors.black));
     }
 
     } //AQUI PONER LOS COMPONENTES DE SELECT QUE HAY QUE CARGAR
@@ -1716,7 +1724,7 @@ _simulateResponseF('Muy bien! ${currentUserLG.value!.userName} ya guardamos la i
          }//_buildTaskTypeSection
          
     else {
-      showWidgetOption = Text(message['text'] ?? '');
+      showWidgetOption = Text(message['text'] ?? '',style: TextStyle(color: isUser ? Colors.white : Colors.black));
     }
 
     }
@@ -1737,7 +1745,7 @@ else if(widget.module == 'storeStore')
       );//priority
          }
          else {
-      showWidgetOption = Text(message['text'] ?? '');
+      showWidgetOption = Text(message['text'] ?? '',style: TextStyle(color: isUser ? Colors.white : Colors.black));
     }
   
 }
@@ -1789,7 +1797,7 @@ else if(widget.module == 'storeProduct')
       );//priority
          }
          else {
-      showWidgetOption = Text(message['text'] ?? '');
+      showWidgetOption = Text(message['text'] ?? '',style: TextStyle(color: isUser ? Colors.white : Colors.black));
     }
   
 }
@@ -1800,7 +1808,7 @@ else if(widget.module == 'storeProduct')
      
     else//este es el por defecto
     {
-      showWidgetOption = Text(message['text'] ?? '');
+      showWidgetOption = Text(message['text'] ?? '',style: TextStyle(color: isUser ? Colors.white : Colors.black));
     }
    
    
@@ -1822,8 +1830,8 @@ else if(widget.module == 'storeProduct')
       cant_boot_promt_extra++;
  
       
-    showWidgetOption = Text(message['text'] ?? '');    
-  }
+    showWidgetOption = Text(message['text'] ?? '',style: TextStyle(color: isUser ? Colors.white : Colors.black));    
+  }//Text(message['text'] ?? '',style: TextStyle(color: isUser ? Colors.white : Colors.black)); 
   else
   {
     
@@ -1891,20 +1899,60 @@ else if(widget.module == 'storeProduct')
 
  }
  return 
-                        Container(
-                        margin: EdgeInsets.symmetric(vertical: 5),
-                        padding: EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: isUser ? const Color.fromARGB(255, 188, 236, 177) : Colors.white,
-                          borderRadius: isUser ?BorderRadius.only(topLeft: Radius.circular(12),topRight: Radius.circular(12),bottomLeft: Radius.circular(12)):
-                          BorderRadius.only(topLeft: Radius.circular(12),topRight: Radius.circular(12),bottomRight: Radius.circular(12))
-                        ),
-                        child:  showWidgetOption   );                   
+                        Column(
+                          children: [
+                            
+                            Container(
+                            margin: EdgeInsets.symmetric(vertical: 5),
+                            padding: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: isUser ? StyleGlobalApk.colorPrimary : const Color.fromARGB(60, 194, 191, 191),
+                              borderRadius: isUser ?BorderRadius.only(topLeft: Radius.circular(12),topRight: Radius.circular(12),bottomLeft: Radius.circular(12)):
+                              BorderRadius.only(topLeft: Radius.circular(12),topRight: Radius.circular(12),bottomRight: Radius.circular(12))
+                            ),
+                            child:  Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                showWidgetOption,
+                                 Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(''),
+                                          Text(message['hr']??'',style: TextStyle(color: isUser ? const Color.fromARGB(118, 255, 255, 255) : const Color.fromARGB(118, 0, 0, 0),fontSize: 10),),
+                                                                     
+                                        ],
+                                      )
+                              ],
+                            )   ),
+                           
+                           isUser ?  const Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                               children: [
+                                Text(''),
+                                 CircleAvatar(
+                                   radius: 15, // Tamaño del avatar
+                                   backgroundImage: AssetImage('assets/people/default.jpg'),
+                                 ),
+                               ],
+                             ):
+                             Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                               children: [
+                                
+                                 CircleAvatar(
+                                   radius: 15, // Tamaño del avatar
+                                   backgroundImage: AssetImage('assets/images/icon-Huoon.jpg'),
+                                 ),
+                                 Text(''),
+                               ],
+                             ),
+                          ],
+                        );                   
 
                           
 
  }
-
 
 // ============================================ TASK SECTION FIN ============================================
   Widget _buildCategorySection() {
@@ -1938,6 +1986,7 @@ _isTypingTime = 1;
       'key': 'category_user',
       'text': selectedCategories.first.title,
       'sender': 'user',
+      'hr' : getcurrenttime()
 
     };
   } else {
@@ -2001,6 +2050,7 @@ _isTypingTime = 1;
       'key': 'income_expenses_user',
       'text': selectedStatuses.first.title,
       'sender': 'user',
+      'hr' : getcurrenttime()
 
     };
   } else {
@@ -2015,8 +2065,6 @@ incomeExpensesSelectIE.value = selectedStatuses.first.id;
       },
     );
   }
-
- 
 
   Widget _buildIncomeExpenseTypeSection() {
     return Builder(
@@ -2062,6 +2110,7 @@ setState(()  {
       'key': 'personalHome_user',
       'text': selectedStatuses.first.title,
       'sender': 'user',
+      'hr' : getcurrenttime()
 
     };
   } else {
@@ -2078,7 +2127,6 @@ personalHomeSelectIE.value = selectedStatuses.first.id;
       },
     );
   }
-
 
   Widget _buildStatusSection() {
     return Builder(
@@ -2112,6 +2160,7 @@ setState(()  {
       'key': 'status_user',
       'text': selectedStatuses.first.title,
       'sender': 'user',
+      'hr' : getcurrenttime()
 
     };
   } else {
@@ -2133,8 +2182,7 @@ setState(()  {
     );
   }
 
-
-  Widget _buildPrioritySection() {
+ Widget _buildPrioritySection() {
     return Builder(
       builder: (context) {
         if (prioritiesCSP.watch(context) != null) {
@@ -2163,6 +2211,7 @@ _isTypingTime = 1;
       'key': 'priority_user',
       'text': selectedPrioritiesList.first.title,
       'sender': 'user',
+      'hr' : getcurrenttime()
 
     };
   } else {
@@ -2246,6 +2295,7 @@ _isTypingTime = 1;
       'key': 'calendar_user',
       'text': 'Nueva Fecha seleccionada ${_formatDateTimeProduct(_startDate!)} - ${_formatDateTimeProduct(_endDate!)}',
       'sender': 'user',
+      'hr' : getcurrenttime()
 
     };
   } else {
@@ -2280,6 +2330,7 @@ _isTypingTime = 1;
       'key': 'calendar_user',
       'text': 'Nueva Fecha seleccionada ${_formatDateTimeProduct(_startDate!)}',
       'sender': 'user',
+      'hr' : getcurrenttime()
 
     };
   } else {
@@ -2315,6 +2366,7 @@ _isTypingTime = 1;
       'key': 'date_income_expense_user',
       'text': 'Nueva Fecha seleccionada ${_formatDateTimeProduct(_startDate!)}',
       'sender': 'user',
+      'hr' : getcurrenttime()
 
     };
   } else {
@@ -2473,6 +2525,7 @@ _isTypingTime = 1;
       'key': 'frequencie_user',
       'text': selectedFrequencies.first.title,
       'sender': 'user',
+      'hr' : getcurrenttime()
 
     };
   } else {
@@ -2532,6 +2585,7 @@ if (taskTypeSelectCSP.value == 'Evento')
           'key': 'help_bot',
           'text': 'Muy bien! te ayudaremos a crear un Evento',
           'sender': 'bot',
+          'hr' : getcurrenttime()
         });
      
     });
@@ -2550,6 +2604,7 @@ _isTypingTime = 1;
       'key': 'calendar_user',
       'text': 'Fecha seleccionada ${_formatDateTimeProduct(_startDate!)} - ${_formatDateTimeProduct(_endDate!)}',
       'sender': 'user',
+      'hr' : getcurrenttime()
 
     };
   } 
@@ -2559,6 +2614,7 @@ _isTypingTime = 1;
       'key': 'calendar_product_user',
       'text': 'Fecha seleccionada ${_formatDateTimeProduct(_startDate!)} - ${_formatDateTimeProduct(_endDate!)}',//calendar_product_user
       'sender': 'user',
+      'hr' : getcurrenttime()
 
     };
 
@@ -2583,6 +2639,7 @@ else
           'key': 'help_bot',
           'text': 'Muy bien! te ayudaremos a crear una Tarea',
           'sender': 'bot',
+          'hr' : getcurrenttime()
         });
      
     });
@@ -2598,6 +2655,7 @@ _isTypingTime = 1;
       'key': 'calendar_user',
       'text': 'Fecha seleccionada ${_formatDateTimeProduct(_startDate!)}',//calendar_product_user
       'sender': 'user',
+      'hr' : getcurrenttime()
 
     };
   }
@@ -2607,6 +2665,7 @@ _isTypingTime = 1;
       'key': 'calendar_product_user',
       'text': 'Fecha seleccionada ${_formatDateTimeProduct(_startDate!)}',//calendar_product_user
       'sender': 'user',
+      'hr' : getcurrenttime()
 
     };
 
@@ -2635,6 +2694,7 @@ _isTypingTime = 1;
       'key': 'typeTask_user',
       'text': msj,
       'sender': 'user',
+      'hr' : getcurrenttime()
 
     };
   } else {
@@ -2709,6 +2769,7 @@ _isTypingTime = 1;
       'key': 'status_store_user',
       'text': selectedStatuses.first.title,
       'sender': 'user',
+      'hr' : getcurrenttime()
 
     };
   } else {
@@ -2772,6 +2833,7 @@ _isTypingTime = 1;
       'key': 'status_product_user',
       'text': selectedStatuses.first.title,
       'sender': 'user',
+      'hr' : getcurrenttime()
 
     };
   } else {
@@ -2823,6 +2885,7 @@ if (existingIndex != -1) {
     'key': 'quantity_product_user',
     'text': newQuantity.toString(),
     'sender': 'user',
+      'hr' : getcurrenttime()
 
   };
 } else {
@@ -2863,6 +2926,7 @@ _isTypingTime = 1;
       'key': 'category_product_user',
       'text': selectedCategories.first.title,
       'sender': 'user',
+      'hr' : getcurrenttime()
 
     };
   } else {
@@ -2913,6 +2977,7 @@ _isTypingTime = 1;
       'key': 'calendar_product_user',
       'text': 'Nueva Fecha seleccionada',
       'sender': 'user',
+      'hr' : getcurrenttime()
 
     };
   } else {

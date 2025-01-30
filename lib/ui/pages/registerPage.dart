@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:huoon/data/services/authGoogle_service.dart';
+import 'package:huoon/domain/blocs/login_bloc/login_service.dart';
+import 'package:huoon/domain/blocs/login_bloc/login_signal.dart';
 import 'package:huoon/ui/util/util_class.dart';
 import 'package:huoon/ui/util/utils_class_apk.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -26,7 +28,7 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
     });
   }
 
-  void _register() {
+  Future<void> _register() async {
     if (_nameController.text.isEmpty ||
         _emailController.text.isEmpty ||
         _usernameController.text.isEmpty ||
@@ -35,15 +37,26 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
         const SnackBar(content: Text('Por favor, complete todos los campos.')),
       );
     } else {
+     // register(String name,String email, String password,String language,String usser)
+     await register(_nameController.text,_emailController.text, _passwordController.text,'es',_usernameController.text);
       // Lógica para crear la cuenta
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Cuenta creada exitosamente.')),
       );
-
-      // Navegar a la página principal u otra acción
+     if(isLoggedInLG.value == true)
+     {
+        // Navegar a la página principal u otra acción
       Future.delayed(const Duration(milliseconds: 500), () {
         GoRouter.of(context).go('/HomePrincipal');
       });
+
+     }
+     else{
+       ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Por favor,Revise los datos.')),
+      );
+     }
+    
     }
   }
 
@@ -97,6 +110,7 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
                     onPressed: () {
                       // Acción de inicio de sesión con Google
                        loginWithGoogle(context);
+                       
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
@@ -228,7 +242,7 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
                 Text(
                   'Ó Al crear una cuenta, acepta los términos de uso y nuestra política de privacidad.',
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                  style: TextStyle(color: Colors.grey, fontSize: 14),
                 ),
                 const SizedBox(height: 30),
 
@@ -258,7 +272,7 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
                       Text(
                       'Ya tienes una cuenta?',
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                      style: TextStyle(color: Colors.grey, fontSize: 14),
                                       ),
                                       InkWell(
                                         onTap: () {
