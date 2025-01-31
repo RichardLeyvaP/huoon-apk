@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
+import 'package:huoon/ui/components/settingsPage.dart';
 import 'package:huoon/ui/pages/loginFormPage.dart';
 import 'package:huoon/ui/pages/registerPage.dart';
 import 'package:huoon/ui/pages/rol-admin/Task/TaskCreationPage.dart';
@@ -155,6 +156,10 @@ class MyApp extends StatelessWidget {
       GoRoute(
         path: '/RegisterFormPage',
         builder: (context, state) => RegisterFormPage(),
+      ),
+       GoRoute(
+        path: '/SettingsPage',
+        builder: (context, state) => SettingsPage(),
       ),
       //rutas de prueba
       //

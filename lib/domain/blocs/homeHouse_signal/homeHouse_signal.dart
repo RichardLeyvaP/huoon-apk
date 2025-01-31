@@ -10,6 +10,7 @@ final Signal<bool> isLoadingHH = Signal<bool>(false); // Estado de carga
 final Signal<bool> isHomeErrorHH = Signal<bool>(false); // Estado de error
 final Signal<List<HomeHouse>?> homeHH = Signal<List<HomeHouse>?>(null);
 final Signal<int?> homeSelectHH = Signal<int?>(null);
+final Signal<String?> homeNameSelectHH = Signal<String?>(null);
 
 final Signal<List<Hometype>?> taskTypeListHH = Signal<List<Hometype>?>(null);
 final Signal<List<Homeperson>?> taskpersonListHH = Signal<List<Homeperson>?>(null);

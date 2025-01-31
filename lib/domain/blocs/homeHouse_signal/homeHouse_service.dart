@@ -123,8 +123,9 @@ Future<void> fetchHomeHouseUsser() async {
         if (homeHouseUsserList[0].id != null) {
           setHomeSelectHH(homeHouseUsserList[0].id!);
         }
+        homeNameSelectHH.value = homeHouseUsserHH.value!.firstWhere((element) => element.id == homeSelectHH.value).name;
       }
-    
+    homeNameSelectHH.value = homeHouseUsserHH.value!.firstWhere((element) => element.id == homeSelectHH.value).name;
   
   } catch (error) {
     print('error al cargar los hogares:$error');
@@ -136,6 +137,7 @@ Future<void> fetchHomeHouseUsser() async {
 
 setHomeSelectHH (int? homeId){
   homeSelectHH.value = homeId;
+  homeNameSelectHH.value = homeHouseUsserHH.value!.firstWhere((element) => element.id == homeId).name;
 }
 
 getHomeSelectHH (){

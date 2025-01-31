@@ -136,7 +136,7 @@ Future<void>? _futureConfiguration;
                   child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
                     // Text(usernameCubit.state),
                     appBarWidget(
-                        context, MdiIcons.bellOutline, MdiIcons.messageOutline, 'currentUserLG.value!.avatarUrl', currentUserLG.value!.userName, 'huoon'),//aqui dio error al salir currentUserLG.value!.userName revisarla
+                        context, MdiIcons.bellOutline, MdiIcons.messageOutline , 'currentUserLG.value!.avatarUrl', currentUserLG.value!.userName, 'huoon'),//aqui dio error al salir currentUserLG.value!.userName revisarla
                     Padding(
                       padding: const EdgeInsets.only(top: 6),
                       child: searchWidget(setState),
@@ -406,23 +406,11 @@ Widget appBarWidget(context, IconData icon1, IconData icon2, String avatar, Stri
                   IconButton(
                     onPressed: () {
                       // Mostrar el LanguageSelector en un diálogo
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          // title: Text('Seleccionar Idioma'),
-                          content: LanguageSelectorNew(
-                            onLocaleChange: (Locale locale) {
-                              print('selección del idioma es:${locale.languageCode}');
-                              final config = Configuration(language: locale.languageCode);
-                              updateConfiguration(config);
-                              Navigator.of(context).pop(); // Cierra el diálogo
-                            },
-                          ),
-                        ),
-                      );
+                      GoRouter.of(context).push('/SettingsPage');
+                    
                     },
-                    icon: Icon(MdiIcons.earth),
-                    tooltip: 'Cambiar Idioma',
+                    icon: Icon(MdiIcons.cog,),
+                    tooltip: 'Configuracion',
                   ),
                   IconButton(
                       onPressed: () async {
