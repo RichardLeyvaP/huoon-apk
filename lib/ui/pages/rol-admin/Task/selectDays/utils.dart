@@ -159,6 +159,20 @@ class _QuantitySelectorState extends State<QuantitySelector> {
   }
 }
 
+
+// Método auxiliar para asignar íconos según el nombre de la categoría
+IconData getCategoryIcon(String categoryName) {
+  switch (categoryName.toLowerCase()) {
+    case 'food':
+      return Icons.fastfood;
+    case 'cleaning':
+      return Icons.cleaning_services;
+    case 'electronics':
+      return Icons.electrical_services;
+    default:
+      return Icons.category;
+  }
+}
 //******************* */
 //selccionador de cantidades
 

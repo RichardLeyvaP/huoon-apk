@@ -3,12 +3,16 @@ import 'dart:async';
 // import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:huoon/data/models/homeHouseCategory/homeHouseCategory_model.dart';
 import 'package:huoon/data/models/products/product_model.dart';
 import 'package:huoon/data/models/store/store_model.dart';
 import 'package:huoon/data/models/tasks/tasks_model.dart';
-import 'package:huoon/domain/blocs/IncomeExpenses_bloc/login_service.dart';
-import 'package:huoon/domain/blocs/IncomeExpenses_bloc/login_signal.dart';
+import 'package:huoon/data/services/auth/auth_check.dart';
+import 'package:huoon/domain/blocs/IncomeExpenses_bloc/incomeExpenses_service.dart';
+import 'package:huoon/domain/blocs/IncomeExpenses_bloc/incomeExpenses_signal.dart';
 import 'package:huoon/domain/blocs/chat_ia_bloc/chat_ia_service.dart';
+import 'package:huoon/domain/blocs/homeHouse_signal/homeHouse_service.dart';
+import 'package:huoon/domain/blocs/homeHouse_signal/homeHouse_signal.dart';
 import 'package:huoon/domain/blocs/login_bloc/login_signal.dart';
 import 'package:huoon/domain/blocs/product_cat_state/bloc/product_cat_state_service.dart';
 import 'package:huoon/domain/blocs/product_cat_state/bloc/product_cat_state_signal.dart';
@@ -27,6 +31,7 @@ import 'package:huoon/ui/Components/frequency_widget.dart';
 import 'package:huoon/ui/Components/priority_widget.dart';
 import 'package:huoon/ui/Components/state_widget.dart';
 import 'package:huoon/ui/Components/type_frequency_widget.dart';
+import 'package:huoon/ui/components/componentGlobal_widget.dart';
 import 'package:huoon/ui/pages/rol-admin/Task/selectDays/utils.dart';
 import 'package:huoon/ui/pages/rol-admin/product/startProductPage.dart';
 import 'package:huoon/ui/util/util_class.dart';
@@ -382,6 +387,12 @@ void _addConversationStep(Map<String, dynamic> newStep) {
      }
      //
      //
+     if(module == 'storeHomeHouse')
+     {
+      _messages.add({'key': 'init','text': 'Hola! ${currentUserLG.value!.userName}. Te ayudaremos a crear un Hogar', 'sender': 'bot'});
+     }
+     //
+     //
     });
     await Future.delayed(Duration(milliseconds: 800));
     _simulateResponse();
@@ -548,10 +559,18 @@ int  cant_boot_promt_extra = 0;
                   //
                   //
                    // ============================================ PRODUCT SECTION FIN ============================================
+                   
                    else if(widget.module == 'storeProduct')//almacen
                   {
                     isUserUpdateMens = message['key'] == 'quantity_product_user' || 
                   message['key'] == 'status_product_user' || message['key'] == 'category_product_user';
+                  } 
+                  // ============================================ PRODUCT SECTION FIN ============================================
+
+                   else if(widget.module == 'storeHomeHouse')//storeHomeHouse
+                  {
+                    isUserUpdateMens = message['key'] == 'home_type_id_homeHouse' || 
+                  message['key'] == 'status_id_homeHouse' || message['key'] == 'people_homeHouse';
                   } 
                   // ============================================ PRODUCT SECTION FIN ============================================
 
@@ -691,8 +710,73 @@ SizedBox(
 
     // Guardar datos
       final currentStepKey = _conversationSteps[_currentStep]['key'];
-      print('imprimir aqui que es lo que va a guardar---$currentStepKey');
+      print('imprimir aqui que es lo que va a guardar---$currentStepKey');//
 
+
+
+
+//PONER AQUI TODOS LOS KEY DE SELECT
+  // ============================================ TASK storeHomeHouse ============================================
+if(module == 'storeHomeHouse')
+{
+  if((currentStepKey != 'people_homeHouse' && currentStepKey != 'status_id_homeHouse' &&
+                    currentStepKey != 'home_type_id_homeHouse'  ) || _editingMessageKey == null )//si no es ninguno de estos que selecciona si puede modificar e insertar
+      {
+         if (_editingMessageIndex != null) {
+      // Editar mensaje existente
+      setState(() {
+         _editingMessageKey = 'vacio';
+        _isTypingTime = 1;        
+        _messages[_editingMessageIndex!] = {'text': input, 'sender': 'user'};
+        _editingMessageIndex = null;
+        _showInputField = !_isFinalStepReached; // Ocultar solo si se alcanzó el paso final
+      });
+    } else {
+      // Nuevo mensaje
+      setState(() {
+        _isTypingTime = 1;
+        _messages.insert(0, {'hr' : getcurrenttime(),'text': input, 'sender': 'user'}); // Insertar al inicio
+      });
+      //PONER AQUI TODOS LOS KEY QUE NO SON SELCT PARA GUARDAR EL ESTADO
+
+        if(currentStepKey == 'name_homeHouse')
+    {
+     homeNameHH.value = input;
+    }
+
+    else if(currentStepKey == 'address_homeHouse')
+    {
+      homeAddressHH.value = input;
+    }
+    else if(currentStepKey == 'residents_homeHouse')
+    {
+      residentsHH.value = input;
+    }
+    else if(currentStepKey == 'geo_location_homeHouse')
+    {
+      geoLocationHH.value = input;
+    }
+   
+      if (currentStepKey != 'done') {
+        _taskData[currentStepKey!] = input;
+      }
+
+      _textController.clear();
+      _currentStep++;
+
+      if (_currentStep < _conversationSteps.length) {
+        _simulateResponse();
+      } else {
+        print('Datos de los ingresos y gastos: $_taskData');
+        _isFinalStepReached = true;
+        _showInputField = false; // Ocultar el campo de texto al finalizar
+      }
+    }
+    
+
+      }
+
+}
 //PONER AQUI TODOS LOS KEY DE SELECT
   // ============================================ TASK SECTION ============================================
 if(module == 'IncomeExpensesCreation')
@@ -1381,6 +1465,34 @@ _isTypingTime = 1;
         }       
          // ============================================ TASK SECTION FIN ============================================
          //
+          //
+         // ============================================ STORE SECTION  ============================================
+        else if(widget.module == 'storeHomeHouse')
+        {
+          
+    //ENVIAR DATOS A LA API    
+    if(1 == 1)
+    {
+      
+    await  submitHomeHouse(); //todo fijo mando valor del hogar
+    GoRouter.of(context).go(
+      '/HomePrincipal'
+    );
+
+    }
+    else
+    {
+       SnackBar(
+        content: Text('Error! Revisa que hay problemas al enviar los datos del almacen'),
+
+        duration: Duration(seconds: 3), // Duración del SnackBar
+       
+      );
+    }
+    
+        } 
+         // ============================================ STORE SECTION FIN ============================================
+         //
          //
          // ============================================ STORE SECTION  ============================================
         else if(widget.module == 'storeStore')
@@ -1637,7 +1749,7 @@ _simulateResponseF('Muy bien! ${currentUserLG.value!.userName} ya guardamos la i
     }
 
     } //AQUI PONER LOS COMPONENTES DE SELECT QUE HAY QUE CARGAR
-    // ============================================ TASK SECTION  ============================================    
+     // ============================================ TASK SECTION  ============================================    
    else if(widget.module == 'storeTask')
     {
        if( keyMessage =='category')
@@ -1729,6 +1841,50 @@ _simulateResponseF('Muy bien! ${currentUserLG.value!.userName} ya guardamos la i
 
     }
      // ============================================ TASK SECTION FIN ============================================
+     //
+     //
+    // ============================================ TASK storeHomeHouse  ============================================    
+   else if(widget.module == 'storeHomeHouse')
+    {
+       if( keyMessage =='home_type_id_homeHouse')
+    {
+      showWidgetOption = Column(
+        children: [
+          Text(message['text'] ?? ''),
+           _buildHometypeWidget (),
+
+        ],
+      );
+
+    }
+    else if( keyMessage =='status_id_homeHouse')
+    {
+      showWidgetOption = Column(
+        children: [
+          Text(message['text'] ?? ''),
+         _buildHomestatusWidget(),
+
+        ],
+      );//priority
+         }
+          else if( keyMessage =='people_homeHouse')
+    {
+      showWidgetOption = Column(
+        children: [
+          Text(message['text'] ?? ''),
+         _buildFamilySection(),
+
+        ],
+      );//_buildFamilySection
+         }
+         
+         
+    else {
+      showWidgetOption = Text(message['text'] ?? '',style: TextStyle(color: isUser ? Colors.white : Colors.black));
+    }
+
+    }
+     // ============================================ storeHomeHouse SECTION FIN ============================================
      //
      //
       // ============================================ STORE SECTION FIN ============================================
@@ -2481,6 +2637,12 @@ updateTaskDateTime(
   }
   
 
+
+
+
+
+
+
   _buildRecurrenceSection() {
     return Builder(
       builder: (context) {
@@ -2543,6 +2705,93 @@ _isTypingTime = 1;
           return Center(child: Text('Error: ${errorMessageCSP.value}'));
         }
         return Container();
+      },
+    );
+  }
+// ============================================ TASK SECTION FIN ============================================
+//
+
+  _buildHometypeWidget () {
+    return Builder(
+      builder: (context) {
+
+          return 
+SelectionWidget<Hometype>(
+  selectMultiple: false,  
+  items: taskTypeListHH.value ?? [],
+  titleWidget: '',
+  itemTitle: (frequency) => frequency.name ?? '', // Pasas la función que obtiene el título
+  itemId: (frequency) => homeTypeIdHH.value.toString(), // Pasas la función que obtiene el ID
+  onSelectionChanged: (selectedItems) {
+    
+  final existingIndex = _messages.indexWhere((message) => message['key'] == 'home_type_id_homeHouse_user');
+                 setState(()  {
+_isTypingTime = 1;
+  if (existingIndex != -1) {
+    // Si existe, modificarlo
+    _messages[existingIndex] = {
+      'key': 'home_type_id_homeHouse_user',
+      'text': selectedItems.first.name,
+      'sender': 'user',
+      'hr' : getcurrenttime()
+
+    };
+  } else {
+     
+                  _handleUserSessions(selectedItems.first.name!,'home_type_id_homeHouse_user');
+  
+  }
+});
+homeTypeIdHH.value = selectedItems.first.id!;
+    // Manejas los items seleccionados
+  },
+);
+
+       
+        
+      },
+    );
+  }
+// ============================================ TASK SECTION FIN ============================================
+//
+  _buildHomestatusWidget () {
+    return Builder(
+      builder: (context) {
+
+          return 
+SelectionWidget<Homestatus>(
+  selectMultiple: false,  
+  items: statusListHH.value ?? [],
+  titleWidget: '',
+  itemTitle: (frequency) => frequency.nameStatus ?? '', // Pasas la función que obtiene el título
+  itemId: (frequency) => statusIdHH.value.toString(), // Pasas la función que obtiene el ID
+  onSelectionChanged: (selectedItems) {
+    
+  final existingIndex = _messages.indexWhere((message) => message['key'] == 'status_id_homeHouse_user');
+                 setState(()  {
+_isTypingTime = 1;
+  if (existingIndex != -1) {
+    // Si existe, modificarlo
+    _messages[existingIndex] = {
+      'key': 'status_id_homeHouse_user',
+      'text': selectedItems.first.nameStatus,
+      'sender': 'user',
+      'hr' : getcurrenttime()
+
+    };
+  } else {
+     
+                  _handleUserSessions(selectedItems.first.nameStatus!,'status_id_homeHouse_user');
+  
+  }
+});
+statusIdHH.value = selectedItems.first.id!;
+    // Manejas los items seleccionados
+  },
+);
+
+       
+        
       },
     );
   }

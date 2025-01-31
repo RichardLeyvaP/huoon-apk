@@ -6,6 +6,7 @@ import 'package:huoon/ui/pages/registerPage.dart';
 import 'package:huoon/ui/pages/rol-admin/Task/TaskCreationPage.dart';
 import 'package:huoon/ui/pages/rol-admin/Task/TaskUpdatePage.dart';
 import 'package:huoon/ui/pages/rol-admin/home/home_principal.dart';
+import 'package:huoon/ui/pages/rol-admin/homeHouse/homeHouseCreation.dart';
 import 'package:huoon/ui/pages/rol-admin/incomeExpenses/incomeExpensesPage.dart';
 import 'package:huoon/ui/pages/rol-admin/product/productCreationPage.dart';
 import 'package:huoon/ui/pages/splash/splash_screen.dart';
@@ -98,6 +99,10 @@ class MyApp extends StatelessWidget {
         },
       ),
 
+      GoRoute(
+        path: '/HomeHouseCreation',
+        builder: (context, state) => HomeHouseCreation(),
+      ),
       GoRoute(
         path: '/ProductCreation',
         builder: (context, state) => ProductCreation(),

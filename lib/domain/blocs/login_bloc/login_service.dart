@@ -117,7 +117,7 @@ void clearLoginSignals() {
 Future<bool> logoutApk()
 async {
   try {
-    final result = await authRepository.logout();
+   // final result = await authRepository.logout();
     if(true == true)
     {     
       signOutFromGoogle();

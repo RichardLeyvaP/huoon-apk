@@ -1,6 +1,6 @@
 import 'package:huoon/data/repository/income_expenses_repository.dart';
 import 'package:huoon/data/services/globalCallApi/apiService.dart';
-import 'package:huoon/domain/blocs/IncomeExpenses_bloc/login_signal.dart';
+import 'package:huoon/domain/blocs/IncomeExpenses_bloc/incomeExpenses_signal.dart';
 
 // Este es el servicio que maneja la lógica de incomeexpenses
 

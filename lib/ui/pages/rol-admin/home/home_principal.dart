@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:huoon/data/models/configuration/configuration_model.dart';
 import 'package:huoon/domain/blocs/configuration_bloc/configuration_service.dart';
 import 'package:huoon/domain/blocs/configuration_bloc/configuration_signal.dart';
+import 'package:huoon/domain/blocs/homeHouse_signal/homeHouse_service.dart';
 import 'package:huoon/domain/blocs/login_bloc/login_service.dart';
 import 'package:huoon/domain/blocs/login_bloc/login_signal.dart';
 import 'package:huoon/domain/blocs/task_cat_state_prior.dart/task_cat_state_prior_service.dart';
@@ -78,7 +79,7 @@ class _HomePrincipalState extends State<HomePrincipal> with SingleTickerProvider
     MdiIcons.storeOutline, //Productos
     MdiIcons.folderStarOutline, //Archivos
   ];
-
+Future<void>? _futureConfiguration;
   @override
   void initState() {
     super.initState();
@@ -87,15 +88,15 @@ class _HomePrincipalState extends State<HomePrincipal> with SingleTickerProvider
     _tabController.addListener(() {
       setState(() {});
     });
-    SchedulerBinding.instance.addPostFrameCallback((_) {
+   
       //  cLogin.toggleTheme();
       // user_activity Actualizando estado
       // initialIndex: 3 = screen_home_task
       // onScreenChange('screen_Home_Task');
       if (configurationCF.value == null) {
-        requestConfiguration();
+         _futureConfiguration = requestConfiguration();
       }
-    });
+  
   }
 
   @override
@@ -111,129 +112,146 @@ class _HomePrincipalState extends State<HomePrincipal> with SingleTickerProvider
     double screenHeight = MediaQuery.of(context).size.height;
     print('alto de mi telefono por si me hiciera falta es :$screenHeight');
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.only(left: 10, right: 10),
-          child: Column(
-            children: [
-              SizedBox(
-                height: 170,
-                child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-                  // Text(usernameCubit.state),
-                  appBarWidget(
-                      context, MdiIcons.bellOutline, MdiIcons.messageOutline, 'currentUserLG.value!.avatarUrl', currentUserLG.value!.userName, 'huoon'),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 6),
-                    child: searchWidget(setState),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 18),
-                    child: cardMenu(_tabController),
-                  ),
-                ]),
-              ),
-              Flexible(
-                child: TabBarView(
-                  controller: _tabController,
-                  children: [
-                    WishesPage(),
-                    FinancePage(),
-                    HealthPage(),
-                    TasksWidget(),
-                    //ProductPage(),
-                    StorePage(),
-                    FilesPage(),
-                  ],
+    return FutureBuilder<void>(
+        future: _futureConfiguration,
+       builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator()); // Muestra un loader mientras carga
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}')); // Muestra un mensaje de error
+          } else {
+            return  Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.only(left: 10, right: 10),
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 170,
+                  child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+                    // Text(usernameCubit.state),
+                    appBarWidget(
+                        context, MdiIcons.bellOutline, MdiIcons.messageOutline, 'currentUserLG.value!.avatarUrl', currentUserLG.value!.userName, 'huoon'),//aqui dio error al salir currentUserLG.value!.userName revisarla
+                    Padding(
+                      padding: const EdgeInsets.only(top: 6),
+                      child: searchWidget(setState),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 18),
+                      child: cardMenu(_tabController),
+                    ),
+                  ]),
                 ),
-              ),
-            ],
+                Flexible(
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      WishesPage(),
+                      FinancePage(),
+                      HealthPage(),
+                      TasksWidget(),
+                      //ProductPage(),
+                      StorePage(),
+                      FilesPage(),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-      ),
-      floatingActionButton: Visibility(
-        visible:
-            _tabController.index != 4, //porque aqui quiero ocultar el del almacen,porque esta en la tabla de almacen
-        child: StatefulBuilder(
-          builder: (context, setState) {
-            return InkWell(
-              onTap: () {
-                print('inde = ${_tabController.index}');
-                if (_tabController.index == 0) {
-                  //llamar a la vista chat                
-
-                   GoRouter.of(context).push('/ChatPage');
-                }
-                
-              else  if (_tabController.index == 1) {
-                  //llamar a la vista chat                
-
-                   GoRouter.of(context).push('/ChatPageFinancePage');
-                }
+        floatingActionButton: Visibility(
+          visible:
+              _tabController.index != 4, //porque aqui quiero ocultar el del almacen,porque esta en la tabla de almacen
+          child: StatefulBuilder(
+            builder: (context, setState) {
+              return InkWell(
+                onTap: () async {
+                  print('inde = ${_tabController.index}');
+                  if (_tabController.index == 0) {
+                    //llamar a la vista chat                
+      
+                     GoRouter.of(context).push('/ChatPage');
+                  }
                   
-              else  if (_tabController.index == 2) {
-                  //llamar a la vista chat                
-
-                   GoRouter.of(context).push('/ChatHealthPage');
-                }
-
-
-              else  if (_tabController.index == 3) {
-                  fetchCategoriesStatusPriority();
-
-                  print('inde =.... ${_tabController.index}');
-                  //context.goNamed('taskCreation', pathParameters: {'id': ''}); // Pasando un valor vacío
-                 // context.goNamed('taskCreation', pathParameters: {'id': '0'});
-                  GoRouter.of(context).push('/taskCreation/0'); // '123' es el valor del parámetro 'id'
-
-                 // GoRouter.of(context).push('/DataAnalysisPage');
-                } else if (_tabController.index == 4) {
-                  //agregar productos
-                  print('inde =.... ${_tabController.index}');
-                  //llamo el evento para buscar la scategorias y los estados
-
-                  GoRouter.of(context).go(
-                    //mando a la vista de crear el producto
-                    // '/ProductCreation',
-                    '/StoreCreation',
-                  );
-                }else if (_tabController.index == 5) {
-                  
-
-                  // GoRouter.of(context).go(
-                  //   //mando a la vista de crear el producto
-                  //   // '/ProductCreation',
-                  //   '/HomePageBusines',
-                  // );
-                }
-                //  dialogComponet(context, _tabTexts[_tabController.index]);
-              },
-              child: 
-              
-              
-              CircleAvatar(
-                backgroundColor: StyleGlobalApk.getColorPrimary(),
+                else  if (_tabController.index == 1) {
+                    //llamar a la vista chat                
+      
+                     GoRouter.of(context).push('/ChatPageFinancePage');
+                  }
+                    
+                else  if (_tabController.index == 2) {
+                    //llamar a la vista chat                
+      
+                     GoRouter.of(context).push('/ChatHealthPage');
+                  }
+      
+      
+                else  if (_tabController.index == 3) {
+                    fetchCategoriesStatusPriority();
+      
+                    print('inde =.... ${_tabController.index}');
+                    //context.goNamed('taskCreation', pathParameters: {'id': ''}); // Pasando un valor vacío
+                   // context.goNamed('taskCreation', pathParameters: {'id': '0'});
+                    GoRouter.of(context).push('/taskCreation/0'); // '123' es el valor del parámetro 'id'
+      
+                   // GoRouter.of(context).push('/DataAnalysisPage');
+                  } else if (_tabController.index == 4) {
+                    //agregar productos
+                    print('inde =.... ${_tabController.index}');
+                    //llamo el evento para buscar la scategorias y los estados
+      
+                    GoRouter.of(context).push(
+                      //mando a la vista de crear el producto
+                      // '/ProductCreation',
+                      '/StoreCreation',
+                    );
+                  }else if (_tabController.index == 5) {
+                    //agregar hogar
+      await fetchCategoriesStatusHomeHouse();
+                    GoRouter.of(context).push('/HomeHouseCreation');
+      
+                    // GoRouter.of(context).push(
+                    //   //mando a la vista de crear el producto
+                    //   // '/ProductCreation',
+                    //   '/HomePageBusines',
+                    // );
+                  }
+                  //  dialogComponet(context, _tabTexts[_tabController.index]);
+                },
                 child: 
-                Image.asset(
-              'assets/images/icon-Huoon.jpg', // Ruta de tu imagen en los assets
-              fit: BoxFit.cover,
-              width: double.infinity,
-              height: double.infinity,
-            ),
-                //****OJO ESTE ERA EL QUE ESTABA*** */
-                // Icon(
-                //   _tabIcons[_tabController.index], // Icono que corresponde al Tab seleccionado
-                // ),
+                
+                
+                CircleAvatar(
+                  backgroundColor: StyleGlobalApk.getColorPrimary(),
+                  child: 
+                  Image.asset(
+                'assets/images/icon-Huoon.jpg', // Ruta de tu imagen en los assets
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity,
               ),
-            );
-          },
+                  //****OJO ESTE ERA EL QUE ESTABA*** */
+                  // Icon(
+                  //   _tabIcons[_tabController.index], // Icono que corresponde al Tab seleccionado
+                  // ),
+                ),
+              );
+            },
+            
+          ),
           
         ),
-        
-      ),
+      )
+   ;
+          }
+       }
+   
     );
   }
+
+
 }
 
 Future<dynamic> dialogComponet(BuildContext context, String name) {
@@ -364,6 +382,18 @@ Widget appBarWidget(context, IconData icon1, IconData icon2, String avatar, Stri
               ),
               Row(
                 children: [
+             configurationCF.value != null   &&   configurationCF.value!.cantHome != 0 && configurationCF.value!.cantHome != null
+                      ? IconButton(onPressed: () {
+                        _showSelectionPanel(context);
+                      }, icon: Badge(
+                    label: Text(configurationCF.value! .cantHome.toString()),
+                    isLabelVisible: true, child: Icon(Icons.house)))
+                      :
+                      IconButton(onPressed: () {
+                        _showSelectionPanel(context);
+                        },
+                         icon: Icon(Icons.house)),
+                  
                   IconButton(onPressed: () {}, icon: Badge(isLabelVisible: true, child: Icon(icon1))),
                   // IconButton(onPressed: () {}, icon: Icon(icon2)),
                   IconButton(
@@ -403,6 +433,14 @@ Widget appBarWidget(context, IconData icon1, IconData icon2, String avatar, Stri
                         );
 
                       }
+                      else
+                      {
+                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                        ScaffoldMessenger.of(context).showSnackBar( SnackBar(
+                          content: Text('Error al cerrar la apk, intente de nuevo'),
+                          backgroundColor: Colors.red,
+                        )); 
+                      }
                       
                       },
                       icon: Icon(MdiIcons.logout)),
@@ -415,6 +453,114 @@ Widget appBarWidget(context, IconData icon1, IconData icon2, String avatar, Stri
     ),
   );
 }
+void _showSelectionPanel(BuildContext context) {
+  int? selectedIndex;
+
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (context) {
+      return StatefulBuilder(
+        builder: (context, setState) {
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Botón para agregar nuevo hogar
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Agregar nuevo hogar",
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(width: 8),
+                    IconButton(
+                     onPressed: () async {
+  final navigator = Navigator.of(context); // Guardamos el contexto antes de cerrar
+  navigator.pop();
+  await fetchCategoriesStatusHomeHouse();
+  GoRouter.of(navigator.context).push('/HomeHouseCreation');
+},
+
+                      icon: Icon(Icons.add_circle, size: 30, color: StyleGlobalApk.colorPrimary),
+                    ),
+                  ],
+                ),
+
+                SizedBox(height: 16),
+
+                // Contenedor con scroll para la lista
+                SizedBox(
+                  height: 300, // Altura máxima para evitar overflow
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: List.generate(configurationCF.value!.cantHome ?? 0, (index) {
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedIndex = index;
+                            });
+                          },
+                          child: Card(
+                            elevation: 3,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              side: BorderSide(
+                                color: selectedIndex == index ? StyleGlobalApk.colorPrimary : Colors.transparent,
+                                width: 2,
+                              ),
+                            ),
+                            child: ListTile(
+                              contentPadding: EdgeInsets.all(12),
+                              leading: CircleAvatar(
+                                radius: 25,
+                                backgroundImage: AssetImage("assets/images/home_$index.jpg"),
+                              ),
+                              title: Text(
+                                "Hogar ${index + 1}",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              subtitle: Text("Dirección: Calle ${index + 1}, Ciudad X"),
+                            ),
+                          ),
+                        );
+                      }),
+                    ),
+                  ),
+                ),
+
+                SizedBox(height: 10),
+
+                // Botón "Aceptar"
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text("Aceptar", style: TextStyle(fontSize: 14)),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    },
+  );
+}
+
 
 Widget searchWidget(setState) {
   return SearchAnchor(

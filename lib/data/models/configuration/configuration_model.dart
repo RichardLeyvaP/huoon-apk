@@ -17,6 +17,7 @@ class ConfigurationsApp with _$ConfigurationsApp {
 class Configuration with _$Configuration {
   const factory Configuration({
     int? id,
+    int? cantHome,
     String? appName,
     String? appVersion,
     String? language,

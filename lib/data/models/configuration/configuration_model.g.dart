@@ -23,6 +23,7 @@ Map<String, dynamic> _$$ConfigurationsAppImplToJson(
 _$ConfigurationImpl _$$ConfigurationImplFromJson(Map<String, dynamic> json) =>
     _$ConfigurationImpl(
       id: (json['id'] as num?)?.toInt(),
+      cantHome: (json['cantHome'] as num?)?.toInt(),
       appName: json['appName'] as String?,
       appVersion: json['appVersion'] as String?,
       language: json['language'] as String?,
@@ -50,6 +51,7 @@ _$ConfigurationImpl _$$ConfigurationImplFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$$ConfigurationImplToJson(_$ConfigurationImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
+      'cantHome': instance.cantHome,
       'appName': instance.appName,
       'appVersion': instance.appVersion,
       'language': instance.language,
