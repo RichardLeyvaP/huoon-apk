@@ -1,4 +1,5 @@
 import 'package:huoon/data/models/homeHouseCategory/homeHouseCategory_model.dart';
+import 'package:huoon/data/models/homeHouseUsser/homeHouseUsser_model.dart';
 import 'package:huoon/data/repository/homeHouse_repository.dart';
 import 'package:huoon/data/services/globalCallApi/apiService.dart';
 import 'package:huoon/domain/blocs/homeHouse_signal/homeHouse_signal.dart';
@@ -75,6 +76,71 @@ Future<void> fetchCategoriesStatusHomeHouse() async {
   }
 }
 
+
+Future<void> fetchHomeHouseUsser() async {
+
+  try {
+    final jsonResponse = await homeHouseRepository.getHomeHouseUsser(); //todo esta fijo el homeId
+
+    // Mapeamos los resultados y los actualizamos en las señales
+    List<Home> homeHouseUsserList = [];
+    if (jsonResponse['homes'] != null) {
+  homeHouseUsserList = (jsonResponse['homes'] as List<dynamic>).map((typeJson) {
+    return Home(
+      id: typeJson['id'],
+      statusId: typeJson['statusId'],
+      homeStatusId: typeJson['homeStatusId'],
+      name: typeJson['name'],
+      address: typeJson['address'],
+      homeTypeId: typeJson['homeTypeId'],
+      homeHomeTypeId: typeJson['homeHomeTypeId'],
+      nameHomeType: typeJson['nameHomeType'],
+      residents: typeJson['residents'],
+      geoLocation: typeJson['geoLocation'],
+      homeGeoLocation: typeJson['homeGeoLocation'],
+      timezone: typeJson['timezone'],
+      nameStatus: typeJson['nameStatus'],
+      image: typeJson['image'],
+      people: typeJson['people'] != null
+          ? (typeJson['people'] as List<dynamic>).map((personJson) {
+              return PersonHomeUsser(
+                id: personJson['id'],
+                name: personJson['name'],
+                image: personJson['image'],
+                roleId: personJson['roleId'],
+                roleName: personJson['roleName'],
+              );
+            }).toList()
+          : [],
+    );
+  }).toList();
+}
+
+
+      homeHouseUsserHH.value = homeHouseUsserList;  
+      if(homeSelectHH.value == null)
+      {
+        if (homeHouseUsserList[0].id != null) {
+          setHomeSelectHH(homeHouseUsserList[0].id!);
+        }
+      }
+    
+  
+  } catch (error) {
+    print('error al cargar los hogares:$error');
+ 
+  } finally {
+
+  }
+}
+
+setHomeSelectHH (int? homeId){
+  homeSelectHH.value = homeId;
+}
+
+getHomeSelectHH (){
+  return homeSelectHH.value;
+}
 // Método para enviar homeHouse a la API
 Future<void> submitHomeHouse() async {
   isLoadingHH.value = true;

@@ -1,5 +1,6 @@
 import 'package:huoon/data/models/products/product_model.dart';
 import 'package:huoon/data/services/globalCallApi/apiService.dart';
+import 'package:huoon/domain/blocs/homeHouse_signal/homeHouse_signal.dart';
 import 'package:huoon/ui/pages/env.dart';
 import 'package:huoon/ui/pages/rol-admin/Task/selectDays/utils.dart';
 
@@ -11,7 +12,7 @@ class ProductsRepository {
   Future<dynamic> getProduct(int homeId, int warehouseId) async {
     final endpoint = '${Env.apiEndpoint}/person-home-warehouse-products';
     final body = {
-      'home_id': homeId, //todo valor fijo
+      'home_id': homeSelectHH.value, 
       'warehouse_id': warehouseId, //todo valor fijo
     };
     print('resultado al devolver los producto-$body');
@@ -57,7 +58,7 @@ class ProductsRepository {
   Future<dynamic> addProduct(ProductElement product) async {
     final endpoint = '${Env.apiEndpoint}/person-home-warehouse-product';
     final body = {
-      'home_id': 1,
+      'home_id': homeSelectHH.value,
       'warehouse_id': product.warehouseId,
       'status_id': product.statusId,
       'category_id': product.categoryId,
@@ -83,7 +84,7 @@ class ProductsRepository {
   Future<dynamic> updateProductRepository(ProductElement product) async {
     final endpoint = '${Env.apiEndpoint}/person-home-warehouse-product-update';
     final body = {
-      'home_id': 1,
+      'home_id': homeSelectHH.value,
       'id': product.id,
       'product_id': product.productId,      
       'warehouse_id': product.warehouseId,

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:huoon/data/models/finances/finances_model.dart';
 import 'package:huoon/data/services/globalCallApi/apiService.dart';
 import 'package:huoon/domain/blocs/IncomeExpenses_bloc/incomeExpenses_signal.dart';
+import 'package:huoon/domain/blocs/homeHouse_signal/homeHouse_signal.dart';
 import 'package:huoon/ui/pages/env.dart';
 
 class IncomeExpensesRepository {
@@ -15,7 +16,7 @@ class IncomeExpensesRepository {
   Future<dynamic> addIncomeExpenses(homeId,spent,income,date,description,type,method,image) async {
     final endpoint = '${Env.apiEndpoint}/finance';
     final body = {
-      'home_id': homeId,
+      'home_id': homeSelectHH.value,
       'spent': spent,
       'income': income,
       'date': date.toString(),
@@ -49,7 +50,7 @@ class IncomeExpensesRepository {
   Future<dynamic> getIncomeExpenses(homeId,type) async {
     final endpoint = '${Env.apiEndpoint}/get-type-finance';
     final body = {
-      'home_id': homeId,
+      'home_id': homeSelectHH.value,
       'type': type,
     };
     // Llama al servicio que maneja la API de autenticación para login

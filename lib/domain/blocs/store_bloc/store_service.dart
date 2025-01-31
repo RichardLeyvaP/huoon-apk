@@ -14,10 +14,9 @@ Future<void> requestStore() async {
   storeErrorST.value = null;
   storeEmpyST.value = null;
   storeDataST.value = null;
-  int homeId = 1;
 
   try {
-    final result = await storeRepository.getStore(homeId);
+    final result = await storeRepository.getStore();
 
     if (result is String) {
       storeEmpyST.value = result;

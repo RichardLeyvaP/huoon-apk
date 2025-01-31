@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:huoon/data/models/tasks/tasks_model.dart';
+import 'package:huoon/domain/blocs/homeHouse_signal/homeHouse_service.dart';
 import 'package:huoon/domain/blocs/task_cat_state_prior.dart/task_cat_state_prior_service.dart';
 import 'package:huoon/domain/blocs/tasks/tasks_service.dart';
 import 'package:huoon/domain/blocs/user_activity_bloc/user_activity_service.dart';
@@ -303,7 +304,17 @@ void _showDeleteConfirmation(BuildContext context) async {
                         // Obtén la fecha seleccionada inicial desde getSelectedDate
                         String initialDateString = getSelectedDate();
                         // carga las tareas
-                       await fetchTasks(initialDateString);
+                      
+                       if(getHomeSelectHH() != null)
+    {
+      await fetchTasks(initialDateString);
+    }
+else{
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    content: Text('No tiene hogar asignado'),
+    duration: const Duration(seconds: 2),
+  ));
+}
                         updateTaskScreen('screen_Home_Tasks', initialDateString); //screen_Home_Tasks
   } else {
     // Lógica para cancelar

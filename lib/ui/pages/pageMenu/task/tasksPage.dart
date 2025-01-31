@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:huoon/data/models/tasks/tasks_model.dart';
 import 'package:huoon/domain/blocs/configuration_bloc/configuration_signal.dart';
+import 'package:huoon/domain/blocs/homeHouse_signal/homeHouse_service.dart';
+import 'package:huoon/domain/blocs/homeHouse_signal/homeHouse_signal.dart';
 import 'package:huoon/domain/blocs/tasks/tasks_service.dart';
 import 'package:huoon/domain/blocs/tasks/tasks_signal.dart';
 import 'package:huoon/domain/blocs/user_activity_bloc/user_activity_service.dart';
@@ -45,7 +47,18 @@ class _TasksWidgetState extends State<TasksWidget> {
   }
   loadTasks(String initialDateString)
   async {
-await fetchTasks(initialDateString);
+    //siempre verifico si tiene hogar sino ni lo mando a la api
+    print('aqui mostrando a homeSelectHH:${homeSelectHH.value}');
+    if(homeSelectHH.value != null)
+    {
+      await fetchTasks(initialDateString);
+    }
+else{
+//   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+//     content: Text('No tiene hogar asignado'),
+//     duration: const Duration(seconds: 2),
+//   ));
+ }
   }
 
   @override
@@ -82,7 +95,16 @@ await fetchTasks(initialDateString);
               String date = DateFormat('yyyy-MM-dd').format(selectedDay);
                updateTaskScreen('screen_Home_Tasks', date); //screen_Home_Tasks
                 //mando a buscar las tareas de esa fecha
-              await  fetchTasks(date);
+               if(getHomeSelectHH() != null)
+    {
+      await fetchTasks(date);
+    }
+else{
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    content: Text('No tiene hogar asignado'),
+    duration: const Duration(seconds: 2),
+  ));
+}
             }
           },
           headerStyle: const HeaderStyle(

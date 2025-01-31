@@ -1,6 +1,7 @@
 import 'package:huoon/data/models/tasks/tasks_model.dart';
 import 'package:huoon/data/repository/tasks_repository.dart';
 import 'package:huoon/data/services/globalCallApi/apiService.dart';
+import 'package:huoon/domain/blocs/homeHouse_signal/homeHouse_signal.dart';
 import 'package:huoon/domain/blocs/task_cat_state_prior.dart/task_cat_state_prior_service.dart';
 import 'package:huoon/domain/blocs/tasks/tasks_signal.dart';
 import 'package:huoon/domain/modelos/category_model.dart';
@@ -76,7 +77,7 @@ void togglePersonRole(int roleId, int personId, int homeId) {
     personRolesTA.value.add({
       "role_id": roleId,
       "person_id": personId,
-      "home_id": 1, // Valor fijo
+      "home_id": homeSelectHH.value, 
     });
   }
 
@@ -90,7 +91,7 @@ void togglePersonRole(int roleId, int personId, int homeId) {
 }
  
 
-void filterPersonRolesByIds(List<int> personIds, List<int> rolIds, int homeId) {
+void filterPersonRolesByIds(List<int> personIds, List<int> rolIds, int? homeId) {
   // Filtrar la lista para mantener solo los elementos cuyo person_id esté en personIds
   personRolesTA.value = personRolesTA.value
       .where((element) => personIds.contains(element['person_id']))
@@ -116,7 +117,7 @@ void filterPersonRolesByIds(List<int> personIds, List<int> rolIds, int homeId) {
 
 
 
-void updateOrAddPersonRole(int roleId, int personId, int homeId) {
+void updateOrAddPersonRole(int roleId, int personId, int? homeId) {
   // Verificar si el mapa ya existe en la lista
   final existingIndex = personRolesTA.value.indexWhere((element) =>
       element['person_id'] == personId && element['home_id'] == homeId);

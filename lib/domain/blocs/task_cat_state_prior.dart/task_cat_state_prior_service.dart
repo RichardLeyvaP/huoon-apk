@@ -12,9 +12,8 @@ Future<void> fetchCategoriesStatusPriority() async {
   isLoadingCSP.value = true; // Indicamos que está cargando
   errorMessageCSP.value = null;
   loadDataCSP.value = false;
-  int homeId = 1;
   try {
-    final jsonResponse = await tasksRepository.getCategoriesStatusPriority(homeId); //todo esta fijo el homeId
+    final jsonResponse = await tasksRepository.getCategoriesStatusPriority(); //todo esta fijo el homeId
 
     // Mapeamos los resultados y los actualizamos en las señales
     List<Category> categoriesList = (jsonResponse['taskcategories'] as List<dynamic>).map((categoryJson) {

@@ -5,6 +5,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:go_router/go_router.dart';
 import 'package:huoon/data/services/authFacebook_service.dart';
 import 'package:huoon/data/services/authGoogle_service.dart';
+import 'package:huoon/domain/blocs/homeHouse_signal/homeHouse_service.dart';
 import 'package:huoon/domain/blocs/login_bloc/login_service.dart';
 import 'package:huoon/domain/blocs/login_bloc/login_signal.dart';
 import 'package:huoon/domain/blocs/tasks/tasks_service.dart';
@@ -66,7 +67,17 @@ class _LoginFormPageState extends State<LoginFormPage> {
       DateTime selectedDay = DateTime.now();
       //String date = '2024-09-09'; // La fecha puede ser dinámica
       String date = DateFormat('yyyy-MM-dd').format(selectedDay);
-     await fetchTasks(date);
+      if(getHomeSelectHH() != null)
+    {
+      await fetchTasks(date);
+    }
+else{
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    content: Text('No tiene hogar asignado'),
+    duration: const Duration(seconds: 2),
+  ));
+}
+     
       //llamar la stareas del día
       // context.read<TasksBloc>().add(TasksRequested(date)); // Pasar la fecha al evento
 

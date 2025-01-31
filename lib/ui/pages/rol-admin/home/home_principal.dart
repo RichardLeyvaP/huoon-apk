@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:go_router/go_router.dart';
 import 'package:huoon/data/models/configuration/configuration_model.dart';
+import 'package:huoon/data/models/homeHouseUsser/homeHouseUsser_model.dart';
 import 'package:huoon/domain/blocs/configuration_bloc/configuration_service.dart';
 import 'package:huoon/domain/blocs/configuration_bloc/configuration_signal.dart';
 import 'package:huoon/domain/blocs/homeHouse_signal/homeHouse_service.dart';
+import 'package:huoon/domain/blocs/homeHouse_signal/homeHouse_signal.dart';
 import 'package:huoon/domain/blocs/login_bloc/login_service.dart';
 import 'package:huoon/domain/blocs/login_bloc/login_signal.dart';
 import 'package:huoon/domain/blocs/task_cat_state_prior.dart/task_cat_state_prior_service.dart';
 import 'package:huoon/domain/blocs/user_activity_bloc/user_activity_service.dart';
 import 'package:huoon/ui/Components/showDialogComp.dart';
+import 'package:huoon/ui/components/ImageDetailScreen.dart';
+import 'package:huoon/ui/pages/env.dart';
 import 'package:huoon/ui/pages/pageMenu/filesPage.dart';
 import 'package:huoon/ui/pages/pageMenu/financePage.dart';
 import 'package:huoon/ui/pages/pageMenu/healthPage.dart';
@@ -18,6 +21,7 @@ import 'package:huoon/ui/pages/pageMenu/wishesPage.dart';
 import 'package:huoon/ui/util/util_class.dart';
 import 'package:huoon/ui/util/utils_class_apk.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../pageMenu/task/tasksPage.dart';
 //COLORES
@@ -383,14 +387,17 @@ Widget appBarWidget(context, IconData icon1, IconData icon2, String avatar, Stri
               Row(
                 children: [
              configurationCF.value != null   &&   configurationCF.value!.cantHome != 0 && configurationCF.value!.cantHome != null
-                      ? IconButton(onPressed: () {
-                        _showSelectionPanel(context);
+                      ? IconButton(onPressed: () async {
+                     await  fetchHomeHouseUsser();
+                        _showSelectionPanel(context,homeHouseUsserHH.value);
                       }, icon: Badge(
                     label: Text(configurationCF.value! .cantHome.toString()),
                     isLabelVisible: true, child: Icon(Icons.house)))
                       :
-                      IconButton(onPressed: () {
-                        _showSelectionPanel(context);
+                      IconButton(onPressed: () async {
+                        await fetchHomeHouseUsser();
+                        _showSelectionPanel(context,homeHouseUsserHH.value);
+                        
                         },
                          icon: Icon(Icons.house)),
                   
@@ -453,8 +460,8 @@ Widget appBarWidget(context, IconData icon1, IconData icon2, String avatar, Stri
     ),
   );
 }
-void _showSelectionPanel(BuildContext context) {
-  int? selectedIndex;
+void _showSelectionPanel(BuildContext context, List<Home>? homeHouseUsserHH) {
+  int? selectedIndex = homeSelectHH.value;
 
   showModalBottomSheet(
     context: context,
@@ -499,11 +506,11 @@ void _showSelectionPanel(BuildContext context) {
                   height: 300, // Altura máxima para evitar overflow
                   child: SingleChildScrollView(
                     child: Column(
-                      children: List.generate(configurationCF.value!.cantHome ?? 0, (index) {
+                      children: List.generate(homeHouseUsserHH == null? 0: homeHouseUsserHH.length, (index) {
                         return GestureDetector(
                           onTap: () {
                             setState(() {
-                              selectedIndex = index;
+                              selectedIndex = homeHouseUsserHH[index].id;
                             });
                           },
                           child: Card(
@@ -511,21 +518,87 @@ void _showSelectionPanel(BuildContext context) {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                               side: BorderSide(
-                                color: selectedIndex == index ? StyleGlobalApk.colorPrimary : Colors.transparent,
+                                color: selectedIndex == homeHouseUsserHH![index].id ? StyleGlobalApk.colorPrimary : Colors.transparent,
                                 width: 2,
                               ),
                             ),
                             child: ListTile(
-                              contentPadding: EdgeInsets.all(12),
+                              contentPadding: EdgeInsets.all(8),
                               leading: CircleAvatar(
                                 radius: 25,
-                                backgroundImage: AssetImage("assets/images/home_$index.jpg"),
+                              
+                               child:  
+                                    GestureDetector(
+                                        onDoubleTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ImageDetailScreen(
+                                                    title: '${homeHouseUsserHH[index].name}',
+                                                      imageUrl:
+                                                          '${Env.apiEndpoint}/images/${homeHouseUsserHH![index].image}'),
+                                                          
+                                            ),
+                                          );
+                                        },
+                                        child: ClipOval(
+                                          child: CachedNetworkImage(
+                                            imageUrl:
+                                                '${Env.apiEndpoint}/images/${homeHouseUsserHH![index].image}',
+                                            placeholder: (context, url) =>
+                                                Container(
+                                              width: 30,
+                                              height: 30,
+                                              child: const Center(
+                                                child: SizedBox(
+                                                  width: 30,
+                                                  height: 30,
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                    strokeWidth:
+                                                        2, // Personaliza el ancho del indicador como desees
+                                                    valueColor:
+                                                        AlwaysStoppedAnimation<
+                                                                Color>(
+                                                            Color.fromARGB(110,
+                                                                253, 176, 42)),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    Image.asset(
+                                              'assets/people/default.jpg',
+                                              cacheWidth: 30,
+                                              cacheHeight: 30,
+                                              fit: BoxFit.cover,
+                                            ),
+                                            fit: BoxFit.cover,
+                                            width: 50,
+                                            height: 50,
+                                          ),
+                                        ),
+                                      ),
+                                    
+                              
+                              
+                              
+                              
+                                
                               ),
                               title: Text(
-                                "Hogar ${index + 1}",
+                                " ${homeHouseUsserHH[index].name}",
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
-                              subtitle: Text("Dirección: Calle ${index + 1}, Ciudad X"),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(" ${homeHouseUsserHH[index].address}"),
+                                  Text(" ${homeHouseUsserHH[index].nameStatus}"),
+                                ],
+                              ),
                             ),
                           ),
                         );
@@ -547,6 +620,7 @@ void _showSelectionPanel(BuildContext context) {
                       ),
                     ),
                     onPressed: () {
+                      setHomeSelectHH( selectedIndex!);
                       Navigator.pop(context);
                     },
                     child: Text("Aceptar", style: TextStyle(fontSize: 14)),

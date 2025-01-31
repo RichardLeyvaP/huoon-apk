@@ -1,5 +1,6 @@
 import 'package:huoon/data/models/store/store_model.dart';
 import 'package:huoon/data/services/globalCallApi/apiService.dart';
+import 'package:huoon/domain/blocs/homeHouse_signal/homeHouse_signal.dart';
 import 'package:huoon/ui/pages/env.dart';
 
 class StoreRepository {
@@ -8,11 +9,11 @@ class StoreRepository {
   StoreRepository({required this.authService});
 
   // Método para obtener las tiendas
-  Future<dynamic> getStore(int homeId) async {
+  Future<dynamic> getStore() async {
     print('Obteniendo tiendas desde la API');
     final endpoint = '${Env.apiEndpoint}/person-warehouse-home';
     Future.delayed(Duration(seconds: 10));
-    final body = {'home_id': homeId};
+    final body = {'home_id':  homeSelectHH.value};
     try {
       // Llama al servicio y obtiene la respuesta procesada
       final response = await authService.post(endpoint, body: body);
@@ -44,7 +45,7 @@ class StoreRepository {
     print('Agregando nueva tienda');
 
     final body = {
-      'home_id': homeId,
+      'home_id': homeSelectHH.value,
       'title': store.title,
       'status': store.status,
       'location': store.location,
@@ -69,7 +70,7 @@ class StoreRepository {
     print('Agregando nueva tienda');
 
     final body = {
-      'home_id': homeId,
+      'home_id': homeSelectHH.value,
       'title': store.title,
       'id': store.id,
       'status': store.status,

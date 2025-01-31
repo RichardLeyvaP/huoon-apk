@@ -1,5 +1,6 @@
 import 'package:huoon/data/models/tasks/tasks_model.dart';
 import 'package:huoon/data/services/globalCallApi/apiService.dart';
+import 'package:huoon/domain/blocs/homeHouse_signal/homeHouse_signal.dart';
 import 'package:huoon/domain/blocs/task_cat_state_prior.dart/task_cat_state_prior_signal.dart';
 import 'package:huoon/domain/blocs/tasks/tasks_signal.dart';
 import 'package:huoon/ui/pages/env.dart';
@@ -9,10 +10,10 @@ class TasksRepository {
 
   TasksRepository({required this.authService});
 
-  Future<dynamic> getCategoriesStatusPriority(int homeId) async {
+  Future<dynamic> getCategoriesStatusPriority() async {
     print('dando click en la getProduct');
     final endpoint = '${Env.apiEndpoint}/category-status-priority-apk';
-    final body = {'home_id': homeId};
+    final body = {'home_id':  homeSelectHH.value};
     try {
       // Llama al servicio y obtiene la respuesta procesada
       final response = await authService.post(endpoint, body: body);
@@ -53,7 +54,7 @@ class TasksRepository {
     final endpoint = '${Env.apiEndpoint}/task-date-apk';
     final body = {
       'start_date': date ,
-      'home_id': 1
+      'home_id':  homeSelectHH.value,
       };
 
     try {
@@ -103,7 +104,7 @@ class TasksRepository {
         "role_id": p.rolId??1, // Valor fijo por ahora
         "person_id": p.id, // Aquí p.id es el ID de la persona
         
-        "home_id": 1 // Valor fijo por ahora
+        "home_id": homeSelectHH.value,
       };
     }).toList();
   }
@@ -115,7 +116,7 @@ class TasksRepository {
     List<Map<String, dynamic>> peopleSelected = getTaskFamiliesFromSelectedPersons(selecteFamilyCSP.value!);
     final body = {
       //'task': task,
-      'home_id': 1,
+      'home_id': homeSelectHH.value,
       'title': task.title,
       'description': task.description,
       'start_date': task.startDate,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:huoon/domain/blocs/homeHouse_signal/homeHouse_signal.dart';
 import 'package:huoon/domain/blocs/task_cat_state_prior.dart/task_cat_state_prior_signal.dart';
 import 'package:huoon/domain/blocs/tasks/tasks_service.dart';
 import 'package:huoon/domain/modelos/category_model.dart';
@@ -81,7 +82,7 @@ class _TaskpersonWidgetState extends State<TaskpersonWidget> {
     List<int> personIds = selected.map((taskperson) => taskperson.id).toList();
     List<int> rolIds = selected.map((taskperson) => taskperson.rolId!).toList();
 
-    filterPersonRolesByIds(personIds,rolIds,1);
+    filterPersonRolesByIds(personIds,rolIds,homeSelectHH.value);
     widget.onSelectionChanged(selected, selectedRoles!.isEmpty ? null : selectedRoles); // Enviamos null si la lista está vacía
   }
 Future<void> _showRoleSelectionDialog(
@@ -271,7 +272,7 @@ Future<void> _showRoleSelectionDialog(
     );
     //aqui seria un modificar si esta 
     //togglePersonRole(idRole, selectedPerson.id,1);
-    updateOrAddPersonRole(idRole, selectedPerson.id,1);
+    updateOrAddPersonRole(idRole, selectedPerson.id,homeSelectHH.value);
 
     // Actualiza la lista de selecteFamilyCSP con la persona modificada
     final updatedList = selecteFamilyCSP.value!

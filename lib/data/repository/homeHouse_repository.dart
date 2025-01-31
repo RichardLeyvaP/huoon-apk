@@ -48,6 +48,34 @@ class HomeHouseRepository {
     }
   }
 
+  Future<dynamic> getHomeHouseUsser() async {
+    print('dando click en la getProduct');
+    final endpoint = '${Env.apiEndpoint}/person-homes';
+    
+    try {
+      // Llama al servicio y obtiene la respuesta procesada
+      final response = await authService.post(endpoint,body: {});
+      print('entrando a * - : getHomeHouseUsser-2.1;$response');
+      // Verificamos si response es un JSON válido
+      if (response is Map<String, dynamic>) {
+       
+        final taskResponse = response;
+
+        // Retornamos el modelo deserializado
+        print('entrando a * - : getHomeHouseUsser-2.4:$taskResponse');
+        return taskResponse;
+      } else if (response is String) {
+        print('dando click en la imagenge-HomeHouseUsser-4:$response');
+        return response;
+      } else {
+        
+        throw Exception('Respuesta inesperada del servidor.-getHomeHouseUsser-Revise su conexión');
+      }
+    } catch (e) {
+      throw Exception('getHomeHouseUsser(): $e');
+    }
+  }
+
 
   // Método para agregar una casa
 Future<dynamic> addHomeHouse() async {

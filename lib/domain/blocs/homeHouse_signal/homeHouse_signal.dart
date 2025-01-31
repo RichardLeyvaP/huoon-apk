@@ -1,5 +1,6 @@
 import 'package:huoon/data/models/homeHouse/homeHouse_model.dart';
 import 'package:huoon/data/models/homeHouseCategory/homeHouseCategory_model.dart';
+import 'package:huoon/data/models/homeHouseUsser/homeHouseUsser_model.dart';
 import 'package:signals/signals.dart';
 
 // Definimos las se√±ales
@@ -8,12 +9,14 @@ final Signal<String> homeMessageHH = Signal<String>(""); // Mensaje de error o √
 final Signal<bool> isLoadingHH = Signal<bool>(false); // Estado de carga
 final Signal<bool> isHomeErrorHH = Signal<bool>(false); // Estado de error
 final Signal<List<HomeHouse>?> homeHH = Signal<List<HomeHouse>?>(null);
+final Signal<int?> homeSelectHH = Signal<int?>(null);
 
 final Signal<List<Hometype>?> taskTypeListHH = Signal<List<Hometype>?>(null);
 final Signal<List<Homeperson>?> taskpersonListHH = Signal<List<Homeperson>?>(null);
 final Signal<List<Homerole>?> rolesListHH = Signal<List<Homerole>?>(null);
 final Signal<List<Homestatus>?> statusListHH = Signal<List<Homestatus>?>(null);
 final Signal<List<Homewarehouse>?> warehouseListHH = Signal<List<Homewarehouse>?>(null);
+final Signal<List<Home>?> homeHouseUsserHH = Signal<List<Home>?>(null);
 
 // Datos del hogar
 final Signal<String> homeNameHH = Signal<String>(""); // Nombre del hogar

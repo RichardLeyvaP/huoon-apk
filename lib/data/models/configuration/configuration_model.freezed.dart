@@ -183,6 +183,7 @@ Configuration _$ConfigurationFromJson(Map<String, dynamic> json) {
 mixin _$Configuration {
   int? get id => throw _privateConstructorUsedError;
   int? get cantHome => throw _privateConstructorUsedError;
+  int? get home => throw _privateConstructorUsedError;
   String? get appName => throw _privateConstructorUsedError;
   String? get appVersion => throw _privateConstructorUsedError;
   String? get language => throw _privateConstructorUsedError;
@@ -224,6 +225,7 @@ abstract class $ConfigurationCopyWith<$Res> {
   $Res call(
       {int? id,
       int? cantHome,
+      int? home,
       String? appName,
       String? appVersion,
       String? language,
@@ -264,6 +266,7 @@ class _$ConfigurationCopyWithImpl<$Res, $Val extends Configuration>
   $Res call({
     Object? id = freezed,
     Object? cantHome = freezed,
+    Object? home = freezed,
     Object? appName = freezed,
     Object? appVersion = freezed,
     Object? language = freezed,
@@ -294,6 +297,10 @@ class _$ConfigurationCopyWithImpl<$Res, $Val extends Configuration>
       cantHome: freezed == cantHome
           ? _value.cantHome
           : cantHome // ignore: cast_nullable_to_non_nullable
+              as int?,
+      home: freezed == home
+          ? _value.home
+          : home // ignore: cast_nullable_to_non_nullable
               as int?,
       appName: freezed == appName
           ? _value.appName
@@ -394,6 +401,7 @@ abstract class _$$ConfigurationImplCopyWith<$Res>
   $Res call(
       {int? id,
       int? cantHome,
+      int? home,
       String? appName,
       String? appVersion,
       String? language,
@@ -432,6 +440,7 @@ class __$$ConfigurationImplCopyWithImpl<$Res>
   $Res call({
     Object? id = freezed,
     Object? cantHome = freezed,
+    Object? home = freezed,
     Object? appName = freezed,
     Object? appVersion = freezed,
     Object? language = freezed,
@@ -462,6 +471,10 @@ class __$$ConfigurationImplCopyWithImpl<$Res>
       cantHome: freezed == cantHome
           ? _value.cantHome
           : cantHome // ignore: cast_nullable_to_non_nullable
+              as int?,
+      home: freezed == home
+          ? _value.home
+          : home // ignore: cast_nullable_to_non_nullable
               as int?,
       appName: freezed == appName
           ? _value.appName
@@ -557,6 +570,7 @@ class _$ConfigurationImpl implements _Configuration {
   const _$ConfigurationImpl(
       {this.id,
       this.cantHome,
+      this.home,
       this.appName,
       this.appVersion,
       this.language,
@@ -586,6 +600,8 @@ class _$ConfigurationImpl implements _Configuration {
   final int? id;
   @override
   final int? cantHome;
+  @override
+  final int? home;
   @override
   final String? appName;
   @override
@@ -631,7 +647,7 @@ class _$ConfigurationImpl implements _Configuration {
 
   @override
   String toString() {
-    return 'Configuration(id: $id, cantHome: $cantHome, appName: $appName, appVersion: $appVersion, language: $language, defaultCurrency: $defaultCurrency, themeColor: $themeColor, backgroundColor: $backgroundColor, textColor: $textColor, buttonColor: $buttonColor, isDarkModeEnabled: $isDarkModeEnabled, notificationsEnabled: $notificationsEnabled, apiEndpoint: $apiEndpoint, connectionTimeout: $connectionTimeout, retryAttempts: $retryAttempts, useBiometricAuth: $useBiometricAuth, requirePinForSensitiveActions: $requirePinForSensitiveActions, storagePath: $storagePath, maxCacheSize: $maxCacheSize, autoUpdateEnabled: $autoUpdateEnabled, supportContactEmail: $supportContactEmail, lastSyncTime: $lastSyncTime, fontSize: $fontSize)';
+    return 'Configuration(id: $id, cantHome: $cantHome, home: $home, appName: $appName, appVersion: $appVersion, language: $language, defaultCurrency: $defaultCurrency, themeColor: $themeColor, backgroundColor: $backgroundColor, textColor: $textColor, buttonColor: $buttonColor, isDarkModeEnabled: $isDarkModeEnabled, notificationsEnabled: $notificationsEnabled, apiEndpoint: $apiEndpoint, connectionTimeout: $connectionTimeout, retryAttempts: $retryAttempts, useBiometricAuth: $useBiometricAuth, requirePinForSensitiveActions: $requirePinForSensitiveActions, storagePath: $storagePath, maxCacheSize: $maxCacheSize, autoUpdateEnabled: $autoUpdateEnabled, supportContactEmail: $supportContactEmail, lastSyncTime: $lastSyncTime, fontSize: $fontSize)';
   }
 
   @override
@@ -642,6 +658,7 @@ class _$ConfigurationImpl implements _Configuration {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.cantHome, cantHome) ||
                 other.cantHome == cantHome) &&
+            (identical(other.home, home) || other.home == home) &&
             (identical(other.appName, appName) || other.appName == appName) &&
             (identical(other.appVersion, appVersion) ||
                 other.appVersion == appVersion) &&
@@ -693,6 +710,7 @@ class _$ConfigurationImpl implements _Configuration {
         runtimeType,
         id,
         cantHome,
+        home,
         appName,
         appVersion,
         language,
@@ -736,6 +754,7 @@ abstract class _Configuration implements Configuration {
   const factory _Configuration(
       {final int? id,
       final int? cantHome,
+      final int? home,
       final String? appName,
       final String? appVersion,
       final String? language,
@@ -765,6 +784,8 @@ abstract class _Configuration implements Configuration {
   int? get id;
   @override
   int? get cantHome;
+  @override
+  int? get home;
   @override
   String? get appName;
   @override

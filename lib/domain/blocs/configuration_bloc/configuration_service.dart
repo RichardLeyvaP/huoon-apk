@@ -2,6 +2,7 @@ import 'package:huoon/data/models/configuration/configuration_model.dart';
 import 'package:huoon/data/repository/configuration_repository.dart';
 import 'package:huoon/data/services/globalCallApi/apiService.dart';
 import 'package:huoon/domain/blocs/configuration_bloc/configuration_signal.dart';
+import 'package:huoon/domain/blocs/homeHouse_signal/homeHouse_service.dart';
 import 'package:huoon/ui/util/util_class.dart';
 
 // Repositorio de configuración (se asume que ya está inicializado en otro lugar)
@@ -21,6 +22,9 @@ Future<void> requestConfiguration() async {
       TranslationManager.loadDefaultTranslations('es');
     } else if (result is Configuration) {
       configurationCF.value = result; // Éxito en la obtención
+      //esta es la variable global que se usa para saber en que hogar se encuentra
+      setHomeSelectHH(configurationCF.value!.home);
+      //este es el idioma que se usa en la app
       TranslationManager.loadDefaultTranslations(configurationCF.value!.language.toString());
     }
   } catch (error) {
