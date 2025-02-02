@@ -136,8 +136,14 @@ Future<void>? _futureConfiguration;
                   child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
                     // Text(usernameCubit.state),
                     appBarWidget(
-                        context, MdiIcons.bellOutline, MdiIcons.messageOutline , 'currentUserLG.value!.avatarUrl', currentUserLG.value!.userName, 'huoon'),//aqui dio error al salir currentUserLG.value!.userName revisarla
-                    Padding(
+                    context,
+MdiIcons.bellOutline,
+MdiIcons.messageOutline,
+ 'default_avatar.png', // Si es null, usa un avatar por defecto
+currentUserLG.value?.userName ?? '', // Si es null, muestra "Invitado"
+'huoon'
+),
+ Padding(
                       padding: const EdgeInsets.only(top: 6),
                       child: searchWidget(setState),
                     ),
@@ -404,8 +410,9 @@ Widget appBarWidget(context, IconData icon1, IconData icon2, String avatar, Stri
                   IconButton(onPressed: () {}, icon: Badge(isLabelVisible: true, child: Icon(icon1))),
                   // IconButton(onPressed: () {}, icon: Icon(icon2)),
                   IconButton(
-                    onPressed: () {
+                    onPressed: () async {
                       // Mostrar el LanguageSelector en un diálogo
+                      await  fetchHomeHouseUsser();
                       GoRouter.of(context).push('/SettingsPage');
                     
                     },

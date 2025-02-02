@@ -24,12 +24,13 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  bool notificationsEnabled = true;
   @override
   Widget build(BuildContext context) {
     bool isActive = true; // Simulación de estado activo
     String selectedLanguage = 'Español';
     String selectedHome = 'Casa Principal';
-    bool notificationsEnabled = true;
+    
     bool darkModeEnabled = false;
 
 
@@ -197,6 +198,8 @@ void _showSelectionPanel(BuildContext context, List<Home>? homeHouseUsserHH) {
                     ),
                     onPressed: () {
                       setHomeSelectHH( selectedIndex!);
+                      final config = Configuration( home: selectedIndex);
+                              updateConfiguration(config);
                       Navigator.pop(context);
                     },
                     child: Text("Aceptar", style: TextStyle(fontSize: 14)),
@@ -277,17 +280,17 @@ void _showSelectionPanel(BuildContext context, List<Home>? homeHouseUsserHH) {
               ],
             ),
            
-           CustomButton(
- onPressed: () {
-   // Llama a la función pasada como parámetro y pasa los valores seleccionados
+//            CustomButton(
+//  onPressed: () {
+//    // Llama a la función pasada como parámetro y pasa los valores seleccionados
              
- },
-  text: 'Guardar',
-  backgroundColor: StyleGlobalApk.colorPrimary,
-  textColor: Colors.white,
-  width: 100,
-  height: 30,
-),
+//  },
+//   text: 'Guardar',
+//   backgroundColor: StyleGlobalApk.colorPrimary,
+//   textColor: Colors.white,
+//   width: 100,
+//   height: 30,
+// ),
           ],
         ),
       ),
@@ -297,7 +300,7 @@ void _showSelectionPanel(BuildContext context, List<Home>? homeHouseUsserHH) {
           ConfigOptionCard(
             icon: Icons.language, 
             title: 'Idioma', 
-            description: configurationCF.value!.language.toString(), 
+            description: getLanguageName(configurationCF.value!.language.toString()), 
             trailing: TextButton(
               onPressed: () {
                 // Acción para cambiar el idioma
@@ -322,18 +325,28 @@ void _showSelectionPanel(BuildContext context, List<Home>? homeHouseUsserHH) {
           ConfigOptionCard(
             icon: Icons.notifications, 
             title: 'Notificaciones', 
-            description: 'Activadas', 
+            description: notificationsEnabled?'Activadas':'Desactivadas', 
             trailing: Switch(
-              value: true,
-              onChanged: (bool value) {
-                // Acción para activar/desactivar
-              },
-            ),
+  activeColor: StyleGlobalApk.colorPrimary, // Color cuando está activo
+  inactiveTrackColor: Colors.grey, // Color cuando está inactivo
+  value: notificationsEnabled,
+  onChanged: (bool value) {
+    setState(() {
+      notificationsEnabled = value;
+    });
+  },
+),
           ),
           ConfigOptionCard(
             icon: Icons.house, 
             title: 'Hogar Principal', 
-            description: homeNameSelectHH.watch(context)??'No hay', 
+            description: homeHouseUsserHH.value!
+    .firstWhere(
+      (element) => element.id == configurationCF.watch(context) !.home,
+      orElse: () => Home(id: -1, name: 'No hay'), // Devuelve un objeto por defecto
+    )
+    .name ?? 'No hay',
+
             trailing:
              TextButton(
               onPressed: () async {
@@ -375,84 +388,6 @@ void _showSelectionPanel(BuildContext context, List<Home>? homeHouseUsserHH) {
       ),
       
     
-      
-      // Padding(
-      //   padding: const EdgeInsets.all(16.0),
-      //   child: Column(
-      //     crossAxisAlignment: CrossAxisAlignment.start,
-      //     children: [
-      //       const Text(
-      //         'Ajustes Generales',
-      //         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-      //       ),
-      //       const SizedBox(height: 10),
-      //       Row(
-      //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      //         children: [
-      //           Text('Idioma'),
-      //           InkWell(
-      //               onTap: () {
-                       
-      //                 showDialog(
-      //                   context: context,
-      //                   builder: (context) => AlertDialog(
-      //                     // title: Text('Seleccionar Idioma'),
-      //                     content: LanguageSelectorNew(
-      //                       onLocaleChange: (Locale locale) {
-      //                         print('selección del idioma es:${locale.languageCode}');
-      //                         final config = Configuration(language: locale.languageCode);
-      //                         updateConfiguration(config);
-      //                         Navigator.of(context).pop(); // Cierra el diálogo
-      //                       },
-      //                     ),
-      //                   ),
-      //                 );
-                  
-                  
-      //               },
-      //             child: Icon(Icons.language)),
-      //         ],
-      //       ),
-      //       ListTile(
-      //         title: const Text('Seleccionar hogar'),
-      //         trailing: DropdownButton<String>(
-      //           value: selectedHome,
-      //           onChanged: (newValue) {},
-      //           items: ['Casa Principal', 'Departamento', 'Oficina']
-      //               .map((home) => DropdownMenuItem(
-      //                     value: home,
-      //                     child: Text(home),
-      //                   ))
-      //               .toList(),
-      //         ),
-      //       ),
-      //       SwitchListTile(
-      //         title: const Text('Notificaciones'),
-      //         value: notificationsEnabled,
-      //         onChanged: (value) {},
-      //       ),
-      //       SwitchListTile(
-      //         title: const Text('Modo Oscuro'),
-      //         value: darkModeEnabled,
-      //         onChanged: (value) {},
-      //       ),
-      //       const Divider(),
-      //       ListTile(
-      //         title: const Text('Privacidad y Seguridad'),
-      //         leading: const Icon(Icons.lock),
-      //         onTap: () {},
-      //       ),
-      //       ListTile(
-      //         title: const Text('Cerrar sesión'),
-      //         leading: const Icon(Icons.logout),
-      //         onTap: () {
-      //           //Get.back();
-      //         },
-      //       ),
-      //     ],
-      //   ),
-      // ),
-   
    
     );
   }

@@ -117,14 +117,7 @@ Future<void> fetchHomeHouseUsser() async {
 }
 
 
-      homeHouseUsserHH.value = homeHouseUsserList;  
-      if(homeSelectHH.value == null)
-      {
-        if (homeHouseUsserList[0].id != null) {
-          setHomeSelectHH(homeHouseUsserList[0].id!);
-        }
-        homeNameSelectHH.value = homeHouseUsserHH.value!.firstWhere((element) => element.id == homeSelectHH.value).name;
-      }
+      homeHouseUsserHH.value = homeHouseUsserList;        
     homeNameSelectHH.value = homeHouseUsserHH.value!.firstWhere((element) => element.id == homeSelectHH.value).name;
   
   } catch (error) {

@@ -16,6 +16,8 @@ class TranslationManager {
 
   static LocalizationsDelegate<TranslationManager> delegate = const _TranslationDelegate();
 
+
+
   // Cargar las traducciones por defecto al iniciar la aplicación
   static Future<void> loadDefaultTranslations(String locale) async {
     _locale = getCurrentApi(locale);
@@ -46,6 +48,8 @@ class TranslationManager {
   static Locale getCurrentLocale() {
     return _locale;
   }
+
+
 
   // Obtener el locale actual según el idioma proporcionado
   static Locale getCurrentApi(String idioma) {
@@ -87,6 +91,15 @@ class _TranslationDelegate extends LocalizationsDelegate<TranslationManager> {
 
   @override
   bool shouldReload(_TranslationDelegate old) => false;
+}
+
+  String getLanguageName(String? languageCode) {
+  const languageMap = {
+    'en': 'Inglés',
+    'es': 'Español',
+    'pt': 'Portugués',
+  };
+  return languageMap[languageCode] ?? 'Español';
 }
 
 //
