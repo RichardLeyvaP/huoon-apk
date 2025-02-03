@@ -4,6 +4,7 @@ import 'package:huoon/data/services/globalCallApi/apiService.dart';
 import 'package:huoon/domain/blocs/configuration_bloc/configuration_signal.dart';
 import 'package:huoon/domain/blocs/homeHouse_signal/homeHouse_service.dart';
 import 'package:huoon/domain/blocs/homeHouse_signal/homeHouse_signal.dart';
+import 'package:huoon/integrationApi/firebase_api.dart';
 import 'package:huoon/ui/util/util_class.dart';
 
 // Repositorio de configuración (se asume que ya está inicializado en otro lugar)
@@ -23,6 +24,7 @@ Future<void> requestConfiguration() async {
       TranslationManager.loadDefaultTranslations('es');
     } else if (result is Configuration) {
       configurationCF.value = result; // Éxito en la obtención
+      await  FirebaseApi().saveTokenAfterLogin();//esto guarda el token de firebase en la base de datos
       //esta es la variable global que se usa para saber en que hogar se encuentra
       setHomeSelectHH(configurationCF.value!.home);
       
@@ -46,6 +48,7 @@ void updateConfiguration(Configuration updatedConfig) {
       updateConfigurationCF.value = true;
     }
     configurationCF.value = configurationCF.value!.copyWith(
+      tokenNotification: updatedConfig.tokenNotification ?? configurationCF.value!.tokenNotification,
       home: updatedConfig.home ?? configurationCF.value!.home,
       language: updatedConfig.language ?? configurationCF.value!.language,
       themeColor: updatedConfig.themeColor ?? configurationCF.value!.themeColor,

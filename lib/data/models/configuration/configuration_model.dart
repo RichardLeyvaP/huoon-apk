@@ -20,6 +20,7 @@ class Configuration with _$Configuration {
     int? cantHome,
     int? home,
     String? appName,
+    String? tokenNotification,
     String? appVersion,
     String? language,
     String? defaultCurrency,

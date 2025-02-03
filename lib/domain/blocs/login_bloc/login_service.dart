@@ -8,6 +8,7 @@ import 'package:huoon/domain/blocs/store_bloc/store_service.dart';
 import 'package:huoon/domain/blocs/task_cat_state_prior.dart/task_cat_state_prior_service.dart';
 import 'package:huoon/domain/blocs/tasks/tasks_service.dart';
 import 'package:huoon/domain/blocs/user_activity_bloc/user_activity_service.dart';
+import 'package:huoon/integrationApi/firebase_api.dart';
 import 'login_signal.dart';
 
 // Este es el servicio que maneja la lógica de login
@@ -29,7 +30,8 @@ Future<void> login(String email, String password) async {
     } else if (result is Login) {
       currentUserLG.value = result; // Guardamos el usuario
       isLoggedInLG.value = true; // El usuario ha iniciado sesión correctamente
-      loginMessageLG.value = "Login successful";
+      loginMessageLG.value = "Login successful";    
+
     }
   } catch (e) {
     isLoginErrorLG.value = true;

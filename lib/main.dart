@@ -6,6 +6,7 @@ import 'package:huoon/data/repository/configuration_repository.dart';
 import 'package:huoon/data/services/globalCallApi/apiService.dart';
 import 'package:huoon/dependency_injection/providers.dart';
 import 'package:huoon/firebaseOptionsNUEVO.dart';
+import 'package:huoon/integrationApi/firebase_api.dart';
 import 'package:huoon/ui/myApp.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
@@ -24,6 +25,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
 );
+ await FirebaseApi().initNotifications();
   await initializeDateFormatting('es', null);
   //await requestConfiguration();//esto cargaba las configuraciones iniciales y ponia lenta la aplicación
 

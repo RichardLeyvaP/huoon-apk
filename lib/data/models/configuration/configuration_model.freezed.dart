@@ -185,6 +185,7 @@ mixin _$Configuration {
   int? get cantHome => throw _privateConstructorUsedError;
   int? get home => throw _privateConstructorUsedError;
   String? get appName => throw _privateConstructorUsedError;
+  String? get tokenNotification => throw _privateConstructorUsedError;
   String? get appVersion => throw _privateConstructorUsedError;
   String? get language => throw _privateConstructorUsedError;
   String? get defaultCurrency => throw _privateConstructorUsedError;
@@ -227,6 +228,7 @@ abstract class $ConfigurationCopyWith<$Res> {
       int? cantHome,
       int? home,
       String? appName,
+      String? tokenNotification,
       String? appVersion,
       String? language,
       String? defaultCurrency,
@@ -268,6 +270,7 @@ class _$ConfigurationCopyWithImpl<$Res, $Val extends Configuration>
     Object? cantHome = freezed,
     Object? home = freezed,
     Object? appName = freezed,
+    Object? tokenNotification = freezed,
     Object? appVersion = freezed,
     Object? language = freezed,
     Object? defaultCurrency = freezed,
@@ -305,6 +308,10 @@ class _$ConfigurationCopyWithImpl<$Res, $Val extends Configuration>
       appName: freezed == appName
           ? _value.appName
           : appName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      tokenNotification: freezed == tokenNotification
+          ? _value.tokenNotification
+          : tokenNotification // ignore: cast_nullable_to_non_nullable
               as String?,
       appVersion: freezed == appVersion
           ? _value.appVersion
@@ -403,6 +410,7 @@ abstract class _$$ConfigurationImplCopyWith<$Res>
       int? cantHome,
       int? home,
       String? appName,
+      String? tokenNotification,
       String? appVersion,
       String? language,
       String? defaultCurrency,
@@ -442,6 +450,7 @@ class __$$ConfigurationImplCopyWithImpl<$Res>
     Object? cantHome = freezed,
     Object? home = freezed,
     Object? appName = freezed,
+    Object? tokenNotification = freezed,
     Object? appVersion = freezed,
     Object? language = freezed,
     Object? defaultCurrency = freezed,
@@ -479,6 +488,10 @@ class __$$ConfigurationImplCopyWithImpl<$Res>
       appName: freezed == appName
           ? _value.appName
           : appName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      tokenNotification: freezed == tokenNotification
+          ? _value.tokenNotification
+          : tokenNotification // ignore: cast_nullable_to_non_nullable
               as String?,
       appVersion: freezed == appVersion
           ? _value.appVersion
@@ -572,6 +585,7 @@ class _$ConfigurationImpl implements _Configuration {
       this.cantHome,
       this.home,
       this.appName,
+      this.tokenNotification,
       this.appVersion,
       this.language,
       this.defaultCurrency,
@@ -604,6 +618,8 @@ class _$ConfigurationImpl implements _Configuration {
   final int? home;
   @override
   final String? appName;
+  @override
+  final String? tokenNotification;
   @override
   final String? appVersion;
   @override
@@ -647,7 +663,7 @@ class _$ConfigurationImpl implements _Configuration {
 
   @override
   String toString() {
-    return 'Configuration(id: $id, cantHome: $cantHome, home: $home, appName: $appName, appVersion: $appVersion, language: $language, defaultCurrency: $defaultCurrency, themeColor: $themeColor, backgroundColor: $backgroundColor, textColor: $textColor, buttonColor: $buttonColor, isDarkModeEnabled: $isDarkModeEnabled, notificationsEnabled: $notificationsEnabled, apiEndpoint: $apiEndpoint, connectionTimeout: $connectionTimeout, retryAttempts: $retryAttempts, useBiometricAuth: $useBiometricAuth, requirePinForSensitiveActions: $requirePinForSensitiveActions, storagePath: $storagePath, maxCacheSize: $maxCacheSize, autoUpdateEnabled: $autoUpdateEnabled, supportContactEmail: $supportContactEmail, lastSyncTime: $lastSyncTime, fontSize: $fontSize)';
+    return 'Configuration(id: $id, cantHome: $cantHome, home: $home, appName: $appName, tokenNotification: $tokenNotification, appVersion: $appVersion, language: $language, defaultCurrency: $defaultCurrency, themeColor: $themeColor, backgroundColor: $backgroundColor, textColor: $textColor, buttonColor: $buttonColor, isDarkModeEnabled: $isDarkModeEnabled, notificationsEnabled: $notificationsEnabled, apiEndpoint: $apiEndpoint, connectionTimeout: $connectionTimeout, retryAttempts: $retryAttempts, useBiometricAuth: $useBiometricAuth, requirePinForSensitiveActions: $requirePinForSensitiveActions, storagePath: $storagePath, maxCacheSize: $maxCacheSize, autoUpdateEnabled: $autoUpdateEnabled, supportContactEmail: $supportContactEmail, lastSyncTime: $lastSyncTime, fontSize: $fontSize)';
   }
 
   @override
@@ -660,6 +676,8 @@ class _$ConfigurationImpl implements _Configuration {
                 other.cantHome == cantHome) &&
             (identical(other.home, home) || other.home == home) &&
             (identical(other.appName, appName) || other.appName == appName) &&
+            (identical(other.tokenNotification, tokenNotification) ||
+                other.tokenNotification == tokenNotification) &&
             (identical(other.appVersion, appVersion) ||
                 other.appVersion == appVersion) &&
             (identical(other.language, language) ||
@@ -712,6 +730,7 @@ class _$ConfigurationImpl implements _Configuration {
         cantHome,
         home,
         appName,
+        tokenNotification,
         appVersion,
         language,
         defaultCurrency,
@@ -756,6 +775,7 @@ abstract class _Configuration implements Configuration {
       final int? cantHome,
       final int? home,
       final String? appName,
+      final String? tokenNotification,
       final String? appVersion,
       final String? language,
       final String? defaultCurrency,
@@ -788,6 +808,8 @@ abstract class _Configuration implements Configuration {
   int? get home;
   @override
   String? get appName;
+  @override
+  String? get tokenNotification;
   @override
   String? get appVersion;
   @override

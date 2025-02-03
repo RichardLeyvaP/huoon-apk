@@ -89,7 +89,13 @@ class ConfigurationRepository {
   Future<dynamic> updateConfiguration(Configuration configData) async {
     final endpoint = '${Env.apiEndpoint}/configuration';
 
-    final body = {'language': configData.language};
+    final body = {
+      'language': configData.language,
+      'home': configData.home,
+      'tokenNotification': configData.tokenNotification,
+      };
+    //final body = configData.toJson(); // Convertir el modelo a 
+    
     print('_onConfigurationSubmitted entrando y con endpoint:${endpoint}');
     print('_onConfigurationSubmitted entrando y con body:${body}');
     try {
