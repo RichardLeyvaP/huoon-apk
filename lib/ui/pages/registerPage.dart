@@ -215,27 +215,36 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
                 const SizedBox(height: 20),
 
                 // Campo de Contraseña
-                TextField(
-                  controller: _passwordController,
-                  obscureText: !_isPasswordVisible,
-                  decoration: InputDecoration(
-                    hintText: 'Contraseña',
-                    filled: true,
-                    fillColor: Colors.grey[100],
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                    prefixIcon: Icon(Icons.lock, color: StyleGlobalApk.colorPrimary),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                        color: StyleGlobalApk.colorPrimary,
-                      ),
-                      onPressed: _togglePasswordVisibility,
-                    ),
-                  ),
-                ),
+                TextFormField(
+  controller: _passwordController,
+  obscureText: !_isPasswordVisible,
+  decoration: InputDecoration(
+    hintText: 'Contraseña',
+    filled: true,
+    fillColor: Colors.grey[100],
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide.none,
+    ),
+    prefixIcon: Icon(Icons.lock, color: StyleGlobalApk.colorPrimary),
+    suffixIcon: IconButton(
+      icon: Icon(
+        _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+        color: StyleGlobalApk.colorPrimary,
+      ),
+      onPressed: _togglePasswordVisibility,
+    ),
+  ),
+  validator: (value) {
+    if (value == null || value.isEmpty) {
+      return 'La contraseña no puede estar vacía';
+    } else if (value.length < 5) {
+      return 'Debe tener al menos 5 caracteres';
+    }
+    return null;
+  },
+),
+
                 const SizedBox(height: 30),
 
                 // Texto de términos y condiciones
