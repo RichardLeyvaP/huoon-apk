@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:huoon/data/models/configuration/configuration_model.dart';
 import 'package:huoon/data/models/homeHouseUsser/homeHouseUsser_model.dart';
 import 'package:huoon/domain/blocs/configuration_bloc/configuration_service.dart';
 import 'package:huoon/domain/blocs/configuration_bloc/configuration_signal.dart';
 import 'package:huoon/domain/blocs/homeHouse_signal/homeHouse_service.dart';
 import 'package:huoon/domain/blocs/homeHouse_signal/homeHouse_signal.dart';
-import 'package:huoon/domain/blocs/login_bloc/login_service.dart';
 import 'package:huoon/domain/blocs/login_bloc/login_signal.dart';
 import 'package:huoon/domain/blocs/task_cat_state_prior.dart/task_cat_state_prior_service.dart';
 import 'package:huoon/domain/blocs/user_activity_bloc/user_activity_service.dart';
@@ -397,6 +395,7 @@ Widget appBarWidget(context, IconData icon1, IconData icon2, String avatar, Stri
                      await  fetchHomeHouseUsser();
                         _showSelectionPanel(context,homeHouseUsserHH.value);
                       }, icon: Badge(
+                        backgroundColor: StyleGlobalApk.colorPrimary,
                     label: Text(configurationCF.value! .cantHome.toString()),
                     isLabelVisible: true, child: Icon(Icons.house)))
                       :
@@ -419,34 +418,8 @@ Widget appBarWidget(context, IconData icon1, IconData icon2, String avatar, Stri
                     icon: Icon(MdiIcons.cog,),
                     tooltip: 'Configuracion',
                   ),
-                  IconButton(
-                      onPressed: () async {
-                         ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Esta cerrando la apk, espere un momento por favor...')),
-      );
-                     bool result =  await  logoutApk();
-                      if(result == true)
-                      {
-                        
-                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                        //  logoutAndClearSignals();
-                        GoRouter.of(context).go(
-                          '/LoginFormPage',
-                        );
-
-                      }
-                      else
-                      {
-                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                        ScaffoldMessenger.of(context).showSnackBar( SnackBar(
-                          content: Text('Error al cerrar la apk, intente de nuevo'),
-                          backgroundColor: Colors.red,
-                        )); 
-                      }
-                      
-                      },
-                      icon: Icon(MdiIcons.logout)),
-                ],
+      
+                 ],
               ),
             ],
           ),

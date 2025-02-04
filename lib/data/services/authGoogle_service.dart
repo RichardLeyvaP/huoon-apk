@@ -57,6 +57,7 @@ GoogleSignIn _googleSignIn = GoogleSignIn(
 Future<void> loginWithGoogle(context) async {
   print('resp1- loginWithGoogle()');
   try {
+     await _googleSignIn.signOut();
     final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
     if (googleUser != null) {
       print('resp1- loginWithGoogle():idToken:(googleUser != null)');
@@ -169,44 +170,3 @@ Future<void> _saveToken(String token) async {
   await prefs.setString('auth_token', token);
 }
 
-/*goToHomeG(Map<String, dynamic> userData, context) {
-  final userCubit = context.read<RoutesCubit>();
-  print('llegando a la pagina de goToHomeG');
-  print('llegando a la pagina de goToHomeG-name:${userData['name']}');
-  userCubit.goHomeFb(
-    name: userData['name'],
-    email: userData['email'],
-    avatarUrl: userData['pictureUrl'],
-  );
-}*/
-
-
-
-
-
-// import 'package:http/http.dart' as http;
-// import 'dart:convert';
-
-// Future<void> loginWithGoogle() async {
-//   print('resp- entrando a loginWithGoogle');
-//   final url = Uri.parse('http://192.168.1.2:8000/api/login-google'); // URL de tu API
-//   try {
-//     final response = await http.get(
-//       url,
-//       /* body: {
-//         'google_token': 'aquí va el token de google',
-//       },*/
-//     );
-//     // Imprime la respuesta completa
-//     print('resp- Response body: ${response.body}');
-//     if (response.statusCode == 200) {
-//       final responseData = json.decode(response.body);
-//       // Maneja la respuesta de la API, como los datos del usuario o token
-//       print('resp- Login exitoso: $responseData');
-//     } else {
-//       print('resp- Error al iniciar sesión: ${response.statusCode}');
-//     }
-//   } catch (error) {
-//     print('resp- Error en la solicitud: $error');
-//   }
-// }

@@ -8,6 +8,7 @@ import 'package:huoon/domain/blocs/configuration_bloc/configuration_service.dart
 import 'package:huoon/domain/blocs/configuration_bloc/configuration_signal.dart';
 import 'package:huoon/domain/blocs/homeHouse_signal/homeHouse_service.dart';
 import 'package:huoon/domain/blocs/homeHouse_signal/homeHouse_signal.dart';
+import 'package:huoon/domain/blocs/login_bloc/login_service.dart';
 import 'package:huoon/ui/components/ImageDetailScreen.dart';
 import 'package:huoon/ui/components/button_custom.dart';
 import 'package:huoon/ui/components/componentGlobal_widget.dart';
@@ -300,7 +301,8 @@ void _showSelectionPanel(BuildContext context, List<Home>? homeHouseUsserHH) {
           ConfigOptionCard(
             icon: Icons.language, 
             title: 'Idioma', 
-            description: getLanguageName(configurationCF.value!.language.toString()), 
+            description: getLanguageName(configurationCF.value?.language?.toString() ?? "es")
+, 
             trailing: TextButton(
               onPressed: () {
                 // Acción para cambiar el idioma
@@ -331,6 +333,7 @@ void _showSelectionPanel(BuildContext context, List<Home>? homeHouseUsserHH) {
   inactiveTrackColor: Colors.grey, // Color cuando está inactivo
   value: notificationsEnabled,
   onChanged: (bool value) {
+    loginFuntionDeprived();
     setState(() {
       notificationsEnabled = value;
     });
@@ -342,7 +345,7 @@ void _showSelectionPanel(BuildContext context, List<Home>? homeHouseUsserHH) {
             title: 'Hogar Principal', 
             description: homeHouseUsserHH.value!
     .firstWhere(
-      (element) => element.id == configurationCF.watch(context) !.home,
+  (element) => element.id == configurationCF.watch(context)?.home,
       orElse: () => Home(id: -1, name: 'No hay'), // Devuelve un objeto por defecto
     )
     .name ?? 'No hay',
@@ -376,19 +379,58 @@ void _showSelectionPanel(BuildContext context, List<Home>? homeHouseUsserHH) {
             icon: Icons.lock, 
             title: 'Privacidad y Seguridad', 
             description: 'Configuración de privacidad', 
-            trailing: const Icon(Icons.arrow_forward_ios),
+            trailing: InkWell(
+              onTap: () {
+                loginFuntionDeprived() ;
+              },
+              child: const Icon(Icons.arrow_forward_ios)),
           ),
           ConfigOptionCard(
             icon: Icons.logout, 
             title: 'Cerrar sesión', 
             description: 'Cerrar sesión actual', 
-            trailing: const Icon(Icons.arrow_forward_ios),
+            trailing: InkWell(
+              onTap: () async {
+                 
+                         ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Esta cerrando la apk, espere un momento por favor...')),
+      );
+                     bool result =  await  logoutApk();
+                      if(result == true)
+                      {
+                        
+                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                        //  logoutAndClearSignals();
+                        GoRouter.of(context).go(
+                          '/LoginFormPage',
+                        );
+
+                      }
+                      else
+                      {
+                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                        ScaffoldMessenger.of(context).showSnackBar( SnackBar(
+                          content: Text('Error al cerrar la apk, intente de nuevo'),
+                          backgroundColor: Colors.red,
+                        )); 
+                      }
+                      
+                      
+              },
+              child: const Icon(Icons.arrow_forward_ios)),
+
           ),
         ],
       ),
       
     
    
+    );
+  }
+  
+     loginFuntionDeprived() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Esta función aún está en desarrollo y no está disponible en este momento')),
     );
   }
 }

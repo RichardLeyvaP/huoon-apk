@@ -25,7 +25,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
 );
- await FirebaseApi().initNotifications();
+// await FirebaseApi().initNotifications();
   await initializeDateFormatting('es', null);
   //await requestConfiguration();//esto cargaba las configuraciones iniciales y ponia lenta la aplicación
 
@@ -54,6 +54,8 @@ class _AppInitializerWidgetState extends State<AppInitializerWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final FirebaseApi firebaseApi = FirebaseApi();
+    firebaseApi.initNotifications(context);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: MyApp(),
