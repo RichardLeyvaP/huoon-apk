@@ -1,8 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:huoon/data/models/filesUsser/filesUsser_model.dart';
 import 'package:huoon/data/models/homeHouseUsser/homeHouseUsser_model.dart';
+import 'package:huoon/data/services/file_upload_service.dart';
 import 'package:huoon/domain/blocs/configuration_bloc/configuration_service.dart';
 import 'package:huoon/domain/blocs/configuration_bloc/configuration_signal.dart';
+import 'package:huoon/domain/blocs/filesUsser_signal/fileUsser_service.dart';
 import 'package:huoon/domain/blocs/homeHouse_signal/homeHouse_service.dart';
 import 'package:huoon/domain/blocs/homeHouse_signal/homeHouse_signal.dart';
 import 'package:huoon/domain/blocs/login_bloc/login_signal.dart';
@@ -18,6 +23,7 @@ import 'package:huoon/ui/pages/pageMenu/store/storePage.dart';
 import 'package:huoon/ui/pages/pageMenu/wishesPage.dart';
 import 'package:huoon/ui/util/util_class.dart';
 import 'package:huoon/ui/util/utils_class_apk.dart';
+import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -101,11 +107,232 @@ Future<void>? _futureConfiguration;
   
   }
 
+
+
+  
+List<File> selectedFiles = [];
+ void _removeFile(int index) {
+    setState(() {
+      selectedFiles.removeAt(index);
+    });
+  }
+   void _handleFilesSelected(List<File> files,BuildContext context) {
+    if (files.isNotEmpty) {
+      setState(() {
+        selectedFiles.addAll(files);
+      });
+      int cantFiles = selectedFiles.length;
+      _showFilesModal(context ); // Mostrar el modal después de seleccionar archivos
+    }
+  }
+  Future<void> loadFilesUsser() async {
+    // Siempre verifico si tiene hogar, sino no mando a la API
+    print('aqui mostrando a homeSelectHH:${homeSelectHH.value}');
+    if (homeSelectHH.value != null) {
+      await requestFilesUsser(); // Solicita los archivos
+    } else {
+      // Si no tiene hogar, muestra un mensaje de error
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('No tiene hogar asignado'),
+        duration: const Duration(seconds: 2),
+      ));
+    }
+  }
+  void _showFilesModal(BuildContext context) {
+  TextEditingController titleController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
+  TextEditingController dateController = TextEditingController(
+    text: DateFormat('yyyy-MM-dd').format(DateTime.now()), // Fecha por defecto
+  );
+  int selectedCategory = 1; // 1 = Personal, 0 = Hogar
+
+  showModalBottomSheet(
+    isDismissible: false,
+    context: context,
+    isScrollControlled: true,
+    builder: (context) {
+      return StatefulBuilder(
+        builder: (context, setState) {
+          return Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom, // Ajuste para teclado
+            ),
+            child: Container(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.5,
+              ),
+              padding: EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Archivos Seleccionados",
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 5),
+                  Flexible(
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: selectedFiles.length,
+                      itemBuilder: (context, index) {
+                        File file = selectedFiles[index];
+                        String fileName = file.path.split('/').last;
+                        String fileExtension = fileName.split('.').last.toLowerCase();
+
+                        Widget fileIcon = (["jpg", "jpeg", "png"].contains(fileExtension))
+                            ? Image.file(file, width: 50, height: 50, fit: BoxFit.cover)
+                            : Icon(
+                                fileExtension == "pdf"
+                                    ? Icons.picture_as_pdf
+                                    : Icons.insert_drive_file,
+                                size: 50,
+                                color: fileExtension == "pdf" ? Colors.red : Colors.grey,
+                              );
+
+                        return ListTile(
+                          contentPadding: EdgeInsets.symmetric(vertical: 2),
+                          leading: fileIcon,
+                          title: Text(fileName, style: TextStyle(fontSize: 12)),
+                          trailing: IconButton(
+                            icon: Icon(Icons.delete, color: Colors.red),
+                            onPressed: () {
+                              setState(() {
+                                selectedFiles.removeAt(index);
+                              });
+                              if (selectedFiles.isEmpty) Navigator.pop(context);
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  if (selectedFiles.length == 1) ...[
+                    TextField(
+                      controller: titleController,
+                      decoration: InputDecoration(
+                        hintText: "Añadir un título...(Opcional)",
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                        contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    TextField(
+                      controller: descriptionController,
+                      decoration: InputDecoration(
+                        hintText: "Añadir un comentario...(Opcional)",
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                        contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    GestureDetector(
+                      onTap: () async {
+                        DateTime? pickedDate = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2101),
+                        );
+                        if (pickedDate != null) {
+                          setState(() {
+                            dateController.text = DateFormat('yyyy-MM-dd').format(pickedDate);
+                          });
+                        }
+                      },
+                      child: AbsorbPointer(
+                        child: TextField(
+                          controller: dateController,
+                          decoration: InputDecoration(
+                            hintText: "Seleccionar fecha",
+                            suffixIcon: Icon(Icons.calendar_today),
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                            contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Radio(
+                          value: 1,
+                          groupValue: selectedCategory,
+                          onChanged: (value) {
+                            setState(() {
+                              selectedCategory = value as int;
+                            });
+                          },
+                        ),
+                        Text("Personal"),
+                        SizedBox(width: 20),
+                        Radio(
+                          value: 0,
+                          groupValue: selectedCategory,
+                          onChanged: (value) {
+                            setState(() {
+                              selectedCategory = value as int;
+                            });
+                          },
+                        ),
+                        Text("Hogar"),
+                      ],
+                    ),
+                  ],
+                  SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: Text("Cancelar"),
+                      ),
+                      ElevatedButton(
+                        onPressed: () async {
+                          final fileElement = FileElement(
+                            name: titleController.text.isEmpty ? null : titleController.text,
+                            description: descriptionController.text.isEmpty ? null : descriptionController.text,
+                            date: DateTime.tryParse(dateController.text) ?? DateTime.now(),
+                            personal: selectedCategory,
+                          );
+
+                          print("📄 Archivo a subir: ${selectedFiles[0].path}");
+                          print("📄 Título: ${fileElement.name}");
+                          print("📝 Descripción: ${fileElement.description}");
+                          print("📅 Fecha: ${fileElement.date}");
+                          print("🏠 Categoría: ${fileElement.personal == 1 ? "Personal" : "Hogar"}");
+
+                          await submitFilesUsser(fileElement,selectedFiles[0].path);
+                          await loadFilesUsser();
+                          Navigator.pop(context);
+                        },
+                        child: Text("Subir Archivos"),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    },
+  );
+}
+
+
+
   @override
   void dispose() {
     _tabController.dispose();
     super.dispose();
   }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -217,9 +444,29 @@ currentUserLG.value?.userName ?? '', // Si es null, muestra "Invitado"
                     );
                   }else if (_tabController.index == 5) {
                     //agregar hogar
-      await fetchCategoriesStatusHomeHouse();
-                    GoRouter.of(context).push('/HomeHouseCreation');
       
+                    //GoRouter.of(context).push('/FilesPageNew');
+                  //  await requestFilesUsser();
+    
+   FilePickerResultData result = await FilePickerService.pickFiles(
+    allowedExtensions: ["jpg","jpeg", "png", "doc", "pdf"],
+    maxSizeMB: 15,
+    maxFiles: 5,
+  );
+
+if (result.files.isNotEmpty) {
+  _handleFilesSelected(result.files,context);
+    print("✅ Archivos seleccionados: ${result.files.map((f) => f.path).toList()}");
+  } else {
+     ScaffoldMessenger.of(context).showSnackBar(
+      
+        SnackBar(
+          backgroundColor: Colors.red,
+          content: Text(result.errorMessage ?? 'Unknown error',style: TextStyle(color: Colors.white),)),
+      );
+    print("⚠️ Archivos seleccionados: Error: ${result.errorMessage}");
+  }
+ 
                     // GoRouter.of(context).push(
                     //   //mando a la vista de crear el producto
                     //   // '/ProductCreation',
@@ -785,4 +1032,7 @@ Column cardMenuUp(IconData icon, String labelText, bool isSelected) {
       ),
     ],
   );
+
+  
 }
+

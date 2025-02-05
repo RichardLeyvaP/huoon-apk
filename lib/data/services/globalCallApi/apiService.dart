@@ -4,6 +4,10 @@ import 'package:http/http.dart' as http;
 import 'package:huoon/ui/pages/env.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:http_parser/http_parser.dart';
+
+
+
 class ApiService {
   String? baseUrl;
   String? _token; // Token privado
@@ -72,7 +76,8 @@ class ApiService {
         Uri.parse(endpoint),
         headers: await _headers(),
         body: jsonEncode(body),
-      );SharedPreferences prefs = await SharedPreferences.getInstance();
+      );
+      SharedPreferences prefs = await SharedPreferences.getInstance();
        String ?token = prefs.getString('auth_token');
       print('aqui estoy entrando-al metodo-post-task-response.statusCode${response.statusCode}');
       print('aqui estoy entrando-al metodo-post-task-response.statusCode-1${token}');
@@ -93,6 +98,86 @@ class ApiService {
       throw Exception('Error desconocido: $e');
     }
   }
+
+
+
+Future<dynamic> postWithFile(
+  String endpoint, {
+  required Map<String, dynamic> body,
+  required File file,
+  String fileField = 'archive', // Nombre del campo del archivo en el servidor
+}) async {
+  try {
+    print('📤 Subiendo archivo: ${file.path}');
+
+    // Detectar el tipo MIME del archivo
+    String mimeType = _getMimeType(file);
+    print('📌 Tipo de archivo detectado: $mimeType');
+
+    final uri = Uri.parse(endpoint);
+    final request = http.MultipartRequest('POST', uri);
+
+    // Agregar encabezados
+    final headers = await _headers();
+    request.headers.addAll(headers);
+
+    // Agregar campos del body
+    body.forEach((key, value) {
+      if (value is String) {
+        request.fields[key] = value;
+      } else {
+        request.fields[key] = jsonEncode(value); // Convertir a JSON si no es String
+      }
+    });
+
+    // Adjuntar el archivo con el tipo MIME correcto
+    request.files.add(await http.MultipartFile.fromPath(
+      fileField,
+      file.path,
+      contentType: MediaType.parse(mimeType),
+    ));
+
+    // Enviar la solicitud
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+
+    print('✅ Respuesta del servidor: ${response.statusCode} - ${response.body}');
+
+    return _processResponse(response);
+  } on SocketException catch (e) {
+    print('❌ Error de red (SocketException): $e');
+    throw Exception('Error de red: No se pudo conectar al servidor.');
+  } on HttpException catch (e) {
+    print('❌ Error HTTP (HttpException): $e');
+    throw Exception('Error HTTP: La solicitud al servidor falló.');
+  } on FormatException catch (e) {
+    print('❌ Error de formato (FormatException): $e');
+    throw Exception('Error de formato: La respuesta no tiene un formato esperado.');
+  } catch (e, stacktrace) {
+    print('❌ Error general (Exception): $e');
+    print('🔍 Stacktrace: $stacktrace');
+    throw Exception('Error desconocido: $e');
+  }
+}
+
+/// Método para obtener el tipo MIME del archivo
+String _getMimeType(File file) {
+  String extension = file.path.split('.').last.toLowerCase();
+  switch (extension) {
+    case 'jpg':
+    case 'jpeg':
+      return 'image/jpeg';
+    case 'png':
+      return 'image/png';
+    default:
+      return 'application/octet-stream'; // Tipo por defecto si no se reconoce
+  }
+}
+
+
+
+
+
 
   // Método PUT
   Future<dynamic> put(String endpoint, {required Map<String, dynamic> body}) async {

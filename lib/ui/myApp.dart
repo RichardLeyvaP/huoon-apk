@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:huoon/ui/components/settingsPage.dart';
 import 'package:huoon/ui/pages/loginFormPage.dart';
+import 'package:huoon/ui/pages/pageMenu/filesPageNew.dart';
 import 'package:huoon/ui/pages/registerPage.dart';
 import 'package:huoon/ui/pages/rol-admin/Task/TaskCreationPage.dart';
 import 'package:huoon/ui/pages/rol-admin/Task/TaskUpdatePage.dart';
@@ -64,6 +65,10 @@ class MyApp extends StatelessWidget {
        GoRoute(
         path: '/HomePrincipal',
         builder: (context, state) => HomePrincipal(),
+      ),
+      GoRoute(
+        path: '/FilesPageNew',
+        builder: (context, state) => FilesPageNew(),
       ),
       // GoRoute(
       //   path: '/LoadingPage',
