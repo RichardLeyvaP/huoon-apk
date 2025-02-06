@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class TranslationManager {
   static late Locale _locale;
@@ -346,5 +347,16 @@ bool isNegative(String num) {
     // Si ocurre una excepción (por ejemplo, si no es un número válido), se maneja aquí
     print('Error al parsear el número: $e');
     return false;  // Devuelve false si no se puede parsear el valor
+  }
+}
+
+
+Future<void> requestStoragePermission() async {
+  PermissionStatus status = await Permission.storage.request();
+  if (status.isGranted) {
+    // Acceso permitido, puedes proceder con la descarga y apertura de archivos
+  } else {
+    // El usuario denegó el permiso, manejarlo apropiadamente
+    print("Permiso de almacenamiento denegado");
   }
 }

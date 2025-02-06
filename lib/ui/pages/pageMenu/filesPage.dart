@@ -2,9 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:huoon/data/services/files/fileService.dart';
 import 'package:huoon/domain/blocs/filesUsser_signal/fileUsser_service.dart';
 import 'package:huoon/domain/blocs/filesUsser_signal/fileUsser_signal.dart';
 import 'package:huoon/domain/blocs/homeHouse_signal/homeHouse_signal.dart';
+import 'package:huoon/ui/components/cacheImageWidget.dart';
+import 'package:huoon/ui/pages/env.dart';
 import 'package:intl/intl.dart';
 import 'package:signals/signals_flutter.dart';
 
@@ -78,11 +81,15 @@ class _FilesPageState extends State<FilesPage> {
                   child: ListView.builder(
                     itemCount: listFileElementFU.watch(context)?.length ?? 0,
                     itemBuilder: (context, index) {
+                      debugPrint('este es el archivo : ${listFileElementFU.value![index].archive}');
                       return FadeIn(
                         child: _buildBudgetCardFiles(
+                          listFileElementFU.value![index].id!,
                           listFileElementFU.value![index].name!,
                           listFileElementFU.value![index].type!,
                           DateFormat('yyyy-MM-dd').format(listFileElementFU.value![index].date!), // Formatea la fecha
+                          listFileElementFU.value![index].archive!,
+                          listFileElementFU.value![index].type!,
                         ),
                       );
                     },
@@ -104,7 +111,7 @@ class _FilesPageState extends State<FilesPage> {
         padding: const EdgeInsets.all(8.0),
         child: Row(
           children: [
-            ContainerIcon(const Color.fromARGB(255, 92, 205, 195), Icons.business_center, 20),
+            ContainerIcon(const Color.fromARGB(255, 92, 205, 195), 20, 'business_center', false),
             SizedBox(width: 20),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,168 +132,134 @@ class _FilesPageState extends State<FilesPage> {
     );
   }
 
-// Widget _buildBudgetCardFiles(String title, String subTitle, DateTime date, String fileType, String filePath) {
-//   return Card(
-//     elevation: 1,
-//     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-//     child: Padding(
-//       padding: const EdgeInsets.all(8.0),
-//       child: Row(
-//         crossAxisAlignment: CrossAxisAlignment.start,
-//         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//         children: [
-//           Row(
-//             children: [
-//               _getFileIcon(fileType, filePath), // Icono dinámico según el tipo de archivo
-//               SizedBox(width: 10),
-//               Column(
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   Text(
-//                     title,
-//                     style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
-//                   ),
-//                   Text(
-//                     subTitle,
-//                     style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: const Color.fromARGB(255, 69, 155, 148)),
-//                   ),
-//                   Row(
-//                     children: [
-//                       Text(
-//                         'Sugerencia de ',
-//                         style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-//                       ),
-//                       Text(
-//                         'Huoon',
-//                         style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: const Color.fromARGB(255, 69, 155, 148)),
-//                       ),
-//                     ],
-//                   ),
-//                 ],
-//               ),
-//             ],
-//           ),
-//           Padding(
-//             padding: const EdgeInsets.all(8.0),
-//             child: Text(
-//               DateFormat('yyyy-MM-dd').format(date),
-//               style: TextStyle(fontSize: 10, color: Colors.red),
-//             ),
-//           ),
-//         ],
-//       ),
-//     ),
-//   );
-// }
 
-// /// Función para obtener el icono adecuado según el tipo de archivo
-// Widget _getFileIcon(String fileType, String filePath) {
-//   if (["jpg", "jpeg", "png", "gif"].contains(fileType.toLowerCase())) {
-//     return ClipRRect(
-//       borderRadius: BorderRadius.circular(10),
-//       child: Image.file(
-//         File(filePath),
-//         width: 50,
-//         height: 50,
-//         fit: BoxFit.cover,
-//       ),
-//     );
-//   } else if (fileType == "pdf") {
-//     return _iconContainer(Colors.red, Icons.picture_as_pdf);
-//   } else if (["doc", "docx"].contains(fileType.toLowerCase())) {
-//     return _iconContainer(Colors.blue, Icons.description);
-//   } else if (["mp3", "wav", "aac"].contains(fileType.toLowerCase())) {
-//     return _iconContainer(Colors.orange, Icons.audiotrack);
-//   } else if (["mp4", "avi", "mov"].contains(fileType.toLowerCase())) {
-//     return _iconContainer(Colors.purple, Icons.video_library);
-//   } else {
-//     return _iconContainer(Colors.grey, Icons.insert_drive_file);
-//   }
-// }
+  Widget _buildBudgetCardFiles(int id,String title, String subTitle, String data,String archive,String type) {
+bool isImage = false;
+if (type.toLowerCase() == 'image' || 
+    type.toLowerCase() == 'jpg' || 
+    type.toLowerCase() == 'jpeg' || 
+    type.toLowerCase() == 'png') {
+  // Lógica para manejar imágenes
+  isImage = true;
+}
+ else if (type.toLowerCase() == 'pdf') {
+    archive = 'pdf';
+    // Lógica para manejar archivos PDF
+  } else if (type.toLowerCase() == 'doc' || type.toLowerCase() == 'docx') {
+    // Lógica para manejar documentos de Word
+    archive = 'doc';
+  } else if (type.toLowerCase() == 'xls' || type.toLowerCase() == 'xlsx') {
+    // Lógica para manejar archivos de Excel
+    archive = 'xls';
+  } else if (type.toLowerCase() == 'txt') {
+    // Lógica para manejar archivos de texto
+    archive = 'txt';
+  } else {
+    archive = 'different';
+    // Lógica para manejar otros tipos de archivos
+  }
 
-// /// Contenedor de iconos con color de fondo
-// Widget _iconContainer(Color color, IconData icon) {
-//   return Container(
-//     decoration: BoxDecoration(
-//       color: color.withOpacity(0.3),
-//       borderRadius: BorderRadius.circular(20),
-//     ),
-//     padding: EdgeInsets.all(10),
-//     child: Icon(
-//       icon,
-//       size: 30,
-//       color: color,
-//     ),
-//   );
-// }
-
-
-  Widget _buildBudgetCardFiles(String title, String subTitle, String data) {
-    return Card(
-      elevation: 1,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                ContainerIcon(const Color.fromARGB(255, 92, 205, 195), Icons.attach_money, 20),
-                SizedBox(width: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
-                    ),
-                    Text(
-                      subTitle,
-                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: const Color.fromARGB(255, 69, 155, 148)),
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          'Sugerencia de ',
-                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-                        ),
-                        Text(
-                          'Huoon',
-                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: const Color.fromARGB(255, 69, 155, 148)),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                data,
-                style: TextStyle(fontSize: 10, color: Colors.red),
+    
+    return InkWell(
+      onTap: () {
+        print('este es mi Archivo: $archive');
+        print('este es mi Archivo-2: ${Env.apiEndpoint}/images/$archive');
+        FileService.handleFile(context, '${Env.apiEndpoint}/images/$archive',id);
+      },
+      child: Card(
+        elevation: 1,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  // (Color colorContainerIcon, IconData icon, double paddingIcon, String image, bool isImage)
+                  ContainerIcon(const Color.fromARGB(255, 92, 205, 195), 20, '${Env.apiEndpoint}/images/$archive', isImage),
+                  SizedBox(width: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                      ),
+                      Text(
+                        subTitle,
+                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: const Color.fromARGB(255, 69, 155, 148)),
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            'Sugerencia de ',
+                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                          ),
+                          Text(
+                            'Huoon',
+                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: const Color.fromARGB(255, 69, 155, 148)),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
               ),
-            ),
-          ],
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  data,
+                  style: TextStyle(fontSize: 10, color: Colors.red),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Container ContainerIcon(Color colorContainerIcon, IconData icon, double paddingIcon) {
+  Container ContainerIcon(Color colorContainerIcon, double paddingIcon, String archive, bool isImage) {
+    IconData iconType;
+
+if (isImage) {
+  iconType = Icons.image;
+} else if (archive == 'pdf') {
+  iconType = Icons.picture_as_pdf;
+} else if (archive == 'doc') {
+  iconType = Icons.description;
+} else if (archive == 'xls') {
+  iconType = Icons.table_chart;
+} else if (archive == 'txt') {
+  iconType = Icons.text_snippet;
+} else if (archive == 'business_center') {
+  iconType = Icons.business_center;
+}
+ else {
+  iconType = Icons.insert_drive_file;
+}
+
     return Container(
       decoration: BoxDecoration(
-        color: colorContainerIcon.withOpacity(0.3),
+        color: colorContainerIcon.withOpacity(0.2),
         borderRadius: BorderRadius.circular(20),
       ),
-      padding: EdgeInsets.all(paddingIcon),
-      child: Icon(
-        icon,
+      padding: EdgeInsets.all(1),
+      child: 
+      isImage ?
+      ClipRRect(
+          borderRadius: BorderRadius.circular(20), // Aplica el redondeo a la imagen
+          child: cacheImageWidget(image: archive),
+        ):
+                                        Icon(
+        iconType,
         size: 30,
         color: colorContainerIcon,
-      ),
+      )
     );
+
+    
   }
 }

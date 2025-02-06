@@ -11,6 +11,7 @@ import 'package:huoon/domain/blocs/homeHouse_signal/homeHouse_signal.dart';
 import 'package:huoon/domain/blocs/login_bloc/login_service.dart';
 import 'package:huoon/ui/components/ImageDetailScreen.dart';
 import 'package:huoon/ui/components/button_custom.dart';
+import 'package:huoon/ui/components/cacheImageWidget.dart';
 import 'package:huoon/ui/components/componentGlobal_widget.dart';
 import 'package:huoon/ui/components/configOptionCard%20.dart';
 import 'package:huoon/ui/myApp.dart';
@@ -85,6 +86,7 @@ void _showSelectionPanel(BuildContext context, List<Home>? homeHouseUsserHH) {
                   child: SingleChildScrollView(
                     child: Column(
                       children: List.generate(homeHouseUsserHH == null? 0: homeHouseUsserHH.length, (index) {
+                     
                         return GestureDetector(
                           onTap: () {
                             setState(() {
@@ -121,42 +123,8 @@ void _showSelectionPanel(BuildContext context, List<Home>? homeHouseUsserHH) {
                                           );
                                         },
                                         child: ClipOval(
-                                          child: CachedNetworkImage(
-                                            imageUrl:
-                                                '${Env.apiEndpoint}/images/${homeHouseUsserHH![index].image}',
-                                            placeholder: (context, url) =>
-                                                Container(
-                                              width: 30,
-                                              height: 30,
-                                              child: const Center(
-                                                child: SizedBox(
-                                                  width: 30,
-                                                  height: 30,
-                                                  child:
-                                                      CircularProgressIndicator(
-                                                    strokeWidth:
-                                                        2, // Personaliza el ancho del indicador como desees
-                                                    valueColor:
-                                                        AlwaysStoppedAnimation<
-                                                                Color>(
-                                                            Color.fromARGB(110,
-                                                                253, 176, 42)),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            errorWidget:
-                                                (context, url, error) =>
-                                                    Image.asset(
-                                              'assets/people/default.jpg',
-                                              cacheWidth: 30,
-                                              cacheHeight: 30,
-                                              fit: BoxFit.cover,
-                                            ),
-                                            fit: BoxFit.cover,
-                                            width: 50,
-                                            height: 50,
-                                          ),
+                                          child:                                           
+                                          cacheImageWidget(image: '${Env.apiEndpoint}/images/${homeHouseUsserHH![index].image}'),
                                         ),
                                       ),
                                     

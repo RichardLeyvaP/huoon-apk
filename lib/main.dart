@@ -1,18 +1,24 @@
+
 // ignore_for_file: unused_element, depend_on_referenced_packages
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:huoon/data/repository/configuration_repository.dart';
+import 'package:huoon/data/services/files/fileService.dart';
 import 'package:huoon/data/services/globalCallApi/apiService.dart';
 import 'package:huoon/dependency_injection/providers.dart';
 import 'package:huoon/firebaseOptionsNUEVO.dart';
 import 'package:huoon/integrationApi/firebase_api.dart';
 import 'package:huoon/ui/myApp.dart';
+import 'package:huoon/ui/util/util_class.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+   // Inicializa las notificaciones cuando arranque la app
+  FileService.initNotifications();
+  await requestStoragePermission();
   // await Firebase.initializeApp();
   // Habilita la recopilación de eventos de Firebase Analytics
   // await FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(true);
@@ -30,7 +36,9 @@ void main() async {
   //await requestConfiguration();//esto cargaba las configuraciones iniciales y ponia lenta la aplicación
 
   runApp(
+    
     MultiProvider(
+      
       providers: providers,
       child: const AppInitializerWidget(),
     ),
@@ -51,7 +59,6 @@ class _AppInitializerWidgetState extends State<AppInitializerWidget> {
   void initState() {
     super.initState();
   }
-
   @override
   Widget build(BuildContext context) {
     final FirebaseApi firebaseApi = FirebaseApi();

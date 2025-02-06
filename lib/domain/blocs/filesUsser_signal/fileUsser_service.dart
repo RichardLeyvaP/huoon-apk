@@ -2,6 +2,7 @@ import 'package:huoon/data/models/filesUsser/filesUsser_model.dart';
 import 'package:huoon/data/repository/filesUsser_repository.dart';
 import 'package:huoon/data/services/globalCallApi/apiService.dart';
 import 'package:huoon/domain/blocs/filesUsser_signal/fileUsser_signal.dart';
+import 'package:huoon/domain/blocs/homeHouse_signal/homeHouse_signal.dart';
 
 // Repositorio de configuración (se asume que ya está inicializado en otro lugar)
 final FilesUsserRepository filesUsserRepository = FilesUsserRepository(authService: ApiService());
@@ -40,6 +41,20 @@ Future<void> submitFilesUsser(FileElement fileElement ,String sendFilePath) asyn
  
     try {
       await filesUsserRepository.storeFilesUsser(fileElement, sendFilePath);
+    } catch (error) {
+      print('error al intentar subir el archivo: $error');
+      errorDescriptionFU.value = error.toString();
+    }
+  }
+// Enviar configuración actualizada a la API
+Future<void> deleteFilesUsser(int id) async {
+ 
+    try {
+      await filesUsserRepository.deleteFilesUsserRepository(id);
+      // actualizar los archivos
+       if (homeSelectHH.value != null) {
+      await requestFilesUsser(); // Solicita los archivos
+    } 
     } catch (error) {
       print('error al intentar subir el archivo: $error');
       errorDescriptionFU.value = error.toString();

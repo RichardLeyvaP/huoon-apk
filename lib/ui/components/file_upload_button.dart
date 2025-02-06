@@ -22,7 +22,7 @@ class FileUploadButton extends StatelessWidget {
     FilePickerResultData result = await FilePickerService.pickFiles(
     allowedExtensions: ["jpg", "png", "pdf"],
     maxSizeMB: 5,
-    maxFiles: 3,
+    maxFiles: 1,
   );
 
     if (result.files.isNotEmpty) {

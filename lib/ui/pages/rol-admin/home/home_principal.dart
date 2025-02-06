@@ -450,8 +450,8 @@ currentUserLG.value?.userName ?? '', // Si es null, muestra "Invitado"
     
    FilePickerResultData result = await FilePickerService.pickFiles(
     allowedExtensions: ["jpg","jpeg", "png", "doc", "pdf"],
-    maxSizeMB: 15,
-    maxFiles: 5,
+    maxSizeMB: 1,
+    maxFiles: 1,
   );
 
 if (result.files.isNotEmpty) {

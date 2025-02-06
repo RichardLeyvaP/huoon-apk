@@ -1,6 +1,4 @@
 import 'dart:io';
-
-import 'package:huoon/data/models/configuration/configuration_model.dart';
 import 'package:huoon/data/models/filesUsser/filesUsser_model.dart';
 import 'package:huoon/data/services/globalCallApi/apiService.dart';
 import 'package:huoon/domain/blocs/homeHouse_signal/homeHouse_signal.dart';
@@ -99,11 +97,14 @@ try {
   }
 
   // Método para eliminar una configuración
-  Future<dynamic> deleteConfiguration(int id) async {
-    final endpoint = '${Env.apiEndpoint}/configurations/$id';
-
+  Future<dynamic> deleteFilesUsserRepository(int id) async {
+    final endpoint = '${Env.apiEndpoint}/file-destroy';
+final body = {
+      'id': id,
+    };
+    // Llama al servicio que maneja la API de autenticación para login
     try {
-      final response = await authService.delete(endpoint);
+       final response = await authService.post(endpoint, body: body);
       print('Respuesta después de eliminar configuración: $response');
       return response;
     } catch (e) {
