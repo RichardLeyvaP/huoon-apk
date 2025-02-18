@@ -7,6 +7,8 @@ import 'package:huoon/domain/blocs/tasks/tasks_service.dart';
 import 'package:huoon/domain/blocs/user_activity_bloc/user_activity_service.dart';
 import 'package:huoon/ui/Components/avatarMultiples.dart';
 import 'package:huoon/ui/Components/dialog_utils.dart';
+import 'package:huoon/ui/pages/pageMenu/RankingPage/widget/showRatingBottomSheet.dart';
+import 'package:huoon/ui/util/utils_class_apk.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class CardTasks extends StatefulWidget {
@@ -247,6 +249,20 @@ class _CardTasksState extends State<CardTasks> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
+                    _buildOptionButton(
+                      icon: Icons.check,
+                      label: "Compl",
+                      color:  StyleGlobalApk.colorPrimary,
+                      onPressed: () {
+                        setState(() {
+        isOptionsVisible = false;
+      });
+                       showRatingBottomSheet(context, widget.people, (ratings) {
+      // Aquí puedes enviar los datos a la API
+      print("Puntuaciones guardadas: $ratings");
+    });
+                      },
+                    ),
                     _buildOptionButton(
                       icon: Icons.edit,
                       label: "Editar",

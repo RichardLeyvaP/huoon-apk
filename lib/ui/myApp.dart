@@ -3,9 +3,11 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:huoon/ui/components/settingsPage.dart';
 import 'package:huoon/ui/pages/loginFormPage.dart';
+import 'package:huoon/ui/pages/pageMenu/RankingPage/rankingPage.dart';
 import 'package:huoon/ui/pages/registerPage.dart';
 import 'package:huoon/ui/pages/rol-admin/Task/TaskCreationPage.dart';
 import 'package:huoon/ui/pages/rol-admin/Task/TaskUpdatePage.dart';
+import 'package:huoon/ui/pages/rol-admin/chat/deseos_chat.dart';
 import 'package:huoon/ui/pages/rol-admin/home/home_principal.dart';
 import 'package:huoon/ui/pages/rol-admin/homeHouse/homeHouseCreation.dart';
 import 'package:huoon/ui/pages/rol-admin/incomeExpenses/incomeExpensesPage.dart';
@@ -159,6 +161,16 @@ class MyApp extends StatelessWidget {
         path: '/SettingsPage',
         builder: (context, state) => SettingsPage(),
       ),
+       GoRoute(
+        path: '/DeseosPage',
+        builder: (context, state) => DeseosPage(),
+      ),
+       GoRoute(
+        path: '/RankingPage',
+        builder: (context, state) => RankingPage(),
+      ),
+
+      
       //rutas de prueba
       //
       //

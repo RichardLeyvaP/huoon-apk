@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 // import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
@@ -40,7 +41,7 @@ import 'package:intl/intl.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-class TaskChatPage extends StatefulWidget {
+class DeseosChatPage extends StatefulWidget {
   final List<Map<String, dynamic>> conversationSteps;
   final String title;
   final String module;
@@ -52,7 +53,7 @@ class TaskChatPage extends StatefulWidget {
   final TimeOfDay? startTime;
   final TimeOfDay? endTime;
 
-  const TaskChatPage({
+  const DeseosChatPage({
     Key? key,
     required this.conversationSteps,
     required this.title,
@@ -67,11 +68,11 @@ class TaskChatPage extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _TaskChatPageState createState() => _TaskChatPageState();
+  _DeseosChatPageState createState() => _DeseosChatPageState();
 }
 
 
-class _TaskChatPageState extends State<TaskChatPage> {
+class _DeseosChatPageState extends State<DeseosChatPage> {
    late TextEditingController _textController;
   late List<Map<String, dynamic>> _messages;
   late Map<String, String> _taskData;
@@ -94,6 +95,367 @@ void removeConversationStep(String key) {
   _conversationSteps.removeWhere((step) => step['key'] == key);
   _messages.removeWhere((step) => step['key'] == key);
 }
+
+// Agregar los datos de sueños a _conversationSteps//AGREGADA NUEVA
+void addDreamsConversation(dreamsConversation) {
+  setState(() {
+    _conversationSteps.addAll(dreamsConversation);
+  });
+  
+}
+List<Map<String, dynamic>> dreamsConversation = [
+  {
+    'key': 'boot_promt2_dreams',
+    'message': '¿Cuál es tu mayor sueño o meta en la vida? 🌟',
+    'hint': 'Ejemplo: Tener mi propio negocio, viajar por el mundo, ser escritor'
+  },
+  {
+    'key': 'boot_promt2_dreams',
+    'message': '¿Qué tan importante es para ti lograrlo? 🎯',
+    'hint': 'Ejemplo: Es mi pasión, cambiará mi vida, me dará estabilidad'
+  },
+  {
+    'key': 'boot_promt3_dreams',
+    'message': '¿Cuáles son los mayores obstáculos que enfrentas para cumplirlo? 🔍',
+    'hint': 'Ejemplo: Falta de dinero, miedo al fracaso, no sé por dónde empezar'
+  },
+  {
+    'key': 'boot_promt4_dreams',
+    'message': 'Si tuvieras todos los recursos necesarios, ¿qué primer paso darías? 🚀',
+    'hint': 'Ejemplo: Inscribirme en un curso, contactar a un mentor, empezar a ahorrar'
+  },
+  {
+    'key': 'boot_promt5_dreams_fin',
+    'message': '¿Cuándo planeas dar tu primer paso para lograrlo? 📅',
+    'hint': 'Ejemplo: Esta semana, en un mes, cuando ahorre lo suficiente'
+  },
+];
+List<Map<String, dynamic>> travelConversation = [
+  {
+    'key': 'boot_promt2_travel',
+    'message': '¿Cuál es tu destino soñado y por qué te gustaría ir allí? 🌍',
+    'hint': 'Ejemplo: Japón, porque amo su cultura'
+  },
+  {
+    'key': 'boot_promt3_travel',
+    'message': '¿Prefieres viajar solo o acompañado? 👥',
+    'hint': 'Ejemplo: Solo para desconectarme, con mi pareja para disfrutar juntos'
+  },
+  {
+    'key': 'boot_promt4_travel',
+    'message': '¿Cuál es tu presupuesto para este viaje? 💰',
+    'hint': 'Ejemplo: \$2000, lo que sea necesario, aún no lo sé'
+  },
+  {
+    'key': 'boot_promt5_travel_fin',
+    'message': '¿Tienes fecha estimada para este viaje? 📅',
+    'hint': 'Ejemplo: Próximo verano, dentro de 2 años, cuando pueda ahorrar lo suficiente'
+  },
+];
+List<Map<String, dynamic>> fitnessConversation = [
+  {
+    'key': 'boot_promt2_travel',
+    'message': '¿Cuál es tu principal objetivo de fitness? 🏆',
+    'hint': 'Ejemplo: Perder peso, ganar músculo, mejorar mi resistencia'
+  },
+  {
+    'key': 'boot_promt3_travel',
+    'message': '¿Cuántas veces a la semana planeas entrenar? 🏋️‍♂️',
+    'hint': 'Ejemplo: 3 veces por semana, todos los días'
+  },
+  {
+    'key': 'boot_promt4_travel',
+    'message': '¿Sigues alguna dieta o plan de alimentación? 🥗',
+    'hint': 'Ejemplo: Sí, una dieta keto, no pero quiero empezar'
+  },
+  {
+    'key': 'boot_promt5_travel_fin',
+    'message': '¿Cuál es tu motivación principal para hacer ejercicio? 🔥',
+    'hint': 'Ejemplo: Sentirme bien, mejorar mi salud, tener más energía'
+  },
+];
+List<Map<String, dynamic>> learningConversation = [
+  {
+    'key': 'boot_promt2_travel', 
+    'message': '¿Qué área del conocimiento te interesa más? 📖', 
+    'hint': 'Ejemplo: Programación, historia, idiomas'
+  },
+  {
+    'key': 'boot_promt3_travel', 
+    'message': '¿Cómo prefieres aprender? 🎓', 
+    'hint': 'Ejemplo: Cursos en línea, libros, clases presenciales'
+  },
+  {
+    'key': 'boot_promt4_travel', 
+    'message': '¿Cuánto tiempo puedes dedicar al aprendizaje cada día? ⏳', 
+    'hint': 'Ejemplo: 1 hora, 3 horas, tiempo completo'
+  },
+  {
+    'key': 'boot_promt5_travel_fin', 
+    'message': '¿Cuáles son los obstáculos que enfrentas para aprender? 🚧', 
+    'hint': 'Ejemplo: Falta de tiempo, recursos limitados'
+  },
+];
+List<Map<String, dynamic>> financeConversation = [
+  {
+    'key': 'boot_promt1_finance', 
+    'message': '¿Cuál es tu mayor meta financiera? 💰', 
+    'hint': 'Ejemplo: Comprar una casa, invertir en la bolsa'
+  },
+  {
+    'key': 'boot_promt2_finance', 
+    'message': '¿Tienes un plan de ahorro o inversión? 📊', 
+    'hint': 'Ejemplo: Sí, invierto en criptomonedas'
+  },
+  {
+    'key': 'boot_promt3_finance', 
+    'message': '¿Cuál es tu principal fuente de ingresos? 💵', 
+    'hint': 'Ejemplo: Trabajo fijo, negocios, freelance'
+  },
+  {
+    'key': 'boot_promt4_finance', 
+    'message': '¿Cómo gestionas tus gastos mensuales? 🏦', 
+    'hint': 'Ejemplo: Planifico con un presupuesto, gasto sin control'
+  },
+  {
+    'key': 'boot_promt5_finance_fin', 
+    'message': 'Si alcanzaras tu meta financiera, ¿qué harías con el dinero? 🏆', 
+    'hint': 'Ejemplo: Viajaría, me jubilaría temprano'
+  },
+];
+List<Map<String, dynamic>> relationshipsConversation = [
+  {
+    'key': 'boot_promt1_relationships', 
+    'message': '¿Estás en una relación actualmente? ❤️', 
+    'hint': 'Ejemplo: Sí, no, es complicado'
+  },
+  {
+    'key': 'boot_promt2_relationships', 
+    'message': '¿Qué cualidades valoras en una pareja? 💑', 
+    'hint': 'Ejemplo: Honestidad, sentido del humor'
+  },
+  {
+    'key': 'boot_promt3_relationships', 
+    'message': '¿Qué es lo más importante en una relación? 🥰', 
+    'hint': 'Ejemplo: Confianza, comunicación, respeto'
+  },
+  {
+    'key': 'boot_promt4_relationships', 
+    'message': '¿Cuál ha sido tu mejor experiencia amorosa? 💕', 
+    'hint': 'Ejemplo: Un viaje juntos, una cena especial'
+  },
+  {
+    'key': 'boot_promt5_relationships_fin', 
+    'message': '¿Cómo imaginas tu relación ideal en el futuro? 🔮', 
+    'hint': 'Ejemplo: Casado con hijos, una pareja estable'
+  },
+];
+List<Map<String, dynamic>> careerConversation = [
+  {
+    'key': 'boot_promt1_career', 
+    'message': '¿En qué área profesional trabajas o te gustaría trabajar? 👔', 
+    'hint': 'Ejemplo: Tecnología, educación, medicina'
+  },
+  {
+    'key': 'boot_promt2_career', 
+    'message': '¿Cuál es tu mayor meta profesional? 🚀', 
+    'hint': 'Ejemplo: Ser gerente, tener mi propio negocio'
+  },
+  {
+    'key': 'boot_promt3_career', 
+    'message': '¿Qué habilidades necesitas mejorar para crecer en tu carrera? 📚', 
+    'hint': 'Ejemplo: Liderazgo, programación, ventas'
+  },
+  {
+    'key': 'boot_promt4_career', 
+    'message': '¿Qué te motiva más en un trabajo? 💡', 
+    'hint': 'Ejemplo: Estabilidad, flexibilidad, buen salario'
+  },
+  {
+    'key': 'boot_promt5_career_fin', 
+    'message': '¿Cómo te gustaría verte profesionalmente en 5 años? ⏳', 
+    'hint': 'Ejemplo: Con mi propio negocio, en un puesto de liderazgo'
+  },
+];
+List<Map<String, dynamic>> hobbiesConversation = [
+  {
+    'key': 'boot_promt1_hobbies', 
+    'message': '¿Cuáles son tus pasatiempos favoritos? 🎨', 
+    'hint': 'Ejemplo: Pintar, jugar fútbol, leer'
+  },
+  {
+    'key': 'boot_promt2_hobbies', 
+    'message': '¿Cuánto tiempo dedicas a tus hobbies cada semana? ⏰', 
+    'hint': 'Ejemplo: 5 horas, solo los fines de semana'
+  },
+  {
+    'key': 'boot_promt3_hobbies', 
+    'message': '¿Has aprendido alguna habilidad nueva recientemente? 🎸', 
+    'hint': 'Ejemplo: Tocar guitarra, cocinar platos nuevos'
+  },
+  {
+    'key': 'boot_promt4_hobbies', 
+    'message': 'Si pudieras elegir un hobby nuevo, ¿cuál sería? 🏄', 
+    'hint': 'Ejemplo: Surf, fotografía, jardinería'
+  },
+  {
+    'key': 'boot_promt5_hobbies_fin', 
+    'message': '¿Has considerado convertir tu hobby en una fuente de ingresos? 💰', 
+    'hint': 'Ejemplo: Vender arte, ser streamer, dar clases'
+  },
+];
+List<Map<String, dynamic>> selfImprovementConversation = [
+  {
+    'key': 'boot_promt1_selfImprovement', 
+    'message': '¿En qué aspecto de tu vida quieres mejorar? 💡', 
+    'hint': 'Ejemplo: Salud, confianza, productividad'
+  },
+  {
+    'key': 'boot_promt2_selfImprovement', 
+    'message': '¿Qué hábitos intentas construir o eliminar? 📅', 
+    'hint': 'Ejemplo: Leer más, hacer ejercicio, dejar de procrastinar'
+  },
+  {
+    'key': 'boot_promt3_selfImprovement', 
+    'message': '¿Tienes alguna meta de desarrollo personal este año? 🎯', 
+    'hint': 'Ejemplo: Meditar a diario, aprender a hablar en público'
+  },
+  {
+    'key': 'boot_promt4_selfImprovement', 
+    'message': '¿Cómo manejas los momentos de frustración o fracaso? 💭', 
+    'hint': 'Ejemplo: Reflexiono, busco apoyo, sigo adelante'
+  },
+  {
+    'key': 'boot_promt5_selfImprovement_fin', 
+    'message': 'Si logras mejorar en ese aspecto, ¿cómo cambiaría tu vida? 🔥', 
+    'hint': 'Ejemplo: Sería más feliz, más exitoso, más seguro'
+  },
+];
+List<Map<String, dynamic>> technologyConversation = [
+  {
+    'key': 'boot_promt1_technology', 
+    'message': '¿Qué avance tecnológico te emociona más? 🤖', 
+    'hint': 'Ejemplo: Inteligencia artificial, autos autónomos'
+  },
+  {
+    'key': 'boot_promt2_technology', 
+    'message': '¿Qué dispositivo tecnológico usas más en tu día a día? 📱', 
+    'hint': 'Ejemplo: Celular, laptop, smartwatch'
+  },
+  {
+    'key': 'boot_promt3_technology', 
+    'message': '¿Has probado nuevas tecnologías recientemente? 🔬', 
+    'hint': 'Ejemplo: Realidad virtual, domótica, blockchain'
+  },
+  {
+    'key': 'boot_promt4_technology', 
+    'message': '¿Qué piensas sobre el impacto de la tecnología en el futuro? 🌍', 
+    'hint': 'Ejemplo: Será positivo, tengo preocupaciones, dependeremos demasiado'
+  },
+  {
+    'key': 'boot_promt5_technology_fin', 
+    'message': 'Si pudieras crear tu propio invento tecnológico, ¿qué sería? 🏗️', 
+    'hint': 'Ejemplo: Un robot asistente, gafas de traducción instantánea'
+  },
+];
+
+
+
+
+
+void analyzingResponseIA(String userInput) {
+
+}
+
+void checkUserInput(String userInput) {
+  // Lista de opciones predefinidas con palabras clave
+List<Map<String, dynamic>> predefinedOptions = [
+  {
+    'id': 'dreams',   
+    'keywords': ['dreams'],
+    'json': dreamsConversation,
+  },
+  {
+    'id': 'travel',
+    'keywords': ['travel'],
+    'json': travelConversation,
+  },
+  {
+    'id': 'fitness',
+    'keywords': ['fitness'],
+    'json': fitnessConversation,
+  },
+  {
+    'id': 'learning',
+    'keywords': ['learning'],
+    'json': learningConversation,
+  },
+  {
+    'id': 'finance',
+    'keywords': ['finance'],
+    'json': financeConversation,
+  },
+  {
+    'id': 'relationships',
+    'keywords': ['relationships'],
+    'json': relationshipsConversation,
+  },
+  {
+    'id': 'career',
+    'keywords': ['career'],
+    'json': careerConversation,
+  },
+  {
+    'id': 'hobbies',
+    'keywords': ['hobbies'],
+    'json': hobbiesConversation,
+  },
+  {
+    'id': 'self_improvement',
+    'keywords': ['self_improvement'],
+    'json': selfImprovementConversation,
+  },
+  {
+    'id': 'technology',
+    'keywords': ['technology'],
+    'json': technologyConversation,
+  },
+];
+
+
+  // Normalizar entrada del usuario (convertir a minúsculas)
+  String normalizedInput = userInput.toLowerCase();
+
+  // Buscar la mejor coincidencia en el JSON
+  Map<String, dynamic>? bestMatch;
+  int maxMatchCount = 0;
+
+  for (var option in predefinedOptions) {
+    int matchCount = option['keywords'].where((word) => normalizedInput.contains(word)).length;
+    
+    if (matchCount > maxMatchCount) {
+      maxMatchCount = matchCount;
+      bestMatch = option;
+    }
+  }
+
+  // Si encuentra coincidencia, agregar el JSON correspondiente
+  if (bestMatch != null) {
+    
+    addDreamsConversation(bestMatch['json']);
+  } else {//general
+    // Decodificar el JSON y extraer la conversación
+    print('este es el jos. $userInput');
+
+  Map<String, dynamic> decodedJson = jsonDecode(userInput);
+  List<Map<String, dynamic>> generalConversation = List<Map<String, dynamic>>.from(decodedJson['conversation']);
+
+    addDreamsConversation(generalConversation);  
+    // Aquí puedes manejar casos donde no hay coincidencia
+    print("No se encontró coincidencia, usar flujo genérico.");
+  }
+}
+
 
   // ============================================ TASK SECTION ============================================
    DateTime _focusedDay = DateTime.now();
@@ -206,118 +568,42 @@ static final kFirstDay = DateTime(2020, 1, 1);
 
 
 String buildPrompt(List<Map<String, dynamic>> steps) {
-  if (widget.module == 'chatIaTravel') {
-    String destination = steps.firstWhere(
-      (step) => step['key'] == 'boot_promt1_travel',
-      orElse: () => {'response': 'un destino'},
-    )['response'] ?? 'un destino';
-
-    String motive = steps.firstWhere(
-      (step) => step['key'] == 'boot_promt2_travel',
-      orElse: () => {'response': 'un motivo'},
-    )['response'] ?? 'un motivo';
-
-    String duration = steps.firstWhere(
-      (step) => step['key'] == 'boot_promt3_travel',
-      orElse: () => {'response': 'una duración'},
-    )['response'] ?? 'una duración';
-
-    String companionship = steps.firstWhere(
-      (step) => step['key'] == 'boot_promt4_travel',
-      orElse: () => {'response': 'solo'},
-    )['response'] ?? 'solo';
-
-    String interest = steps.firstWhere(
-      (step) => step['key'] == 'boot_promt5_travel_fin',
-      orElse: () => {'response': 'ningún interés específico'},
-    )['response'] ?? 'ningún interés específico';
-
-    return 'Quiero viajar a $destination por $motive. Planeo quedarme $duration y viajaré $companionship. '
-        'Mis intereses principales incluyen $interest. ¿Qué recomendaciones tienes para este viaje? y la respuesta dala en no mas de 400 caracteres';
-  } 
-  else
-   if (widget.module == 'chatIaFinance') {
-    String goal = steps.firstWhere(
-      (step) => step['key'] == 'boot_promt1_finance',
-      orElse: () => {'response': 'un objetivo financiero'},
-    )['response'] ?? 'un objetivo financiero';
-
-    String income = steps.firstWhere(
-      (step) => step['key'] == 'boot_promt2_finance',
-      orElse: () => {'response': 'un ingreso mensual promedio'},
-    )['response'] ?? 'un ingreso mensual promedio';
-
-    String expenses = steps.firstWhere(
-      (step) => step['key'] == 'boot_promt3_finance',
-      orElse: () => {'response': 'principales gastos mensuales'},
-    )['response'] ?? 'principales gastos mensuales';
-
-    String savings = steps.firstWhere(
-      (step) => step['key'] == 'boot_promt4_finance',
-      orElse: () => {'response': 'ningún ahorro o inversión'},
-    )['response'] ?? 'ningún ahorro o inversión';
-
-    String riskLevel = steps.firstWhere(
-      (step) => step['key'] == 'boot_promt5_finance_fin',
-      orElse: () => {'response': 'un nivel de riesgo bajo'},
-    )['response'] ?? 'un nivel de riesgo bajo';
-
-    return 'Mi objetivo financiero es $goal. Tengo un ingreso mensual promedio de $income y mis principales gastos incluyen $expenses. '
-        'Actualmente tengo $savings y estoy dispuesto a asumir $riskLevel. ¿Qué recomendaciones puedes darme para mejorar mis finanzas? y la respuesta dala en no mas de 400 caracteres';
-  } 
-
-
-  else if (widget.module == 'chatIaHealth') {
-    String healthGoal = steps.firstWhere(
-      (step) => step['key'] == 'boot_promt1_health',
-      orElse: () => {'response': 'mejorar mi bienestar general'},
-    )['response'] ?? 'mejorar mi bienestar general';
-
-    String activityLevel = steps.firstWhere(
-      (step) => step['key'] == 'boot_promt2_health',
-      orElse: () => {'response': 'un nivel bajo de actividad física'},
-    )['response'] ?? 'un nivel bajo de actividad física';
-
-    String dietType = steps.firstWhere(
-      (step) => step['key'] == 'boot_promt3_health',
-      orElse: () => {'response': 'una dieta estándar'},
-    )['response'] ?? 'una dieta estándar';
-
-    String sleepPattern = steps.firstWhere(
-      (step) => step['key'] == 'boot_promt4_health',
-      orElse: () => {'response': '7 horas de sueño por noche'},
-    )['response'] ?? '7 horas de sueño por noche';
-
-    String healthConcerns = steps.firstWhere(
-      (step) => step['key'] == 'boot_promt5_health_fin',
-      orElse: () => {'response': 'ninguna preocupación específica'},
-    )['response'] ?? 'ninguna preocupación específica';
-
-    return 'Mi objetivo de salud es $healthGoal. Tengo $activityLevel, sigo $dietType, y generalmente duermo $sleepPattern. '
-        'Mis preocupaciones actuales incluyen $healthConcerns. ¿Qué recomendaciones puedes darme para mejorar mi salud?  y la respuesta dala en no mas de 400 caracteres';
-  }
+  steps;
   
-  else {
+  //if (bestMatch['id'] == 'dreams') { 
+  String dream = steps.firstWhere(
+    (step) => step['key'] == 'boot_promt1_dreams',
+    orElse: () => {'response': 'un sueño o meta'},
+  )['response'] ?? 'un sueño o meta';
 
-    if (widget.module == 'chatIaTravel') 
-    {
-     return 'Eres un experto en viajes, necesito los mejores cosejos. ¿Qué recomendaciones tienes para mí? y la respuesta dala en no mas de 400 caracteres';
-  }
-  
-   else if (widget.module == 'chatIaFinance') 
-    {
-     return 'Eres un experto en finanzas, necesito los mejores cosejos. ¿Qué recomendaciones tienes para mí? y la respuesta dala en no mas de 400 caracteres';
-  }
-  
-   else if (widget.module == 'chatIaHealth') 
-    {
-     return 'Eres un experto en salud, necesito los mejores cosejos. ¿Qué recomendaciones tienes para mí? y la respuesta dala en no mas de 400 caracteres';
-  }
-  else
-  {
-     return 'Dependiendo lo que te pregunte tu eres un experto en el tema, necesito los mejores cosejos.y la respuesta dala en no mas de 400 caracteres';
-  }
-    }
+  String importance = steps.firstWhere(
+    (step) => step['key'] == 'boot_promt2_dreams',
+    orElse: () => {'response': 'cierta importancia'},
+  )['response'] ?? 'cierta importancia';
+
+  String obstacles = steps.firstWhere(
+    (step) => step['key'] == 'boot_promt3_dreams',
+    orElse: () => {'response': 'algunos obstáculos'},
+  )['response'] ?? 'algunos obstáculos';
+
+  String firstStep = steps.firstWhere(
+    (step) => step['key'] == 'boot_promt4_dreams',
+    orElse: () => {'response': 'un paso inicial'},
+  )['response'] ?? 'un paso inicial';
+
+  String startTime = steps.firstWhere(
+    (step) => step['key'] == 'boot_promt5_dreams_fin',
+    orElse: () => {'response': 'sin una fecha definida'},
+  )['response'] ?? 'sin una fecha definida';
+
+  return 'Mi mayor sueño es $dream. Para mí, tiene $importance. '
+      'Actualmente, enfrento $obstacles para lograrlo. '
+      'Si tuviera todos los recursos, daría el primer paso: $firstStep. '
+      'Planeo empezar $startTime. ¿Qué consejos me puedes dar para alcanzar mi meta? '
+      'Dame la respuesta en no más de 400 caracteres.';
+//}
+
+    
 }
 
 String buildPromptInput(String input) {
@@ -542,7 +828,7 @@ int  cant_boot_promt_extra = 0;
                   if(widget.module == 'storeTask')//tarea
                   {
                     isUserUpdateMens =  message['key'] == 'category_user' || 
-                //  message['key'] == 'status_user' ||
+                  message['key'] == 'status_user' ||
                    message['key'] == 'priority_user' || 
                    message['key'] == 'frequencie_user' || 
                    message['key'] == 'family_user';
@@ -705,353 +991,69 @@ SizedBox(
 
   Future<void> _handleUserInput(String input,String module) async {
 
+final currentStepKey = _conversationSteps[_currentStep]['key'];
+if((currentStepKey == 'boot_promt1_travel') && _isTyping == false)
+      {
+        
+       String question = 'Mi deseo principal o mi meta sería: $input';
+String issue = '''
+Eres un asistente experto en identificar la intención del usuario. 
+Necesito que analices de qué tema quiere hablar basándote en su respuesta. 
+Tu tarea es devolver exactamente **una palabra** de la siguiente lista que mejor represente el tema:  
+(dreams, travel, fitness, learning, finance, relationships, career, hobbies, self_improvement, technology, general).
 
+Reglas:
+1. Si la respuesta del usuario encaja claramente con un tema de la lista, devuélvelo tal cual.
+2. Si la respuesta menciona algo relacionado con dinero, inversiones o economía, devuelve "finance".
+3. Si habla sobre tecnología, innovación o dispositivos, devuelve "technology".
+4. Si no encuentras una correspondencia clara, devuelve un json como te dejo explicado mas abajo.
+
+Ejemplo:
+- Usuario: "Quiero mejorar mi salud y bienestar" → Respuesta: **fitness**
+- Usuario: "Deseo viajar por el mundo y conocer nuevas culturas" → Respuesta: **travel**
+- Usuario: "Quiero ser astronauta" → Respuesta: devuelve un json con preguntas adaptadas al tema del usuario
+- Usuario: "Quiero saber tirarme de un paracaidas" → Respuesta: devuelve un json con preguntas adaptadas al tema del usuario
+
+**Importante:** Responde con **una sola palabra exacta** de la lista, **sin signos de puntuación, sin comillas, sin prefijos ni sufijos.**  
+**Si no encuentras una correspondencia clara, genera un JSON con preguntas adaptadas al tema del usuario.**  
+
+**Salida esperada:**  
+✅ Correcto: `finance`  
+❌ Incorrecto: `: finance`, `"finance"`, `finance.`  
+
+5. **Si no encuentras una correspondencia clara, devuelve exclusivamente el siguiente JSON bien formado:**  
+
+- Usuario: "Quiero ser astronauta" → Respuesta: devuelve un json
+```json
+{
+  "category": "general",
+  "conversation": [
+    { "key": "boot_prompt1_general", "message": "¡Interesante! Alguna vez te has montado en alguna nave o piloteado avion?", "hint": "Ejemplo: Me gusta aprender cosas nuevas" },
+    { "key": "boot_prompt2_general", "message": "¿Por qué es importante para ti? 💭", "hint": "Ejemplo: Porque me hace feliz, porque es un reto" },
+    { "key": "boot_prompt3_general", "message": "¿Cómo influye en tu vida diaria? 🔄", "hint": "Ejemplo: Me ayuda a relajarme, me motiva a mejorar" },
+    { "key": "boot_prompt4_general_fin", "message": "Con base en lo que me dijiste, construiré un resumen para que una inteligencia artificial pueda ayudarte mejor. ¿Hay algún detalle adicional que quieras agregar? 🤖✨", "hint": "Ejemplo: No, eso es todo / Sí, también quiero mejorar mi organización" }
+  ]
+}
+''';
+
+String responseIA = await requestChatIa(question, issue);
+
+
+        checkUserInput(responseIA);
+      }
     if (_currentStep >= _conversationSteps.length || input.isEmpty) return;
 
     // Guardar datos
-      final currentStepKey = _conversationSteps[_currentStep]['key'];
+      
       print('imprimir aqui que es lo que va a guardar---$currentStepKey');//
 
 
 
-
-//PONER AQUI TODOS LOS KEY DE SELECT
-  // ============================================ TASK storeHomeHouse ============================================
-if(module == 'storeHomeHouse')
-{
-  if((currentStepKey != 'people_homeHouse' && currentStepKey != 'status_id_homeHouse' &&
-                    currentStepKey != 'home_type_id_homeHouse'  ) || _editingMessageKey == null )//si no es ninguno de estos que selecciona si puede modificar e insertar
-      {
-         if (_editingMessageIndex != null) {
-      // Editar mensaje existente
-      setState(() {
-         _editingMessageKey = 'vacio';
-        _isTypingTime = 1;        
-        _messages[_editingMessageIndex!] = {'text': input, 'sender': 'user'};
-        _editingMessageIndex = null;
-        _showInputField = !_isFinalStepReached; // Ocultar solo si se alcanzó el paso final
-      });
-    } else {
-      // Nuevo mensaje
-      setState(() {
-        _isTypingTime = 1;
-        _messages.insert(0, {'hr' : getcurrenttime(),'text': input, 'sender': 'user'}); // Insertar al inicio
-      });
-      //PONER AQUI TODOS LOS KEY QUE NO SON SELCT PARA GUARDAR EL ESTADO
-
-        if(currentStepKey == 'name_homeHouse')
-    {
-     homeNameHH.value = input;
-    }
-
-    else if(currentStepKey == 'address_homeHouse')
-    {
-      homeAddressHH.value = input;
-    }
-    else if(currentStepKey == 'residents_homeHouse')
-    {
-      residentsHH.value = input;
-    }
-    else if(currentStepKey == 'geo_location_homeHouse')
-    {
-      geoLocationHH.value = input;
-    }
-   
-      if (currentStepKey != 'done') {
-        _taskData[currentStepKey!] = input;
-      }
-
-      _textController.clear();
-      _currentStep++;
-
-      if (_currentStep < _conversationSteps.length) {
-        _simulateResponse();
-      } else {
-        print('Datos de los ingresos y gastos: $_taskData');
-        _isFinalStepReached = true;
-        _showInputField = false; // Ocultar el campo de texto al finalizar
-      }
-    }
-    
-
-      }
-
-}
-//PONER AQUI TODOS LOS KEY DE SELECT
-  // ============================================ TASK SECTION ============================================
-if(module == 'IncomeExpensesCreation')
-{
-  if((currentStepKey != 'income_expenses' && currentStepKey != 'income_expense_type' &&
-                    currentStepKey != 'date_income_expense'  ) || _editingMessageKey == null )//si no es ninguno de estos que selecciona si puede modificar e insertar
-      {
-         if (_editingMessageIndex != null) {
-      // Editar mensaje existente
-      setState(() {
-         _editingMessageKey = 'vacio';
-        _isTypingTime = 1;        
-        _messages[_editingMessageIndex!] = {'text': input, 'sender': 'user'};
-        _editingMessageIndex = null;
-        _showInputField = !_isFinalStepReached; // Ocultar solo si se alcanzó el paso final
-      });
-    } else {
-      // Nuevo mensaje
-      setState(() {
-        _isTypingTime = 1;
-        _messages.insert(0, {'hr' : getcurrenttime(),'text': input, 'sender': 'user'}); // Insertar al inicio
-      });
-      //PONER AQUI TODOS LOS KEY QUE NO SON SELCT PARA GUARDAR EL ESTADO
-
-        if(currentStepKey == 'money_amount')
-    {
-     money_amountIE.value = input;
-    }
-
-    else if(currentStepKey == 'description_income_expense')
-    {
-      description_income_expenseIE.value = input;
-    }
-   
-      if (currentStepKey != 'done') {
-        _taskData[currentStepKey!] = input;
-      }
-
-      _textController.clear();
-      _currentStep++;
-
-      if (_currentStep < _conversationSteps.length) {
-        _simulateResponse();
-      } else {
-        print('Datos de los ingresos y gastos: $_taskData');
-        _isFinalStepReached = true;
-        _showInputField = false; // Ocultar el campo de texto al finalizar
-      }
-    }
-    
-
-      }
-
-}
-  // ============================================ TASK SECTION FIN ============================================
-  //
-  ////PONER AQUI TODOS LOS KEY DE SELECT
-  // ============================================ TASK SECTION ============================================
-if(module == 'storeTask')
-{
-  if((currentStepKey != 'category' && /*currentStepKey != 'status' &&*/
-                    currentStepKey != 'priority' && 
-                   currentStepKey != 'frequencie'  &&
-                   currentStepKey != 'typeTask'  &&
-                   currentStepKey != 'help_bot'  &&
-
-                  currentStepKey != 'family') || _editingMessageKey == null )//si no es ninguno de estos que selecciona si puede modificar e insertar
-      {
-         if (_editingMessageIndex != null) {
-      // Editar mensaje existente
-      setState(() {
-         _editingMessageKey = 'vacio';
-        _isTypingTime = 1;        
-        _messages[_editingMessageIndex!] = {'text': input, 'sender': 'user'};
-        _editingMessageIndex = null;
-        _showInputField = !_isFinalStepReached; // Ocultar solo si se alcanzó el paso final
-      });
-    } else {
-      // Nuevo mensaje
-      setState(() {
-        _isTypingTime = 1;
-        _messages.insert(0, {'hr' : getcurrenttime(),'text': input, 'sender': 'user'}); // Insertar al inicio
-      });
-      //PONER AQUI TODOS LOS KEY QUE NO SON SELCT PARA GUARDAR EL ESTADO
-
-        if(currentStepKey == 'title')
-    {
-      updateTaskTitle(input); //updateTaskDescription
-    }
-
-    else if(currentStepKey == 'description')
-    {
-      updateTaskDescription(input); //updateTaskDescription
-    }
-   
-      if (currentStepKey != 'done') {
-        _taskData[currentStepKey!] = input;
-      }
-
-      _textController.clear();
-      _currentStep++;
-
-      if (_currentStep < _conversationSteps.length) {
-        _simulateResponse();
-      } else {
-        print('Datos de la tarea: $_taskData');
-        _isFinalStepReached = true;
-        _showInputField = false; // Ocultar el campo de texto al finalizar
-      }
-    }
-    
-
-      }
-
-}
-  // ============================================ TASK SECTION FIN ============================================
-  //
-  //
-  // ============================================ STORE SECTION  ============================================
-  else if(module == 'storeStore')
-{
-  if((currentStepKey != 'status_store' ) || _editingMessageKey == null )//si no es ninguno de estos que selecciona si puede modificar e insertar
-      {
-         if (_editingMessageIndex != null) {
-      // Editar mensaje existente
-      setState(() {
-         _editingMessageKey = 'vacio';
-        _isTypingTime = 1;
-        _messages[_editingMessageIndex!] = {'text': input, 'sender': 'user'};
-        _editingMessageIndex = null;
-        _showInputField = !_isFinalStepReached; // Ocultar solo si se alcanzó el paso final
-      });
-    } else {
-      // Nuevo mensaje
-      setState(() {
-        _isTypingTime = 1;
-        _messages.insert(0, {'hr' : getcurrenttime(),'text': input, 'sender': 'user'}); // Insertar al inicio
-      });
-
-        if(currentStepKey == 'title_store')
-    {
-      
-      final storeElement = StoreElement(
-          title: input, 
-          );
-          updateStoreData(storeElement);
-    }
-
-    else if(currentStepKey == 'description_store')
-    {
-      final storeElement = StoreElement(
-          description: input,
-          );
-          updateStoreData(storeElement);
-    }
-    
-    else if(currentStepKey == 'place_store')
-    {
-      final storeElement = StoreElement(
-          location: input,
-          );
-          updateStoreData(storeElement);
-    }
-      if (currentStepKey != 'done') {
-        _taskData[currentStepKey!] = input;
-      }
-
-      _textController.clear();
-      _currentStep++;
-
-      if (_currentStep < _conversationSteps.length) {
-        _simulateResponse();
-      } else {
-        print('Datos del almacen $_taskData');
-        _isFinalStepReached = true;
-        _showInputField = false; // Ocultar el campo de texto al finalizar
-      }
-    }
-    
-
-      }
-
-}
-    // ============================================ STORE SECTION FIN ============================================  
-    //
-    //
-    //
-  //
-  // ============================================ PRODUCT SECTION  ============================================
-  else if(module == 'storeProduct')
-{
-  if((currentStepKey != 'quantity_product' && currentStepKey != 'status_product' && currentStepKey != 'category_product') || _editingMessageKey == null )//si no es ninguno de estos que selecciona si puede modificar e insertar
-      {
-         if (_editingMessageIndex != null) {
-      // Editar mensaje existente
-      setState(() {
-         _editingMessageKey = 'vacio';
-        _isTypingTime = 1;
-        _messages[_editingMessageIndex!] = {'text': input, 'sender': 'user'};
-        _editingMessageIndex = null;
-        _showInputField = !_isFinalStepReached; // Ocultar solo si se alcanzó el paso final
-      });
-    } else {
-      // Nuevo mensaje
-      setState(() {
-        _isTypingTime = 1;
-        _messages.insert(0, {'hr' : getcurrenttime(),'text': input, 'sender': 'user'}); // Insertar al inicio
-      });
-
-        if(currentStepKey == 'title_product')
-    {
-      
-      final productElement = ProductElement( 
-          productName: input,        
-          image: 'image/default.jpg'
-          );
-      updateProductData(productElement);
-    }
-
-    else if(currentStepKey == 'description_product')
-    {
-      final productElement = ProductElement(    
-          additionalNotes: input,  
-          );
-      updateProductData(productElement);
-    }
-    
-    else if(currentStepKey == 'price_product')
-    {
-      final productElement = ProductElement(    
-          unitPrice: input, 
-          );
-      updateProductData(productElement);
-    }
-    
-    else if(currentStepKey == 'location_product')
-    {
-      final productElement = ProductElement( 
-          purchasePlace: input
-          );
-      updateProductData(productElement);
-    }
-    
-    else if(currentStepKey == 'brand_product')
-    {
-      final productElement = ProductElement( 
-        brand:input ,
-          );
-      updateProductData(productElement);
-    }
-      if (currentStepKey != 'done') {
-        _taskData[currentStepKey!] = input;
-      }
-
-      _textController.clear();
-      _currentStep++;
-
-      if (_currentStep < _conversationSteps.length) {
-        _simulateResponse();
-      } else {
-        print('Datos del almacen $_taskData');
-        _isFinalStepReached = true;
-        _showInputField = false; // Ocultar el campo de texto al finalizar
-      }
-    }
-    
-
-      }
-
-}
-    // ============================================ PRODUCT SECTION FIN ============================================
+// ============================================ PRODUCT SECTION FIN ============================================
     //
     //
    
-     else if(module == 'chatIaTravel' || module == 'chatIaFinance'|| module == 'chatIaHealth')
+      if(module == 'chatIaTravel' )
 {
   if( _editingMessageKey == null ||   _editingMessageKey == 'vacio')//si no es ninguno de estos que selecciona si puede modificar e insertar
       {
@@ -1085,6 +1087,7 @@ if(module == 'storeTask')
         _messages.insert(0, {'hr' : getcurrenttime(),'text': input, 'sender': 'user'}); // Insertar al inicio
  responseIA = await  requestChatIa(buildPromptInput(input),buildPrompt(_conversationSteps));
       }
+      
       else
       {
         setState(()  {
@@ -1763,7 +1766,7 @@ _simulateResponseF('Muy bien! ${currentUserLG.value!.userName} ya guardamos la i
       );
 
     }
-   /* else if( keyMessage =='status')
+    else if( keyMessage =='status')
     {
       showWidgetOption = Column(
         children: [
@@ -1772,7 +1775,7 @@ _simulateResponseF('Muy bien! ${currentUserLG.value!.userName} ya guardamos la i
 
         ],
       );//priority
-         }*/
+         }
           else if( keyMessage =='priority')
     {
       showWidgetOption = Column(
@@ -2284,59 +2287,59 @@ personalHomeSelectIE.value = selectedStatuses.first.id;
     );
   }
 
-//   Widget _buildStatusSection() {
-//     return Builder(
-//       builder: (context) {
-//         if (statusCSP.watch(context) != null) {
-//           bool selectMultiple = false;
+  Widget _buildStatusSection() {
+    return Builder(
+      builder: (context) {
+        if (statusCSP.watch(context) != null) {
+          bool selectMultiple = false;
           
             
           
-//           return StatusWidget(
-//             status: statusCSP.value!,
-//             fitTextContainer: false,
-//             eventDetails: true,
-//             titleWidget: '',
-//             selectMultiple: selectMultiple, // Permite seleccionar solo un estado
-//             selectedStatusId: selectStateTaskCSP.value, // Estado preseleccionado
-//             onSelectionChanged: (List<Status> selectedStatuses) {
-//               FocusScope.of(context).unfocus();
-//               // Aquí manejas los estados seleccionados
-//               print('Estados seleccionados: ${selectedStatuses.map((e) => e.id).join(', ')}');
-//               selectedStatus = selectedStatuses.isNotEmpty ? selectedStatuses.first.id : 0;
-//               print('Estados seleccionados: $selectedStatus');
+          return StatusWidget(
+            status: statusCSP.value!,
+            fitTextContainer: false,
+            eventDetails: true,
+            titleWidget: '',
+            selectMultiple: selectMultiple, // Permite seleccionar solo un estado
+            selectedStatusId: selectStateTaskCSP.value, // Estado preseleccionado
+            onSelectionChanged: (List<Status> selectedStatuses) {
+              FocusScope.of(context).unfocus();
+              // Aquí manejas los estados seleccionados
+              print('Estados seleccionados: ${selectedStatuses.map((e) => e.id).join(', ')}');
+              selectedStatus = selectedStatuses.isNotEmpty ? selectedStatuses.first.id : 0;
+              print('Estados seleccionados: $selectedStatus');
 
               
-//               final existingIndex = _messages.indexWhere((message) => message['key'] == 'status_user');
-// setState(()  {
-//   _isTypingTime = 1;
-//   if (existingIndex != -1) {
-//     // Si existe, modificarlo
-//     _messages[existingIndex] = {
-//       'key': 'status_user',
-//       'text': selectedStatuses.first.title,
-//       'sender': 'user',
-//       'hr' : getcurrenttime()
+              final existingIndex = _messages.indexWhere((message) => message['key'] == 'status_user');
+setState(()  {
+  _isTypingTime = 1;
+  if (existingIndex != -1) {
+    // Si existe, modificarlo
+    _messages[existingIndex] = {
+      'key': 'status_user',
+      'text': selectedStatuses.first.title,
+      'sender': 'user',
+      'hr' : getcurrenttime()
 
-//     };
-//   } else {
-//       _handleUserSessions(selectedStatuses.first.title,'status_user');
+    };
+  } else {
+      _handleUserSessions(selectedStatuses.first.title,'status_user');
   
-//   }
-//   });
+  }
+  });
 
-// //seleccionando el estado
-//               onTaskStateSelected(selectedStatus);
-//               updateTaskStatusId(selectedStatus);
-//             },
-//           );
-//         } else if (errorMessageCSP.watch(context) != null) {
-//           return Center(child: Text('Error: ${errorMessageCSP.value}'));
-//         }
-//         return Container();
-//       },
-//     );
-//   }
+//seleccionando el estado
+              onTaskStateSelected(selectedStatus);
+              updateTaskStatusId(selectedStatus);
+            },
+          );
+        } else if (errorMessageCSP.watch(context) != null) {
+          return Center(child: Text('Error: ${errorMessageCSP.value}'));
+        }
+        return Container();
+      },
+    );
+  }
 
  Widget _buildPrioritySection() {
     return Builder(

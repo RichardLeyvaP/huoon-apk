@@ -16,6 +16,7 @@ import 'package:huoon/domain/blocs/user_activity_bloc/user_activity_service.dart
 import 'package:huoon/ui/Components/showDialogComp.dart';
 import 'package:huoon/ui/components/ImageDetailScreen.dart';
 import 'package:huoon/ui/pages/env.dart';
+import 'package:huoon/ui/pages/pageMenu/RankingPage/rankingPage.dart';
 import 'package:huoon/ui/pages/pageMenu/filesPage.dart';
 import 'package:huoon/ui/pages/pageMenu/financePage.dart';
 import 'package:huoon/ui/pages/pageMenu/healthPage.dart';
@@ -92,7 +93,7 @@ Future<void>? _futureConfiguration;
   void initState() {
     super.initState();
     // _getLocation();
-    _tabController = TabController(length: 6, vsync: this, initialIndex: getIndexCurrentScreenUA());
+    _tabController = TabController(length: 7, vsync: this, initialIndex: getIndexCurrentScreenUA());
     _tabController.addListener(() {
       setState(() {});
     });
@@ -389,6 +390,7 @@ currentUserLG.value?.userName ?? '', // Si es null, muestra "Invitado"
                       //ProductPage(),
                       StorePage(),
                       FilesPage(),
+                      RankingPage(),
                     ],
                   ),
                 ),
@@ -406,8 +408,9 @@ currentUserLG.value?.userName ?? '', // Si es null, muestra "Invitado"
                   print('inde = ${_tabController.index}');
                   if (_tabController.index == 0) {
                     //llamar a la vista chat                
-      
-                     GoRouter.of(context).push('/ChatPage');
+                   
+                    GoRouter.of(context).push('/DeseosPage');
+                  //   GoRouter.of(context).push('/ChatPage');
                   }
                   
                 else  if (_tabController.index == 1) {
@@ -949,6 +952,7 @@ Widget cardMenu(_tabController) {
   String menuTasksTitle = TranslationManager.translate('menuTasks');
   String menuProductsTitle = TranslationManager.translate('menuProducts');
   String menuArchivesTitle = TranslationManager.translate('menuArchives');
+  String menuRankingTitle = 'Ranking ';//TranslationManager.translate('menuArchives');
   //Nombres del titulo del menu
   return Container(
     color: Colors.transparent,
@@ -980,6 +984,9 @@ Widget cardMenu(_tabController) {
         ),
         Tab(
           child: cardMenuUp(MdiIcons.folderStarOutline, menuArchivesTitle, _tabController.index == 5), //Archivos
+        ),
+        Tab(
+          child: cardMenuUp(MdiIcons.trophy, menuRankingTitle, _tabController.index == 6), //Archivos
         ),
       ],
     ),

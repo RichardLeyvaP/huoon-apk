@@ -123,7 +123,7 @@ class TasksRepository {
       'end_date': task.endDate,
       'priority_id': task.priorityId, //llegando null
       'parent_id': task.parentId,
-      'status_id': task.statusId,
+     // 'status_id': task.statusId,//poner aqui pendiente
       'category_id': task.categoryId,
       'recurrence': task.recurrence,
       'estimated_time': task.estimatedTime ?? 0, //todo fijo por duda

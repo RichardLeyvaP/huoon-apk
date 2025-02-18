@@ -35,7 +35,7 @@ class _TaskCreationState extends State<TaskCreation> {
   {'key': 'calendar', 'message': 'Que fecha de Inicio y Final tendría?', 'hint': ''},
   {'key': 'frequencie', 'message': 'La Frecuencia que deseas darle', 'hint': ''},
   {'key': 'category', 'message': '¿A qué categoría pertenece? ', 'hint': ''},
-  {'key': 'status', 'message': '¿Qué estado tendría? ', 'hint': ''},
+  //{'key': 'status', 'message': '¿Qué estado tendría? ', 'hint': ''},
   {'key': 'priority', 'message': '¡Muy bien! ¿Ahora qué prioridad le das?', 'hint': ''},
   {'key': 'family', 'message': '¡Ya estamos terminando! ¿Qué familiar va a participar?', 'hint': ''}, 
     {'key': 'done', 'message': '¡Genial! He registrado todos los datos. ¿Quieres guardarlo', 'hint': 'Confirmar'}
