@@ -251,13 +251,13 @@ class _CardTasksState extends State<CardTasks> {
                   children: [
                     _buildOptionButton(
                       icon: Icons.check,
-                      label: "Compl",
+                      label: "Completar",
                       color:  StyleGlobalApk.colorPrimary,
                       onPressed: () {
                         setState(() {
         isOptionsVisible = false;
       });
-                       showRatingBottomSheet(context, widget.people, (ratings) {
+                       showRatingBottomSheet(widget.idTask,context, widget.people, (ratings) {
       // Aquí puedes enviar los datos a la API
       print("Puntuaciones guardadas: $ratings");
     });

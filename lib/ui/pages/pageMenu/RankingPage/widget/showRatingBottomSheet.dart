@@ -1,18 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:huoon/data/models/tasks/tasks_model.dart';
 import 'package:huoon/domain/blocs/ranking_signal/ranking_service.dart';
+import 'package:huoon/domain/blocs/tasks/tasks_service.dart';
+import 'package:huoon/domain/blocs/user_activity_bloc/user_activity_service.dart';
+import 'package:huoon/ui/pages/env.dart';
 import 'package:huoon/ui/util/utils_class_apk.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-void showRatingBottomSheet(BuildContext context, List<Person> participants, Function(List<Map<String, dynamic>>) onSave) {
-  List<Map<String, dynamic>> ratings = participants.map((person) {
+void showRatingBottomSheet(int idTask, BuildContext context,
+    List<Person> participants, Function(List<Map<String, dynamic>>) onSave) {
+  List<Map<String, dynamic>> ratings = participants
+      .where((person) =>
+          person.homePersonTaskId !=
+          0) // Filtra los elementos con homePersonHomeId != 0
+      .map((person) {
     return {
-      "id": person.id,
+      "id": person.homePersonTaskId,
       "person_id": person.id,
       "namePerson": person.name,
-      "imagePerson": person.image,
-      "points": 0,
-      "description": "",
+      "imagePerson": person.image ?? '',
+      "points": person.points ?? 0,
+      "description": person.description ?? '',
     };
   }).toList();
 
@@ -33,20 +41,25 @@ void showRatingBottomSheet(BuildContext context, List<Person> participants, Func
           return StatefulBuilder(
             builder: (context, setState) {
               return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Row(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(top: 12,right: 4),
+                          padding: const EdgeInsets.only(top: 12, right: 4),
                           child: const Text(
                             "Dar por completada la tarea",
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                         ),
-                        Icon(MdiIcons.check,color: StyleGlobalApk.colorPrimary,)
+                        Icon(
+                          MdiIcons.check,
+                          color: StyleGlobalApk.colorPrimary,
+                        )
                       ],
                     ),
                     const SizedBox(height: 10),
@@ -69,18 +82,22 @@ void showRatingBottomSheet(BuildContext context, List<Person> participants, Func
                                   Row(
                                     children: [
                                       CircleAvatar(
-                                        backgroundImage: NetworkImage(person["imagePerson"]),
+                                        backgroundImage: NetworkImage(
+                                            '${Env.apiEndpoint}/${person["imagePerson"]}'),
                                       ),
                                       const SizedBox(width: 10),
-                                      Text(person["namePerson"], style: const TextStyle(fontWeight: FontWeight.bold)),
+                                      Text(person["namePerson"],
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold)),
                                     ],
                                   ),
-                                 
                                   Row(
                                     children: List.generate(5, (i) {
                                       return IconButton(
                                         icon: Icon(
-                                          i < person["points"] ? Icons.star : Icons.star_border,
+                                          i < person["points"]
+                                              ? Icons.star
+                                              : Icons.star_border,
                                           color: Colors.amber,
                                         ),
                                         onPressed: () {
@@ -92,20 +109,18 @@ void showRatingBottomSheet(BuildContext context, List<Person> participants, Func
                                     }),
                                   ),
                                   const SizedBox(height: 2),
-                                      TextField(
-                                          maxLines: 2,
-                                          decoration: const InputDecoration(
-                                            hintText: "Escribe un comentario...",
-                                            border: OutlineInputBorder(),
-                                          ),
-                                          onChanged: (value) {
-                                            setState(() {
-                                              ratings[index]["description"] = value;
-                                            });
-                                          },
-                                         
-                                        )
-                                     
+                                  TextField(
+                                    maxLines: 2,
+                                    decoration: const InputDecoration(
+                                      hintText: "Escribe un comentario...",
+                                      border: OutlineInputBorder(),
+                                    ),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        ratings[index]["description"] = value;
+                                      });
+                                    },
+                                  )
                                 ],
                               ),
                             ),
@@ -117,20 +132,23 @@ void showRatingBottomSheet(BuildContext context, List<Person> participants, Func
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        
-                    ElevatedButton(
-                      onPressed: () {
-                       
-                        Navigator.pop(context);
-                      },
-                      child: const Text("Cancelar"),
-                    ),
+                        ElevatedButton(
+                          onPressed: () {
+                           if (Navigator.canPop(context)) {
+                              Navigator.pop(context);
+                            }
+                          },
+                          child: const Text("Cancelar"),
+                        ),
                         ElevatedButton(
                           onPressed: () async {
                             onSave(ratings);
-                            int taskId = 99999;
-                         await  submitRanking(taskId,ratings);
-                            Navigator.pop(context);
+
+                            await submitRanking(idTask, ratings);
+                            await fetchTasks(getSelectedDate());
+                            if (Navigator.canPop(context)) {
+                              Navigator.pop(context);
+                            }
                           },
                           child: const Text("Guardar"),
                         ),

@@ -829,7 +829,10 @@ Person _$PersonFromJson(Map<String, dynamic> json) {
 mixin _$Person {
   int get id => throw _privateConstructorUsedError;
   int? get roleId => throw _privateConstructorUsedError;
+  int? get points => throw _privateConstructorUsedError;
+  int? get homePersonTaskId => throw _privateConstructorUsedError;
   String? get name => throw _privateConstructorUsedError;
+  String? get description => throw _privateConstructorUsedError;
   String? get image => throw _privateConstructorUsedError;
   String? get roleName => throw _privateConstructorUsedError;
 
@@ -848,7 +851,14 @@ abstract class $PersonCopyWith<$Res> {
       _$PersonCopyWithImpl<$Res, Person>;
   @useResult
   $Res call(
-      {int id, int? roleId, String? name, String? image, String? roleName});
+      {int id,
+      int? roleId,
+      int? points,
+      int? homePersonTaskId,
+      String? name,
+      String? description,
+      String? image,
+      String? roleName});
 }
 
 /// @nodoc
@@ -868,7 +878,10 @@ class _$PersonCopyWithImpl<$Res, $Val extends Person>
   $Res call({
     Object? id = null,
     Object? roleId = freezed,
+    Object? points = freezed,
+    Object? homePersonTaskId = freezed,
     Object? name = freezed,
+    Object? description = freezed,
     Object? image = freezed,
     Object? roleName = freezed,
   }) {
@@ -881,9 +894,21 @@ class _$PersonCopyWithImpl<$Res, $Val extends Person>
           ? _value.roleId
           : roleId // ignore: cast_nullable_to_non_nullable
               as int?,
+      points: freezed == points
+          ? _value.points
+          : points // ignore: cast_nullable_to_non_nullable
+              as int?,
+      homePersonTaskId: freezed == homePersonTaskId
+          ? _value.homePersonTaskId
+          : homePersonTaskId // ignore: cast_nullable_to_non_nullable
+              as int?,
       name: freezed == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
+              as String?,
+      description: freezed == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
               as String?,
       image: freezed == image
           ? _value.image
@@ -905,7 +930,14 @@ abstract class _$$PersonImplCopyWith<$Res> implements $PersonCopyWith<$Res> {
   @override
   @useResult
   $Res call(
-      {int id, int? roleId, String? name, String? image, String? roleName});
+      {int id,
+      int? roleId,
+      int? points,
+      int? homePersonTaskId,
+      String? name,
+      String? description,
+      String? image,
+      String? roleName});
 }
 
 /// @nodoc
@@ -923,7 +955,10 @@ class __$$PersonImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? roleId = freezed,
+    Object? points = freezed,
+    Object? homePersonTaskId = freezed,
     Object? name = freezed,
+    Object? description = freezed,
     Object? image = freezed,
     Object? roleName = freezed,
   }) {
@@ -936,9 +971,21 @@ class __$$PersonImplCopyWithImpl<$Res>
           ? _value.roleId
           : roleId // ignore: cast_nullable_to_non_nullable
               as int?,
+      points: freezed == points
+          ? _value.points
+          : points // ignore: cast_nullable_to_non_nullable
+              as int?,
+      homePersonTaskId: freezed == homePersonTaskId
+          ? _value.homePersonTaskId
+          : homePersonTaskId // ignore: cast_nullable_to_non_nullable
+              as int?,
       name: freezed == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
+              as String?,
+      description: freezed == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
               as String?,
       image: freezed == image
           ? _value.image
@@ -956,7 +1003,14 @@ class __$$PersonImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$PersonImpl implements _Person {
   const _$PersonImpl(
-      {required this.id, this.roleId, this.name, this.image, this.roleName});
+      {required this.id,
+      this.roleId,
+      this.points,
+      this.homePersonTaskId,
+      this.name,
+      this.description,
+      this.image,
+      this.roleName});
 
   factory _$PersonImpl.fromJson(Map<String, dynamic> json) =>
       _$$PersonImplFromJson(json);
@@ -966,7 +1020,13 @@ class _$PersonImpl implements _Person {
   @override
   final int? roleId;
   @override
+  final int? points;
+  @override
+  final int? homePersonTaskId;
+  @override
   final String? name;
+  @override
+  final String? description;
   @override
   final String? image;
   @override
@@ -974,7 +1034,7 @@ class _$PersonImpl implements _Person {
 
   @override
   String toString() {
-    return 'Person(id: $id, roleId: $roleId, name: $name, image: $image, roleName: $roleName)';
+    return 'Person(id: $id, roleId: $roleId, points: $points, homePersonTaskId: $homePersonTaskId, name: $name, description: $description, image: $image, roleName: $roleName)';
   }
 
   @override
@@ -984,7 +1044,12 @@ class _$PersonImpl implements _Person {
             other is _$PersonImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.roleId, roleId) || other.roleId == roleId) &&
+            (identical(other.points, points) || other.points == points) &&
+            (identical(other.homePersonTaskId, homePersonTaskId) ||
+                other.homePersonTaskId == homePersonTaskId) &&
             (identical(other.name, name) || other.name == name) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
             (identical(other.image, image) || other.image == image) &&
             (identical(other.roleName, roleName) ||
                 other.roleName == roleName));
@@ -992,8 +1057,8 @@ class _$PersonImpl implements _Person {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, roleId, name, image, roleName);
+  int get hashCode => Object.hash(runtimeType, id, roleId, points,
+      homePersonTaskId, name, description, image, roleName);
 
   /// Create a copy of Person
   /// with the given fields replaced by the non-null parameter values.
@@ -1015,7 +1080,10 @@ abstract class _Person implements Person {
   const factory _Person(
       {required final int id,
       final int? roleId,
+      final int? points,
+      final int? homePersonTaskId,
       final String? name,
+      final String? description,
       final String? image,
       final String? roleName}) = _$PersonImpl;
 
@@ -1026,7 +1094,13 @@ abstract class _Person implements Person {
   @override
   int? get roleId;
   @override
+  int? get points;
+  @override
+  int? get homePersonTaskId;
+  @override
   String? get name;
+  @override
+  String? get description;
   @override
   String? get image;
   @override

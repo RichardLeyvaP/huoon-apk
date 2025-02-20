@@ -26,6 +26,7 @@ class HomePerson with _$HomePerson {
     String? roleName,
     String? personImage,
     int? points,
+    int? percent,
   }) = _HomePerson;
 
   factory HomePerson.fromJson(Map<String, dynamic> json) => _$HomePersonFromJson(json);

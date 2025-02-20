@@ -7,7 +7,6 @@ import 'package:huoon/data/models/homeHouseCategory/homeHouseCategory_model.dart
 import 'package:huoon/data/models/products/product_model.dart';
 import 'package:huoon/data/models/store/store_model.dart';
 import 'package:huoon/data/models/tasks/tasks_model.dart';
-import 'package:huoon/data/services/auth/auth_check.dart';
 import 'package:huoon/domain/blocs/IncomeExpenses_bloc/incomeExpenses_service.dart';
 import 'package:huoon/domain/blocs/IncomeExpenses_bloc/incomeExpenses_signal.dart';
 import 'package:huoon/domain/blocs/chat_ia_bloc/chat_ia_service.dart';
@@ -23,6 +22,7 @@ import 'package:huoon/domain/blocs/store_bloc/store_signal.dart';
 import 'package:huoon/domain/blocs/task_cat_state_prior.dart/task_cat_state_prior_service.dart';
 import 'package:huoon/domain/blocs/task_cat_state_prior.dart/task_cat_state_prior_signal.dart';
 import 'package:huoon/domain/blocs/tasks/tasks_service.dart';
+import 'package:huoon/domain/blocs/tasks/tasks_signal.dart';
 import 'package:huoon/domain/modelos/category_model.dart';
 import 'package:huoon/ui/Components/TimePickerModal.dart';
 import 'package:huoon/ui/Components/category_widget.dart';
@@ -32,6 +32,7 @@ import 'package:huoon/ui/Components/priority_widget.dart';
 import 'package:huoon/ui/Components/state_widget.dart';
 import 'package:huoon/ui/Components/type_frequency_widget.dart';
 import 'package:huoon/ui/components/componentGlobal_widget.dart';
+import 'package:huoon/ui/pages/pageMenu/task/widget/notificationModal.dart';
 import 'package:huoon/ui/pages/rol-admin/Task/selectDays/utils.dart';
 import 'package:huoon/ui/pages/rol-admin/product/startProductPage.dart';
 import 'package:huoon/ui/util/util_class.dart';
@@ -416,7 +417,7 @@ int  cant_boot_promt_extra = 0;
       if (mounted) { // Verifica si el widget sigue montado
     //verifico si ya pasaron 10segundos le mando un mensaje
     
-    if(_isTypingTime == 50)//si e sfalse mando un mensaje
+    if(_isTypingTime == 100)//si e sfalse mando un mensaje
     {
      ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -1374,9 +1375,10 @@ _isTypingTime = 1;
   
   }
 });
-      print('Hora inicial: $startTime');
+      print('Hora inicial de tarea: $startTime');
       print('Hora final: $endTime');
       // Aquí puedes realizar cualquier acción adicional
+     updateTaskStartTime(startTime) ;
     },
   ),
 );
@@ -1446,9 +1448,42 @@ _isTypingTime = 1;
          // eventDate();
    // await Future.delayed(Duration(seconds: 3));
     //ENVIAR DATOS A LA API    
-    verificDate();//verifica que se cumpla que startDate < endDate
-    await storeTask();//insertar tarea
+   
     //limpiando variables
+   
+    showDialog(
+  context: context,
+  builder: (context) => NotificationModal(hour: taskElementTA.value.startTime!,date: taskElementTA.value.startDate!),
+).then((result) async {
+
+  if(result['selectedOption'] == "Cancelar")//"selectedOption": "Cancelar",
+  {
+  //no hace nada
+  }
+  else
+  {
+     String notificationDate ;
+    String notificationTime;
+  
+    print("Opción seleccionada: ${result['selectedOption']}");
+
+   
+  DateTime dateTime = DateTime.parse(result['customDateTime']); // Convierte el String a DateTime  
+   notificationDate = DateFormat('yyyy-MM-dd').format(dateTime); // Formatea la fecha
+   notificationTime = DateFormat('HH:mm').format(dateTime); // Formatea la hora
+
+  print("Fecha personalizada: $notificationDate");
+  print("Hora personalizada: $notificationTime");
+
+
+ 
+ verificDate();//verifica que se cumpla que startDate < endDate
+    if(taskElementTA.value.type == 'Tarea')
+    {
+      updateTaskEndTime(notificationTime);
+    }
+    await storeTask(notificationDate,notificationTime);//insertar tarea
+    //
     selecteFamilyCSP.value = null;
     selectedCategoryIdCSP.value = null;
     selecteFamilyCSP.value = null;
@@ -1457,10 +1492,16 @@ _isTypingTime = 1;
     //
     taskTypeSelectCSP.value = null;
     frequencyTaskCSP.value = '';
-
-    GoRouter.of(context).go(
+    //
+   GoRouter.of(context).go(
       '/HomePrincipal'
     );
+    
+  }
+ 
+});
+
+   
 
         }       
          // ============================================ TASK SECTION FIN ============================================
@@ -2955,6 +2996,7 @@ _isTypingTime = 1;
       print('Hora inicial: $startTime');
       print('Hora final: $endTime');
       // Aquí puedes realizar cualquier acción adicional
+      updateTaskStartTime(startTime) ;
     },
   ),
 );

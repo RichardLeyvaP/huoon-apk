@@ -48,7 +48,10 @@ class Person with _$Person {
   const factory Person({
     required int id,
     int? roleId,
+    int? points,
+    int? homePersonTaskId,
     String? name,
+    String? description,
     String? image,
     String? roleName,
   }) = _Person;

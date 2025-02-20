@@ -186,6 +186,7 @@ mixin _$HomePerson {
   String? get roleName => throw _privateConstructorUsedError;
   String? get personImage => throw _privateConstructorUsedError;
   int? get points => throw _privateConstructorUsedError;
+  int? get percent => throw _privateConstructorUsedError;
 
   /// Serializes this HomePerson to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -214,7 +215,8 @@ abstract class $HomePersonCopyWith<$Res> {
       int? homePersonRoleId,
       String? roleName,
       String? personImage,
-      int? points});
+      int? points,
+      int? percent});
 }
 
 /// @nodoc
@@ -243,6 +245,7 @@ class _$HomePersonCopyWithImpl<$Res, $Val extends HomePerson>
     Object? roleName = freezed,
     Object? personImage = freezed,
     Object? points = freezed,
+    Object? percent = freezed,
   }) {
     return _then(_value.copyWith(
       id: freezed == id
@@ -289,6 +292,10 @@ class _$HomePersonCopyWithImpl<$Res, $Val extends HomePerson>
           ? _value.points
           : points // ignore: cast_nullable_to_non_nullable
               as int?,
+      percent: freezed == percent
+          ? _value.percent
+          : percent // ignore: cast_nullable_to_non_nullable
+              as int?,
     ) as $Val);
   }
 }
@@ -312,7 +319,8 @@ abstract class _$$HomePersonImplCopyWith<$Res>
       int? homePersonRoleId,
       String? roleName,
       String? personImage,
-      int? points});
+      int? points,
+      int? percent});
 }
 
 /// @nodoc
@@ -339,6 +347,7 @@ class __$$HomePersonImplCopyWithImpl<$Res>
     Object? roleName = freezed,
     Object? personImage = freezed,
     Object? points = freezed,
+    Object? percent = freezed,
   }) {
     return _then(_$HomePersonImpl(
       id: freezed == id
@@ -385,6 +394,10 @@ class __$$HomePersonImplCopyWithImpl<$Res>
           ? _value.points
           : points // ignore: cast_nullable_to_non_nullable
               as int?,
+      percent: freezed == percent
+          ? _value.percent
+          : percent // ignore: cast_nullable_to_non_nullable
+              as int?,
     ));
   }
 }
@@ -403,7 +416,8 @@ class _$HomePersonImpl implements _HomePerson {
       this.homePersonRoleId,
       this.roleName,
       this.personImage,
-      this.points});
+      this.points,
+      this.percent});
 
   factory _$HomePersonImpl.fromJson(Map<String, dynamic> json) =>
       _$$HomePersonImplFromJson(json);
@@ -430,10 +444,12 @@ class _$HomePersonImpl implements _HomePerson {
   final String? personImage;
   @override
   final int? points;
+  @override
+  final int? percent;
 
   @override
   String toString() {
-    return 'HomePerson(id: $id, homeId: $homeId, homePersonHomeId: $homePersonHomeId, personId: $personId, homePersonPersonId: $homePersonPersonId, personName: $personName, roleId: $roleId, homePersonRoleId: $homePersonRoleId, roleName: $roleName, personImage: $personImage, points: $points)';
+    return 'HomePerson(id: $id, homeId: $homeId, homePersonHomeId: $homePersonHomeId, personId: $personId, homePersonPersonId: $homePersonPersonId, personName: $personName, roleId: $roleId, homePersonRoleId: $homePersonRoleId, roleName: $roleName, personImage: $personImage, points: $points, percent: $percent)';
   }
 
   @override
@@ -458,7 +474,8 @@ class _$HomePersonImpl implements _HomePerson {
                 other.roleName == roleName) &&
             (identical(other.personImage, personImage) ||
                 other.personImage == personImage) &&
-            (identical(other.points, points) || other.points == points));
+            (identical(other.points, points) || other.points == points) &&
+            (identical(other.percent, percent) || other.percent == percent));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -475,7 +492,8 @@ class _$HomePersonImpl implements _HomePerson {
       homePersonRoleId,
       roleName,
       personImage,
-      points);
+      points,
+      percent);
 
   /// Create a copy of HomePerson
   /// with the given fields replaced by the non-null parameter values.
@@ -505,7 +523,8 @@ abstract class _HomePerson implements HomePerson {
       final int? homePersonRoleId,
       final String? roleName,
       final String? personImage,
-      final int? points}) = _$HomePersonImpl;
+      final int? points,
+      final int? percent}) = _$HomePersonImpl;
 
   factory _HomePerson.fromJson(Map<String, dynamic> json) =
       _$HomePersonImpl.fromJson;
@@ -532,6 +551,8 @@ abstract class _HomePerson implements HomePerson {
   String? get personImage;
   @override
   int? get points;
+  @override
+  int? get percent;
 
   /// Create a copy of HomePerson
   /// with the given fields replaced by the non-null parameter values.

@@ -86,6 +86,9 @@ flutter:
     - assets/images/test/pizza-cubana.jpeg
     - assets/images/test/bolo-chocolate.jpeg
     - assets/images/test/negocio.jpg
+    - assets/images/top-gan.png
+
+    
 
   fonts:
     - family: BebasNeue

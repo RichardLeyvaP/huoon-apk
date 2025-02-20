@@ -78,7 +78,10 @@ Map<String, dynamic> _$$TaskElementImplToJson(_$TaskElementImpl instance) =>
 _$PersonImpl _$$PersonImplFromJson(Map<String, dynamic> json) => _$PersonImpl(
       id: (json['id'] as num).toInt(),
       roleId: (json['roleId'] as num?)?.toInt(),
+      points: (json['points'] as num?)?.toInt(),
+      homePersonTaskId: (json['homePersonTaskId'] as num?)?.toInt(),
       name: json['name'] as String?,
+      description: json['description'] as String?,
       image: json['image'] as String?,
       roleName: json['roleName'] as String?,
     );
@@ -87,7 +90,10 @@ Map<String, dynamic> _$$PersonImplToJson(_$PersonImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'roleId': instance.roleId,
+      'points': instance.points,
+      'homePersonTaskId': instance.homePersonTaskId,
       'name': instance.name,
+      'description': instance.description,
       'image': instance.image,
       'roleName': instance.roleName,
     };

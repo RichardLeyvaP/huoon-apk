@@ -1444,33 +1444,12 @@ _isTypingTime = 1;
     {
        
         // ============================================ TASK SECTION  ============================================
-        if(widget.module == 'storeTask')
-        {
-         // eventDate();
-   // await Future.delayed(Duration(seconds: 3));
-    //ENVIAR DATOS A LA API    
-    verificDate();//verifica que se cumpla que startDate < endDate
-    await storeTask();//insertar tarea
-    //limpiando variables
-    selecteFamilyCSP.value = null;
-    selectedCategoryIdCSP.value = null;
-    selecteFamilyCSP.value = null;
-    selectedPriorityIdCSP.value = null;
-    selectStateTaskCSP.value = null;
-    //
-    taskTypeSelectCSP.value = null;
-    frequencyTaskCSP.value = '';
-
-    GoRouter.of(context).go(
-      '/HomePrincipal'
-    );
-
-        }       
+          
          // ============================================ TASK SECTION FIN ============================================
          //
           //
          // ============================================ STORE SECTION  ============================================
-        else if(widget.module == 'storeHomeHouse')
+         if(widget.module == 'storeHomeHouse')
         {
           
     //ENVIAR DATOS A LA API    

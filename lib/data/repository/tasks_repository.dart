@@ -110,12 +110,15 @@ class TasksRepository {
   }
 
 //metodo para agregar una tarea
-  Future<dynamic> addTasks(TaskElement task) async {
+  Future<dynamic> addTasks(notificationDate,notificationTime,TaskElement task) async {
     final endpoint = '${Env.apiEndpoint}/task';
     //  const endpoint = '${Env.apiEndpoint}/task-test';
     List<Map<String, dynamic>> peopleSelected = getTaskFamiliesFromSelectedPersons(selecteFamilyCSP.value!);
     final body = {
-      //'task': task,
+      //fecha y hora de notificar la tarea
+      'notificationDate': notificationDate,
+      'notificationTime': notificationTime,
+      //
       'home_id': homeSelectHH.value,
       'title': task.title,
       'description': task.description,

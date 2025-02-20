@@ -31,6 +31,7 @@ _$HomePersonImpl _$$HomePersonImplFromJson(Map<String, dynamic> json) =>
       roleName: json['roleName'] as String?,
       personImage: json['personImage'] as String?,
       points: (json['points'] as num?)?.toInt(),
+      percent: (json['percent'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$$HomePersonImplToJson(_$HomePersonImpl instance) =>
@@ -46,4 +47,5 @@ Map<String, dynamic> _$$HomePersonImplToJson(_$HomePersonImpl instance) =>
       'roleName': instance.roleName,
       'personImage': instance.personImage,
       'points': instance.points,
+      'percent': instance.percent,
     };

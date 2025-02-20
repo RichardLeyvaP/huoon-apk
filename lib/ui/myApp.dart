@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
       GoRoute(
         path: '/',
         redirect: (context, state) => '/SplashScreen',
-        // redirect: (context, state) => '/SignUpPage',
+       //  redirect: (context, state) => '/RankingPage',
       ),
       GoRoute(
         path: '/SplashScreen',

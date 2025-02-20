@@ -30,10 +30,10 @@ Future<void> fetchTasks(String date) async {
 }
 
 // Enviar tarea actualizada
-Future<void> storeTask() async {
+Future<void> storeTask(notificationDate,notificationTime) async {
   isLoadingTA.value = true;
   try {
-    await tasksRepository.addTasks(taskElementTA.value);
+    await tasksRepository.addTasks(notificationDate,notificationTime,taskElementTA.value);
     successMessageTA.value = "Task submitted successfully!";
     
   } catch (error) {

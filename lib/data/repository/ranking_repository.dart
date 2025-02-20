@@ -41,7 +41,7 @@ class RankingRepository {
   
   //metodo para agregar una tarea
   Future<dynamic> addRanking(int taskId,List<Map<String, dynamic>> people) async {
-    final endpoint = '${Env.apiEndpoint}/person-home-warehouse-product';
+    final endpoint = '${Env.apiEndpoint}/task-create-points';
     final body = {
       'home_id': homeSelectHH.value,
       'task_id': taskId,
