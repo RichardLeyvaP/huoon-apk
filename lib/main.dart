@@ -8,7 +8,7 @@ import 'package:huoon/data/services/files/fileService.dart';
 import 'package:huoon/data/services/globalCallApi/apiService.dart';
 import 'package:huoon/dependency_injection/providers.dart';
 import 'package:huoon/firebaseOptionsNUEVO.dart';
-import 'package:huoon/integrationApi/firebase_api.dart';
+import 'package:huoon/integrationFirebase/firebase_api.dart';
 import 'package:huoon/ui/myApp.dart';
 import 'package:huoon/ui/util/util_class.dart';
 import 'package:intl/date_symbol_data_local.dart';

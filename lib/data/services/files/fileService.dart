@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:huoon/domain/blocs/filesUsser_signal/fileUsser_service.dart';
+import 'package:huoon/domain/signals/filesUsser_signal/fileUsser_service.dart';
 import 'package:huoon/ui/util/util_class.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';

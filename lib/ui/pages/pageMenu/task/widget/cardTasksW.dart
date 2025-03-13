@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:huoon/data/models/tasks/tasks_model.dart';
-import 'package:huoon/domain/blocs/homeHouse_signal/homeHouse_service.dart';
-import 'package:huoon/domain/blocs/task_cat_state_prior.dart/task_cat_state_prior_service.dart';
-import 'package:huoon/domain/blocs/tasks/tasks_service.dart';
-import 'package:huoon/domain/blocs/user_activity_bloc/user_activity_service.dart';
+import 'package:huoon/domain/signals/homeHouse_signal/homeHouse_service.dart';
+import 'package:huoon/domain/signals/task_cat_state_prior_signal.dart/task_cat_state_prior_service.dart';
+import 'package:huoon/domain/signals/tasks_signal/tasks_service.dart';
+import 'package:huoon/domain/signals/user_activity_signal/user_activity_service.dart';
 import 'package:huoon/ui/Components/avatarMultiples.dart';
 import 'package:huoon/ui/Components/dialog_utils.dart';
-import 'package:huoon/ui/pages/pageMenu/RankingPage/widget/showRatingBottomSheet.dart';
+import 'package:huoon/ui/pages/pageMenu/ranking/widget/showRatingBottomSheet.dart';
 import 'package:huoon/ui/util/utils_class_apk.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 

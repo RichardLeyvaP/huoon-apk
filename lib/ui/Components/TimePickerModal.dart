@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:huoon/domain/blocs/task_cat_state_prior.dart/task_cat_state_prior_service.dart';
-import 'package:huoon/domain/blocs/task_cat_state_prior.dart/task_cat_state_prior_signal.dart';
-import 'package:huoon/domain/blocs/tasks/tasks_service.dart';
+import 'package:huoon/domain/signals/task_cat_state_prior_signal.dart/task_cat_state_prior_service.dart';
+import 'package:huoon/domain/signals/task_cat_state_prior_signal.dart/task_cat_state_prior_signal.dart';
+import 'package:huoon/domain/signals/tasks_signal/tasks_service.dart';
 import 'package:huoon/ui/Components/button_custom.dart';
-import 'package:huoon/ui/pages/rol-admin/Task/selectDays/utils.dart';
+import 'package:huoon/ui/pages/usserPage/Task/selectDays/utils.dart';
 import 'package:huoon/ui/util/utils_class_apk.dart';
 
 

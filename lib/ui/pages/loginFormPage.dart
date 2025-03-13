@@ -2,11 +2,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:huoon/data/services/authGoogle_service.dart';
-import 'package:huoon/domain/blocs/homeHouse_signal/homeHouse_service.dart';
-import 'package:huoon/domain/blocs/login_bloc/login_service.dart';
-import 'package:huoon/domain/blocs/login_bloc/login_signal.dart';
-import 'package:huoon/domain/blocs/tasks/tasks_service.dart';
-import 'package:huoon/domain/blocs/user_activity_bloc/user_activity_service.dart';
+import 'package:huoon/domain/signals/homeHouse_signal/homeHouse_service.dart';
+import 'package:huoon/domain/signals/login_signal/login_service.dart';
+import 'package:huoon/domain/signals/login_signal/login_signal.dart';
+import 'package:huoon/domain/signals/tasks_signal/tasks_service.dart';
+import 'package:huoon/domain/signals/user_activity_signal/user_activity_service.dart';
 import 'package:huoon/ui/util/util_class.dart';
 import 'package:huoon/ui/util/utils_class_apk.dart';
 import 'package:intl/intl.dart';

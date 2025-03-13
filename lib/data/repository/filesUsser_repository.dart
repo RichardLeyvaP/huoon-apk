@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:huoon/data/models/filesUsser/filesUsser_model.dart';
 import 'package:huoon/data/services/globalCallApi/apiService.dart';
-import 'package:huoon/domain/blocs/homeHouse_signal/homeHouse_signal.dart';
+import 'package:huoon/domain/signals/homeHouse_signal/homeHouse_signal.dart';
 import 'package:huoon/ui/pages/env.dart';
 
 class FilesUsserRepository {

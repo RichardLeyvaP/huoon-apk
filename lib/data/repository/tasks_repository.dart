@@ -1,8 +1,8 @@
 import 'package:huoon/data/models/tasks/tasks_model.dart';
 import 'package:huoon/data/services/globalCallApi/apiService.dart';
-import 'package:huoon/domain/blocs/homeHouse_signal/homeHouse_signal.dart';
-import 'package:huoon/domain/blocs/task_cat_state_prior.dart/task_cat_state_prior_signal.dart';
-import 'package:huoon/domain/blocs/tasks/tasks_signal.dart';
+import 'package:huoon/domain/signals/homeHouse_signal/homeHouse_signal.dart';
+import 'package:huoon/domain/signals/task_cat_state_prior_signal.dart/task_cat_state_prior_signal.dart';
+import 'package:huoon/domain/signals/tasks_signal/tasks_signal.dart';
 import 'package:huoon/ui/pages/env.dart';
 
 class TasksRepository {

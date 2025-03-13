@@ -1,8 +1,8 @@
 import 'package:huoon/data/models/products/product_model.dart';
 import 'package:huoon/data/services/globalCallApi/apiService.dart';
-import 'package:huoon/domain/blocs/homeHouse_signal/homeHouse_signal.dart';
+import 'package:huoon/domain/signals/homeHouse_signal/homeHouse_signal.dart';
 import 'package:huoon/ui/pages/env.dart';
-import 'package:huoon/ui/pages/rol-admin/Task/selectDays/utils.dart';
+import 'package:huoon/ui/pages/usserPage/Task/selectDays/utils.dart';
 
 class ProductsRepository {
   final ApiService authService;

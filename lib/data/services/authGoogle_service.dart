@@ -5,8 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:huoon/data/models/login/login_model.dart';
-import 'package:huoon/domain/blocs/login_bloc/login_service.dart';
-import 'package:huoon/domain/blocs/login_bloc/login_signal.dart';
+import 'package:huoon/domain/signals/login_signal/login_service.dart';
+import 'package:huoon/domain/signals/login_signal/login_signal.dart';
 import 'package:huoon/ui/pages/env.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
